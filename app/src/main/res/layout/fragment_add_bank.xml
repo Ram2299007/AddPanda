@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/appThemeColor"
-    tools:context=".Fragments.addBankFragment">
+    tools:context=".Screens.addBankScreen">
 
     <ScrollView
         android:layout_width="match_parent"

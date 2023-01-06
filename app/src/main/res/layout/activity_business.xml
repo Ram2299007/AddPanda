@@ -42,13 +42,13 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="43dp"
                     android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
                     android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Business Name"
                     android:inputType="textPersonName"
                     android:lineHeight="21dp"
-                    android:hint="Business Name"
-                    android:textColorHint="@color/whitetograyforbutton"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
@@ -58,29 +58,29 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
                     android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
-                    android:inputType="textEmailAddress"
                     android:fontFamily="@font/poppins"
-                    android:lineHeight="21dp"
+                    android:gravity="center"
                     android:hint="Enter Email"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:inputType="textEmailAddress"
+                    android:lineHeight="21dp"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
-                    android:id="@+id/mobile"
+                    android:id="@+id/mobilePersonal"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
                     android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
-                    android:inputType="phone"
-                    android:maxLength="10"
-                    android:lineHeight="21dp"
-                    android:hint="Enter mobile no"
                     android:fontFamily="@font/poppins"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:gravity="center"
+                    android:hint="Enter mobile no"
+                    android:inputType="phone"
+                    android:lineHeight="21dp"
+                    android:maxLength="10"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
@@ -89,13 +89,13 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
                     android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
-                    android:inputType="textWebEditText"
                     android:fontFamily="@font/poppins"
-                    android:lineHeight="21dp"
+                    android:gravity="center"
                     android:hint="Enter Website"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:inputType="textWebEditText"
+                    android:lineHeight="21dp"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
@@ -104,13 +104,13 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
                     android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
-                    android:inputType="textPostalAddress"
                     android:fontFamily="@font/poppins"
-                    android:lineHeight="21dp"
+                    android:gravity="center"
                     android:hint="Enter Address"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:inputType="textPostalAddress"
+                    android:lineHeight="21dp"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
@@ -119,44 +119,44 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
                     android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
                     android:gravity="center"
+                    android:hint="Business Category"
                     android:inputType="text"
                     android:lineHeight="21dp"
-                    android:hint="Business Category"
-                    android:fontFamily="@font/poppins"
-                    android:textColorHint="@color/whitetograyforbutton"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/dateofincorp"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
                     android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
-                    android:inputType="date"
-                    android:lineHeight="21dp"
-                    android:hint="Date Of  Incorporation"
                     android:fontFamily="@font/poppins"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:gravity="center"
+                    android:hint="Date Of  Incorporation"
+
+                    android:lineHeight="21dp"
                     android:textColor="@color/white"
-                    android:textSize="14dp" />
+                    android:textColorHint="@color/text_hint_color"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/businessd"
                     android:layout_width="match_parent"
                     android:layout_height="79dp"
                     android:layout_marginTop="14dp"
-                    android:background="@drawable/button_color_hover_for_all"
-                    android:gravity="center"
-                    android:inputType="text"
                     android:layout_marginBottom="14dp"
-                    android:lineHeight="21dp"
-                    android:hint="Enter Business Details"
+                    android:background="@drawable/button_color_hover_for_all"
                     android:fontFamily="@font/poppins"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:gravity="center"
+                    android:hint="Enter Business Details"
+                    android:inputType="text"
+                    android:lineHeight="21dp"
                     android:textColor="@color/white"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
 

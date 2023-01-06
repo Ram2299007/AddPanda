@@ -12,6 +12,11 @@
     <color name="bottom_navigation_item_color">#263238</color>
     <color name="button_Normal_color">#5A5E61</color>
     <color name="button_Hover_color">#BCB9B9</color>
+    <color name="text_hint_color">#BCB9B9</color>
     <color name="appOrangeTheme_shadow">#d3742c</color>
+
+
+    <color name="shimmer_coloe">#BFBDBD</color>
+
 
 </resources>

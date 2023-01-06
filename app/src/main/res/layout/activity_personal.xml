@@ -47,7 +47,7 @@
                     android:inputType="textPersonName"
                     android:lineHeight="21dp"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
@@ -63,11 +63,11 @@
                     android:inputType="textEmailAddress"
                     android:lineHeight="21dp"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
-                    android:id="@+id/mobile"
+                    android:id="@+id/mobilePersonal"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
@@ -79,7 +79,7 @@
                     android:lineHeight="21dp"
                     android:maxLength="10"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
                 <EditText
@@ -94,10 +94,10 @@
                     android:inputType="textPostalAddress"
                     android:lineHeight="21dp"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/dob"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -106,11 +106,11 @@
                     android:fontFamily="@font/poppins"
                     android:gravity="center"
                     android:hint="Enter DOB"
-                    android:inputType="date"
+
                     android:lineHeight="21dp"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/whitetograyforbutton"
-                    android:textSize="14dp" />
+                    android:textColorHint="@color/text_hint_color"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/political"
@@ -125,7 +125,7 @@
                     android:inputType="text"
                     android:lineHeight="21dp"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textColorHint="@color/text_hint_color"
                     android:textSize="14dp" />
 
 
@@ -153,6 +153,7 @@
                         android:id="@+id/sb"
                         android:layout_width="match_parent"
                         android:layout_height="44dp"
+
                         android:layout_gravity="center_vertical"
                         android:paddingStart="87dp"
                         android:progressDrawable="@android:color/transparent"

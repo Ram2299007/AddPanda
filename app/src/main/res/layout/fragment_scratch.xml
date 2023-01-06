@@ -11,6 +11,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -53,7 +54,7 @@
                             android:text="Edit From Scratch"
                             android:textColor="@color/white"
                             android:textFontWeight="500"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
 
                         <LinearLayout
@@ -92,9 +93,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="19dp"
+                        android:layout_marginStart="15dp"
                         android:layout_marginTop="11dp"
-                        android:layout_marginEnd="19dp"
+                        android:layout_marginEnd="15dp"
 
                         android:orientation="vertical">
 
@@ -112,13 +113,13 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_weight="4"
-                                android:textColor="@android:color/white"
-                                android:textSize="12sp"
                                 android:background="@android:color/transparent"
                                 android:entries="@array/spinnerData"
                                 android:gravity="center"
-
                                 android:spinnerMode="dropdown"
+                                android:textColor="@android:color/white"
+
+                                android:textSize="12sp"
                                 tools:ignore="TouchTargetSizeCheck" />
 
                             <ImageView
@@ -144,373 +145,27 @@
 
                             android:textColor="@color/white"
                             android:textFontWeight="400"
-                            android:textSize="13dp" />
+                            android:textSize="13sp" />
 
 
                         <ScrollView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_marginBottom="20dp"
                                 android:orientation="vertical">
-
-
-                                <LinearLayout
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/trendingRecyclerview"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="14dp"
                                     android:orientation="horizontal">
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="start|center"
-                                        android:layout_marginStart="10dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="start"
-                                        android:lineHeight="12.1dp"
-                                        android:text="Birthday"
-                                        android:textColor="@color/white"
-                                        android:textFontWeight="500"
-                                        android:textSize="16sp" />
+                                </androidx.recyclerview.widget.RecyclerView>
 
-                                    <TextView
-                                        android:id="@+id/trendingViewall"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="end|center"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginEnd="18dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="end"
-                                        android:lineHeight="18dp"
-                                        android:text="View all >"
-                                        android:textColor="@color/orange_text_to_white"
-                                        android:textFontWeight="500"
-                                        android:textSize="12sp" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="13dp"
-                                    android:gravity="center"
-                                    android:orientation="horizontal">
-
-                                    <LinearLayout
-                                        android:id="@+id/birthday"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/birthday" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/birthday" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/birthday" />
-
-
-                                    </LinearLayout>
-
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="13dp"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="start|center"
-                                        android:layout_marginStart="10dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="start"
-                                        android:lineHeight="12.1dp"
-                                        android:text="Dusshrea"
-                                        android:textColor="@color/white"
-                                        android:textFontWeight="500"
-                                        android:textSize="16sp" />
-
-                                    <TextView
-
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="end|center"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginEnd="18dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="end"
-                                        android:lineHeight="18dp"
-                                        android:text="View all >"
-                                        android:textColor="@color/orange_text_to_white"
-                                        android:textFontWeight="500"
-                                        android:textSize="12sp" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="13dp"
-                                    android:gravity="center"
-                                    android:orientation="horizontal">
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/dussera" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/dussera2" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/dussera3" />
-
-
-                                    </LinearLayout>
-
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="13dp"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="start|center"
-                                        android:layout_marginStart="10dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="start"
-                                        android:lineHeight="12.1dp"
-                                        android:text="Diwali"
-                                        android:textColor="@color/white"
-                                        android:textFontWeight="500"
-                                        android:textSize="16sp" />
-
-                                    <TextView
-
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="end|center"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginEnd="18dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="end"
-                                        android:lineHeight="18dp"
-                                        android:text="View all >"
-                                        android:textColor="@color/orange_text_to_white"
-                                        android:textFontWeight="500"
-                                        android:textSize="12sp" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="13dp"
-                                    android:gravity="center"
-                                    android:orientation="horizontal">
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/diwali1" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/diwali2" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/diwali3" />
-
-
-                                    </LinearLayout>
-
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="13dp"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="start|center"
-                                        android:layout_marginStart="10dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="start"
-                                        android:lineHeight="12.1dp"
-                                        android:text="Anniversary"
-                                        android:textColor="@color/white"
-                                        android:textFontWeight="500"
-                                        android:textSize="16sp" />
-
-                                    <TextView
-
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="end|center"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginEnd="18dp"
-                                        android:fontFamily="@font/poppins_medium"
-                                        android:gravity="end"
-                                        android:lineHeight="18dp"
-                                        android:text="View all >"
-                                        android:textColor="@color/orange_text_to_white"
-                                        android:textFontWeight="500"
-                                        android:textSize="12sp" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="13dp"
-                                    android:layout_marginBottom="90dp"
-                                    android:gravity="center"
-                                    android:orientation="horizontal">
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/ani1" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="17.72dp"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/ani2" />
-
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-
-                                        <ImageView
-                                            android:layout_width="102dp"
-                                            android:layout_height="92dp"
-                                            android:src="@drawable/ani3" />
-
-
-                                    </LinearLayout>
-
-
-                                </LinearLayout>
                             </LinearLayout>
 
                         </ScrollView>
@@ -527,8 +182,6 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </ScrollView>
-
-
 
 
 </RelativeLayout>

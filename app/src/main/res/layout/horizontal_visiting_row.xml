@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/horirow"
+        android:layout_width="287.25dp"
+        android:layout_marginEnd="20dp"
+        android:layout_height="164dp"
+        android:src="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/visiting_card_template_id"
+        android:visibility="gone"/>
+
+</RelativeLayout>

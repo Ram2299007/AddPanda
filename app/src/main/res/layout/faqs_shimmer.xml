@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="10dp">
+
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/low_radius_noti"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+
+            android:id="@+id/faq1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/question"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+
+                    android:layout_marginStart="20dp"
+
+                    android:fontFamily="@font/poppins_medium"
+                    android:lineHeight="19.5dp"
+                    android:background="@color/shimmer_coloe"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="10sp" />
+
+                <TextView
+
+                    android:layout_width="150dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+
+                    android:layout_marginStart="20dp"
+
+                    android:fontFamily="@font/poppins_medium"
+                    android:lineHeight="19.5dp"
+                    android:background="@color/shimmer_coloe"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+
+
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/firstarrow"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="20dp"
+                    app:tint="@color/shimmer_coloe"
+
+                    android:src="@drawable/downarrow" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:id="@+id/faq2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout"
+        android:layout_gravity="center"
+
+        android:layout_marginTop="1dp"
+        android:background="@drawable/faq_radius2"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="13dp"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="start"
+            android:lineHeight="15dp"
+
+
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos."
+
+            android:textColor="#BECDD8"
+            android:textFontWeight="600"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

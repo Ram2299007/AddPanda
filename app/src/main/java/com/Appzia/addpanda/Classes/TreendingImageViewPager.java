@@ -23,7 +23,8 @@ public class TreendingImageViewPager extends PagerAdapter {
     }
 
     private int[] sliderImageId = new int[]{
-            R.drawable.trendingbanner,R.drawable.trendingbanner,
+            R.drawable.frame_defalut,R.drawable.orange_frame,R.drawable.yellow_frame,R.drawable.green_frame,
+
     };
 
     @Override

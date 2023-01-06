@@ -6,7 +6,7 @@
     android:id="@+id/container"
     android:layout_height="match_parent"
     android:background="@color/appThemeColor"
-    tools:context=".Screens.DownloadImage">
+   >
 
     <ScrollView
         android:id="@+id/scrollView2"

@@ -72,7 +72,7 @@
                         android:orientation="vertical">
 
                         <EditText
-                            android:id="@+id/name"
+                            android:id="@+id/text"
                             android:layout_width="match_parent"
                             android:layout_height="130dp"
 
@@ -87,6 +87,7 @@
                             android:textSize="14dp" />
 
                         <EditText
+                            android:id="@+id/fb"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
@@ -102,6 +103,7 @@
                             android:textSize="14dp" />
 
                         <EditText
+                            android:id="@+id/insta"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
@@ -117,6 +119,7 @@
                             android:textSize="14dp" />
 
                         <EditText
+                            android:id="@+id/linkdn"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
@@ -132,6 +135,7 @@
                             android:textSize="14sp" />
 
                         <EditText
+                            android:id="@+id/address"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"

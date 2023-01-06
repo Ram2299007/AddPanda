@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+    tools:context=".Screens.createScreen">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="19.91dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/backArrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_arrow_back_24"
+                            app:tint="@color/icon_tints" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="11dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:lineHeight="22.5dp"
+                            android:text="Create"
+                            android:textColor="@color/white"
+                            android:textFontWeight="500"
+                            android:textSize="15sp" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="30dp"
+                            android:gravity="end"
+                            android:orientation="horizontal">
+
+
+                            <ImageView
+                                android:id="@+id/noti"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/notifilled"
+                                app:tint="@color/icon_tints" />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="172dp"
+                        android:layout_height="188dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="27dp"
+                        android:src="@drawable/create_first" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+
+                        android:id="@+id/basicedits"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="35dp"
+
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/orangebuttonhovereffect_for_all"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center"
+                        android:lineHeight="24dp"
+                        android:paddingStart="25dp"
+                        android:paddingEnd="25dp"
+                        android:text="Basic Edits"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="16sp"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+                    <ImageView
+                        android:layout_marginTop="47dp"
+                        android:layout_width="280dp"
+                        android:layout_height="159dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/scratch"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+
+                        android:id="@+id/scratch"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="29dp"
+
+                        android:layout_marginBottom="90dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/orangebuttonhovereffect_for_all"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center"
+                        android:lineHeight="24dp"
+                        android:paddingStart="25dp"
+                        android:paddingEnd="25dp"
+                        android:text="Edit From scratch"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="16sp"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </ScrollView>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+
+            android:background="@drawable/bottomnavigation_background"
+            android:backgroundTint="@color/appOrangeTheme"
+            app:fabCradleMargin="2.5dp"
+            app:fabCradleRoundedCornerRadius="2.5dp"
+
+            app:fabCradleVerticalOffset="2.5dp">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigationView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bottomnavigation_background"
+                android:paddingTop="10dp"
+                android:state_focused="true"
+                android:state_selected="true"
+                app:itemIconSize="20dp"
+                app:itemIconTint="@drawable/nav_item_color_state"
+                app:itemTextAppearanceActive="@style/BottomNavigationViewTextStyle"
+                app:itemTextAppearanceInactive="@style/BottomNavigationViewTextStyle"
+                app:itemTextColor="@drawable/nav_item_color_state"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/bottom_navigation_menu" />
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:backgroundTint="@color/appOrangeTheme"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/create"
+            android:text="@string/create2"
+
+            app:layout_anchor="@id/bottomAppBar"
+            app:tint="@android:color/white" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</RelativeLayout>

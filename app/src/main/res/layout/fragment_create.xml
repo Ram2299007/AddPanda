@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/appThemeColor"
-    tools:context=".Fragments.showDownloadFragment">
+    tools:context=".Fragments.createFragment">
 
 
     <ScrollView
@@ -54,7 +54,7 @@
                             android:text="Create"
                             android:textColor="@color/white"
                             android:textFontWeight="500"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
 
                         <LinearLayout
@@ -67,7 +67,7 @@
 
 
                             <ImageView
-                                android:id="@+id/download"
+                                android:id="@+id/noti"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center"

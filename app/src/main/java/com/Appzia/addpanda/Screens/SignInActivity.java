@@ -1,15 +1,16 @@
 package com.Appzia.addpanda.Screens;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -21,16 +22,16 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
 import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
+import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivitySignInBinding;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -46,7 +47,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,28 +56,87 @@ public class SignInActivity extends AppCompatActivity {
     ActivitySignInBinding binding;
     private FirebaseAuth auth, mAuth;
     GoogleSignInClient mGoogleSignInClient;
-    ProgressDialog progressDialog;
+    ProgressDialog progressDialog, progressDialog2;
     CallbackManager mCallbackManager;
     LoginButton loginButton;
     public static final int PERMISSIONS_REQUEST_READ_CONTACTS = 1;
     ImageView img;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+    public static String type = "2";    //for mobile type
+    Context mContext;
+    String social_media_type;
+    String token, VERIFIED_KEY,VERIFIED_SOCIAL_MEDIA_KEY;
+    public static String social_media_typeKey;
+
+
     @Override
     protected void onStart() {
         super.onStart();
-//
         checkAndRequestPermissions();
 
+        SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+        String user_id = sh.getString("user_id", "");
+        String otp = sh.getString("otp", "");
+        token = sh.getString("TOKEN_SF", "");
+        VERIFIED_KEY = sh.getString("VERIFIED_KEY", "");
+        VERIFIED_SOCIAL_MEDIA_KEY = sh.getString("VERIFIED_SOCIAL_MEDIA_KEY", "");
+        //   Toast.makeText(mContext, token, Toast.LENGTH_SHORT).show();
+        social_media_typeKey = sh.getString("social_media_type", "");
 
-        if (auth.getCurrentUser() != null) {
 
-            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        if (VERIFIED_KEY.equals("VERIFIED_KEY")) {
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+
+        } else if (VERIFIED_SOCIAL_MEDIA_KEY.equals("VERIFIED_SOCIAL_MEDIA_KEY")) {
+            Intent intent = new Intent(mContext, MainActivity.class);
+
+            mContext.startActivity(intent);
+        } else {
+            try {
+
+                Constant.NetworkCheck(mContext);
+                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+                    Webservice.verify_otp(mContext, type, otp, token, binding.mobileNo.getText().toString());
+                    Webservice.social_media_login_FOR_CHECK(mContext, "1", FirebaseAuth.getInstance().getUid(), token);
+                } else {
+                    Constant.NetworkCheckDialogue(mContext);
+                    Constant.dialogForNetwork.show();
+
+                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Constant.dialogForNetwork.dismiss();
+
+                        }
+                    });
+
+
+                }
+
+
+            } catch (Exception ignored) {
+            }
         }
+
+//
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+        myEdit.putString("nameKey", "");
+        myEdit.apply();
+
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
@@ -90,7 +149,8 @@ public class SignInActivity extends AppCompatActivity {
         window.setStatusBarColor(this.getResources().getColor(R.color.appThemeColor));
 
 
-
+        mContext = this;
+        progressDialog = new ProgressDialog(this);
         //for facebook authentication
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -105,7 +165,25 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                binding.loginButton.performClick();
+                SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+                myEdit.putString("nameKey", "facebook");
+                myEdit.apply();
+
+
+                if (binding.refer.getText().toString().equals("")) {
+                    binding.refer.requestFocus();
+                    binding.skip.setVisibility(View.VISIBLE);
+                    binding.refer.setBackgroundResource(R.drawable.missing_edittext_radius);
+                    binding.refer.setHint("Reference code ?");
+
+                } else {
+                    binding.loginButton.performClick();
+
+                }
+
 
             }
         });
@@ -135,10 +213,7 @@ public class SignInActivity extends AppCompatActivity {
         progressDialog.setTitle("Login");
         progressDialog.setMessage("Login to your account");
         //  Configure Google Sign In  error in future occure in default web config client id
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -151,26 +226,208 @@ public class SignInActivity extends AppCompatActivity {
         });
 
 
-       binding.mobileNo.addTextChangedListener(new TextWatcher() {
-           @Override
-           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        binding.mobileNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-           }
+            }
 
-           @Override
-           public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-               if(binding.mobileNo.getText().toString().length() == 10){
-                  startActivity(new Intent(getApplicationContext(),MobileVerification.class));
-               }
 
-           }
+                if (binding.mobileNo.length() == 10) {
 
-           @Override
-           public void afterTextChanged(Editable s) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
-           }
-       });
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+                    myEdit.putString("nameKey", "phone");
+                    myEdit.apply();
+
+
+                    if (binding.refer.getText().toString().equals("")) {
+                        binding.refer.requestFocus();
+                        binding.skip.setVisibility(View.VISIBLE);
+                        binding.refer.setBackgroundResource(R.drawable.missing_edittext_radius);
+                        binding.refer.setHint("Reference code ?");
+
+                    } else {
+                        //  binding.skip.setVisibility(View.GONE);
+                        //binding.skip.setText("Continue with phone");
+                        startActivity(new Intent(getApplicationContext(), MobileVerification.class));
+
+                    }
+
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        binding.refer.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (binding.refer.getText().toString().equals("")) {
+                    binding.skip.setText("Skip & continue");
+                    binding.skip.setVisibility(View.VISIBLE);
+                    binding.refer.setBackgroundResource(R.drawable.missing_edittext_radius);
+                    binding.refer.setHint("Reference code ?");
+
+                } else {
+
+                    SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+
+                    String s1 = sh.getString("nameKey", "");
+
+                    if (s1.equals("phone")) {
+
+                        binding.skip.setText("Continue with phone");
+                        binding.refer.setBackgroundResource(R.drawable.button_color_hover_for_all);
+                        binding.refer.setHint("Reference code");
+
+                    } else if (s1.equals("google")) {
+                        binding.skip.setText("Continue with google");
+                        binding.refer.setBackgroundResource(R.drawable.button_color_hover_for_all);
+                        binding.refer.setHint("Reference code");
+
+                        social_media_type = "1";
+                        // Storing data into SharedPreferences
+                        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                        myEdit.putString("social_media_type", social_media_type);
+                        myEdit.apply();
+
+
+                    } else if (s1.equals("facebook")) {
+                        binding.skip.setText("Continue with facebook");
+                        binding.refer.setBackgroundResource(R.drawable.button_color_hover_for_all);
+                        binding.refer.setHint("Reference code");
+
+
+                    } else {
+
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        binding.skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+
+                String s1 = sh.getString("nameKey", "");
+
+                if (binding.skip.getText().toString().equals("Skip & continue") && s1.equals("phone")) {
+
+                    //withput referal key
+                    try {
+                        progressDialog2.setTitle("Please wait");
+                        progressDialog2.setMessage("Log in to your account");
+                        progressDialog2.show();
+                    } catch (Exception ignored) {
+                    }
+
+                    Constant.NetworkCheck(mContext);
+                    if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+                        Webservice.send_otp(mContext, type, binding.mobileNo.getText().toString().trim(), binding.refer.getText().toString());
+
+                    } else {
+                        Constant.NetworkCheckDialogue(mContext);
+                        Constant.dialogForNetwork.show();
+
+                        AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Constant.dialogForNetwork.dismiss();
+
+                            }
+                        });
+
+
+                    }
+
+
+                } else if (binding.skip.getText().toString().equals("Skip & continue") && s1.equals("google")) {
+
+
+                    //withput referal key
+                    progressDialog.show();
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                    social_media_type = "1";
+                    // Storing data into SharedPreferences
+                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    myEdit.putString("social_media_type", social_media_type);
+                    myEdit.apply();
+                } else if (binding.skip.getText().toString().equals("Skip & continue") && s1.equals("facebook")) {
+
+                    binding.loginButton.performClick();
+
+                } else {
+                    Toast.makeText(mContext, "Authentication not selected", Toast.LENGTH_SHORT).show();
+                }
+
+
+                if (binding.skip.getText().toString().equals("Continue with phone")) {
+
+                    Constant.NetworkCheck(mContext);
+                    if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+                        Webservice.send_otp(mContext, type, binding.mobileNo.getText().toString().trim(), binding.refer.getText().toString());
+
+                    } else {
+                        Constant.NetworkCheckDialogue(mContext);
+                        Constant.dialogForNetwork.show();
+
+                        AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Constant.dialogForNetwork.dismiss();
+
+                            }
+                        });
+
+
+                    }
+                } else if (binding.skip.getText().toString().equals("Continue with google")) {
+
+                    //with referal key
+                    progressDialog.show();
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                } else if (binding.skip.getText().toString().equals("Continue with facebook")) {
+
+                    //with referal key
+                    binding.loginButton.performClick();
+                }
+
+            }
+        });
 
 
     }
@@ -178,9 +435,32 @@ public class SignInActivity extends AppCompatActivity {
     int RC_SIGN_IN = 65;
 
     private void signIn() {
-        progressDialog.show();
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+        myEdit.putString("nameKey", "google");
+        myEdit.apply();
+
+
+        if (binding.refer.getText().toString().equals("")) {
+            binding.refer.requestFocus();
+            binding.skip.setVisibility(View.VISIBLE);
+            binding.refer.setBackgroundResource(R.drawable.missing_edittext_radius);
+            binding.refer.setHint("Reference code ?");
+
+        } else {
+            //  binding.skip.setVisibility(View.GONE);
+            // binding.skip.setText("Continue with google");
+            progressDialog.show();
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        }
+
+
     }
 
     @Override
@@ -209,85 +489,161 @@ public class SignInActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+        auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    // Sign in success, update UI with the signed-in user's information
 
-                            progressDialog.dismiss();
-                            Log.d("TAG", "signInWithCredential:success");
-                            FirebaseUser user = auth.getCurrentUser();
-                            //updateUI(user);
-
-//                            Users users=new Users();
-//                            users.setUserId(user.getUid());
-//                            users.setUserName(user.getDisplayName());
-//                            users.setProfilepic(user.getPhotoUrl().toString());
-//                            database.getReference().child("Users").child(user.getUid()).setValue(users);
+                    progressDialog.dismiss();
+                    Log.d("signInWithCredential", "signInWithCredential:success" + task);
 
 
-                            //    very important intent all time
-                            Intent intent = new Intent(SignInActivity.this, choosePersonalBusiness.class);
-                            SignInActivity.this.overridePendingTransition(0, 0);
 
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            startActivity(intent);
 
-                            Toast.makeText(SignInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    social_media_type = "1";
+                    // Storing data into SharedPreferences
+                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    myEdit.putString("social_media_type", social_media_type);
+                    myEdit.apply();
 
-                            String key = FirebaseAuth.getInstance().getUid();
-                            String name = Objects.requireNonNull(auth.getCurrentUser()).getDisplayName();
-                            String image = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getPhotoUrl());
+
+
+                    SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+                    social_media_typeKey = sh.getString("social_media_type", "");
+
+                    try {
+                        Constant.NetworkCheck(mContext);
+                        if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+                            Webservice.social_media_login_FOR_CHECK(mContext, social_media_typeKey, FirebaseAuth.getInstance().getUid(), token);
+
+                        } else {
+                            Constant.NetworkCheckDialogue(mContext);
+                            Constant.dialogForNetwork.show();
+
+                            AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                            btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Constant.dialogForNetwork.dismiss();
+
+                                }
+                            });
+
+
+                        }
+                    } catch (Exception ex) {
+                        Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    //  Toast.makeText(SignInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+
+                    String key = FirebaseAuth.getInstance().getUid();
+                    String name = Objects.requireNonNull(auth.getCurrentUser()).getDisplayName();
+                    String image = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getPhotoUrl());
+                    String provider_data = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getProviderData());
+                    String email = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getEmail());
+                    String TenantId = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getTenantId());
+
 
 //                            Toast.makeText(SignInActivity.this, "User Id :\n" + key, Toast.LENGTH_SHORT).show();
 //                            Toast.makeText(SignInActivity.this, "Name :\n" + name, Toast.LENGTH_SHORT).show();
 //                            Toast.makeText(SignInActivity.this, "Name :\n" + image, Toast.LENGTH_SHORT).show();
-                            Log.d("url", image);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("TAG", "signInWithCredential:failure", task.getException());
-                            //    updateUI(null);
-                        }
-                    }
-                });
+                    Log.d("url", image);
+
+                    //  Log.d("googleResponse", "_name_"+name+"_image_"+image+"_key_"+key+"___All Response ___"+allResponse);
+
+
+                    Log.d("googleResponse", "_name : " + name + "_image :" + image + "_-Auth_Id :" + key + "_provider_data" + provider_data + "_email" + email + "_TenantId" + TenantId);
+
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("TAG", "signInWithCredential:failure", task.getException());
+                    //    updateUI(null);
+                }
+            }
+        });
     }
 
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d("TAG", "handleFacebookAccessToken:" + token);
+    private void handleFacebookAccessToken(AccessToken token2) {
+        Log.d("TAG", "handleFacebookAccessToken:" + token2);
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("TAG", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+        AuthCredential credential = FacebookAuthProvider.getCredential(token2.getToken());
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+//                    // Sign in success, update UI with the signed-in user's information
+//                    Log.d("TAG", "signInWithCredential:success");
+//                    FirebaseUser user = mAuth.getCurrentUser();
+//
+//                    //after complete activity
+//
+//                    String key = FirebaseAuth.getInstance().getUid();
+//                    String name = Objects.requireNonNull(auth.getCurrentUser()).getDisplayName();
+//                    String image = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getPhotoUrl());
+//
+//                    startActivity(new Intent(getApplicationContext(), choosePersonalBusiness.class));
 
-                            //after complete activity
 
-                            String key = FirebaseAuth.getInstance().getUid();
-                            String name = Objects.requireNonNull(auth.getCurrentUser()).getDisplayName();
-                            String image = String.valueOf(Objects.requireNonNull(auth.getCurrentUser()).getPhotoUrl());
 
-//                            Toast.makeText(SignInActivity.this, "User Id :\n" + key, Toast.LENGTH_SHORT).show();
-//                            Toast.makeText(SignInActivity.this, "Name :\n" + name, Toast.LENGTH_SHORT).show();
-//                            Toast.makeText(SignInActivity.this, "Name :\n" + image, Toast.LENGTH_SHORT).show();
-                          startActivity(new Intent(getApplicationContext(),choosePersonalBusiness.class));
+
+
+                    progressDialog.dismiss();
+
+
+                    social_media_type = "2";
+                    // Storing data into SharedPreferences
+                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    myEdit.putString("social_media_type", social_media_type);
+                    myEdit.apply();
+
+
+
+                    SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+                    social_media_typeKey = sh.getString("social_media_type", "");
+
+                    try {
+                        Constant.NetworkCheck(mContext);
+                        if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+                            Webservice.social_media_login_FOR_CHECK(mContext, social_media_typeKey, FirebaseAuth.getInstance().getUid(), token);
+
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("TAG", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Constant.NetworkCheckDialogue(mContext);
+                            Constant.dialogForNetwork.show();
+
+                            AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                            btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Constant.dialogForNetwork.dismiss();
+
+                                }
+                            });
 
 
                         }
+                    } catch (Exception ex) {
+                        Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                });
+
+
+
+
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("TAG", "signInWithCredential:failure", task.getException());
+                    Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+
+
+                }
+            }
+        });
     }
 
     private boolean checkAndRequestPermissions() {
@@ -316,12 +672,11 @@ public class SignInActivity extends AppCompatActivity {
 
                 return false;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.d("permission", ex.getMessage());
         }
         return true;
     }
-
 
 
 }

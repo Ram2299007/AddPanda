@@ -41,7 +41,7 @@
                 android:text="Create Visiting card"
                 android:textColor="@color/white"
                 android:textFontWeight="500"
-                android:textSize="15dp" />
+                android:textSize="15sp" />
 
 
             <LinearLayout
@@ -66,13 +66,113 @@
 
         </LinearLayout>
 
-        <ImageView
+        <RelativeLayout
+            android:id="@+id/viewCardImg"
             android:layout_width="match_parent"
             android:layout_height="183dp"
-            android:layout_marginLeft="18dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginTop="73dp"
-            android:layout_marginRight="18dp"
-            android:src="@drawable/frame1_hori" />
+            android:layout_marginRight="25dp"
+            android:background="@drawable/framelayout" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <TextView
+                    android:id="@+id/mainTitle"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="47dp"
+                    android:layout_marginEnd="150dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Nitin Kamat"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="67dp"
+                    android:layout_marginEnd="150dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Director &amp; CEO"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/phone"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="255dp"
+                    android:layout_marginTop="43dp"
+                    android:fontFamily="@font/inter"
+                    android:text="+91 123456789"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="227dp"
+                    android:layout_marginTop="72dp"
+                    android:fontFamily="@font/inter"
+                    android:text="info@abc.com"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/website"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="190dp"
+                    android:layout_marginTop="105dp"
+                    android:fontFamily="@font/inter"
+                    android:text="www.abc.com"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/location"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="170dp"
+                    android:layout_marginTop="136dp"
+
+                    android:fontFamily="@font/inter"
+                    android:text="Phoenix Market city, Viman nagar,\nPune -411014"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </RelativeLayout>
+
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,6 +214,7 @@
 
                 <androidx.appcompat.widget.AppCompatButton
 
+                    android:id="@+id/download"
                     android:layout_width="153dp"
 
                     android:layout_height="50dp"
@@ -202,7 +303,7 @@
                     android:lineHeight="12.1dp"
                     android:text="Chats"
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -228,7 +329,7 @@
                     android:lineHeight="12.1dp"
                     android:text="Whatsapp"
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -253,7 +354,7 @@
                     android:lineHeight="12.1dp"
                     android:text="Facebook"
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -277,7 +378,7 @@
                     android:lineHeight="12.1dp"
                     android:text="Instagram"
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -314,7 +415,7 @@
                     android:lineHeight="12.1dp"
                     android:text="Gmail"
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -340,7 +441,7 @@
                     android:lineHeight="12.1dp"
                     android:text="  Skype "
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -365,7 +466,7 @@
                     android:lineHeight="12.1dp"
                     android:text="   Twitter    "
                     android:textColor="@color/white"
-                    android:textSize="10dp" />
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -399,6 +500,5 @@
 
 
     </LinearLayout>
-
 
 </RelativeLayout>

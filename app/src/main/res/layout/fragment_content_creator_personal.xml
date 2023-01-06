@@ -51,7 +51,7 @@
                         android:text="Contet Creator"
                         android:textColor="@color/white"
                         android:textFontWeight="500"
-                        android:textSize="15dp" />
+                        android:textSize="15sp" />
 
 
                 </LinearLayout>
@@ -87,7 +87,7 @@
                         android:lineHeight="21dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/whitetograyforbutton"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <EditText
 
@@ -101,9 +101,10 @@
                         android:hint="Contact Number"
                         android:inputType="phone"
                         android:lineHeight="21dp"
+                        android:maxLength="10"
                         android:textColor="@color/white"
                         android:textColorHint="@color/whitetograyforbutton"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <EditText
 
@@ -119,7 +120,7 @@
                         android:lineHeight="21dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/whitetograyforbutton"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <EditText
 
@@ -135,7 +136,7 @@
                         android:lineHeight="21dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/whitetograyforbutton"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <EditText
                         android:id="@+id/special"
@@ -150,7 +151,7 @@
                         android:lineHeight="21dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/whitetograyforbutton"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <EditText
 
@@ -166,7 +167,7 @@
                         android:lineHeight="21dp"
                         android:textColor="@color/white"
                         android:textColorHint="@color/whitetograyforbutton"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <androidx.appcompat.widget.AppCompatButton
 
@@ -187,7 +188,7 @@
                         android:text="Submit"
                         android:textColor="@color/white"
                         android:textFontWeight="500"
-                        android:textSize="15dp" />
+                        android:textSize="15sp" />
 
 
                 </LinearLayout>

@@ -3,11 +3,17 @@ package com.Appzia.addpanda.Screens;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,8 +29,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -45,6 +56,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.font_adapter_new;
+import com.Appzia.addpanda.Adapter.frameAdapter;
 import com.Appzia.addpanda.Adapter.shapeAdapter;
 import com.Appzia.addpanda.Adapter.textColorAdapter;
 import com.Appzia.addpanda.MainActivity;
@@ -52,6 +64,8 @@ import com.Appzia.addpanda.Model.fontModelNew;
 import com.Appzia.addpanda.Model.shapeModel;
 import com.Appzia.addpanda.Model.textColorModel;
 import com.Appzia.addpanda.R;
+import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivityEditFameBinding;
 import com.Appzia.addpanda.sharedPreference.PreferenceManager;
 import com.google.android.material.bottomappbar.BottomAppBar;
@@ -66,11 +80,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import me.zhanghai.android.fastscroll.FastScrollerBuilder;
-
 public class editFameActivity extends AppCompatActivity {
 
     ActivityEditFameBinding binding;
+    Context mContext;
+    String token;
 
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
@@ -95,7 +109,6 @@ public class editFameActivity extends AppCompatActivity {
     String sshape, shShapeSelectText;
     Button editButton;
 
-    // for moving edittext variable section
     float[] lastEvent = null;
     float d = 0f;
     float newRot = 0f;
@@ -109,9 +122,6 @@ public class editFameActivity extends AppCompatActivity {
     private PointF mid = new PointF();
     float oldDist = 1f;
     private float xCoOrdinate, yCoOrdinate;
-
-
-    //for put the image value from database to viewholder
 
     private shapeModel[] model;
     private shapeAdapter adapter;
@@ -135,16 +145,108 @@ public class editFameActivity extends AppCompatActivity {
 
     TextView titleText;
     String getImg, getImg2, getImg3;
+    byte[] byteArray;
 
     SharedPreferences sharedPreferenceFontText, shGettextFont;
     public String getCurrentTextForfont = "Ad Panda";
+
+    public static frameAdapter frameadapter;
+    String template_idKey;
+
+    public static RelativeLayout mainRelativeLayout, mainLayout;
+    String categoryid;
+    String sub_cat_id;
+    String template_id;
+
+    String widthKey, heightKey;
+    Animation goneAnime;
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        try {
+            widthKey = getIntent().getStringExtra("widthKey");
+            heightKey = getIntent().getStringExtra("heightKey");
+            // here  navigation bar for  gone animation
+            Constant.viewGoneAnimator(binding.coord);
+            if (!widthKey.equals("")) {
+                ViewGroup.LayoutParams params = binding.mainLayout.getLayoutParams();
+                params.height = Integer.parseInt(heightKey);
+                params.width = Integer.parseInt(widthKey);
+                binding.mainLayout.setLayoutParams(params);
+                binding.mainLayout.setBackgroundResource(R.drawable.bg_round_10);
+                ColorStateList myColorStateList = ColorStateList.valueOf(getResources().getColor(R.color.white));
+                binding.mainLayout.setBackgroundTintList(myColorStateList);
+
+
+
+
+
+            } else {
+            }
+        } catch (Exception ignored) {
+        }
+
+
+        SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+
+        token = sh.getString("TOKEN_SF", "");
+        template_idKey = sh.getString("template_idKey", "");
+
+        mainRelativeLayout = (RelativeLayout) findViewById(R.id.mainRelativeLayout);
+        mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
+
+        categoryid = getIntent().getStringExtra("categoryidKey");
+
+        sub_cat_id = getIntent().getStringExtra("sub_cat_idKey");
+        template_id = getIntent().getStringExtra("template_idKeyKey");
+//        Constant.frameList.clear();
+//        Constant.frameListTwo.clear();
+
+        Constant.NetworkCheck(mContext);
+        if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+            Webservice.get_frame_list_two(mContext, token, editFameActivity.this, "", "", "");
+
+        } else {
+            Constant.NetworkCheckDialogue(mContext);
+            Constant.dialogForNetwork.show();
+
+            AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Constant.dialogForNetwork.dismiss();
+
+                }
+            });
+
+
+        }
+
+        Constant.getSfFuncion(getApplicationContext());
+        String imgDta = Constant.getSF.getString("originalImageKey", "empty");
+        Log.d("##imgDta", imgDta);
+
+        clearSharedPref();
+
+    }
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityEditFameBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mContext = this;
 
 
         //By default on each activity android studio
@@ -158,15 +260,6 @@ public class editFameActivity extends AppCompatActivity {
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
         bottomBarBackground.setShapeAppearanceModel(bottomBarBackground.getShapeAppearanceModel().toBuilder().setTopRightCorner(CornerFamily.ROUNDED, 10).setTopLeftCorner(CornerFamily.ROUNDED, 10).build());
-
-
-
-
-        SharedPreferences shNew = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
-
-        String s1 = shNew.getString("imagekey", "");
-        binding.mainLayout.setBackgroundResource(Integer.parseInt(s1));
-
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -191,7 +284,7 @@ public class editFameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -215,7 +308,7 @@ public class editFameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -238,7 +331,7 @@ public class editFameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -262,7 +355,7 @@ public class editFameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -272,9 +365,6 @@ public class editFameActivity extends AppCompatActivity {
 
             }
         });
-
-
-        //bottom for editfram from fragment activity
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,11 +383,31 @@ public class editFameActivity extends AppCompatActivity {
 
                         })
 
-                        .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
             }
         });
+        try {
+
+            try {
+                SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                String s1 = sh.getString("imgData", "");
+                byteArray = Base64.decode(s1, Base64.DEFAULT);
+
+
+            } catch (Exception ex) {
+                Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            Drawable dr = new BitmapDrawable(bmp);
+            binding.mainLayout.setBackgroundDrawable(dr);
+        } catch (Exception ex) {
+            Toast.makeText(this, "BITMAP ERROR :" + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        //bottom for editfram from fragment activity
+
 
         preferenceManager = PreferenceManager.getInstance(getApplicationContext());
 
@@ -305,23 +415,9 @@ public class editFameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //     getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new trendingFragment()).commit();
+                //  Constant.collapse(binding.coord);
 
-                new AlertDialog.Builder(editFameActivity.this).setTitle("Warning").setMessage("If you leave this page , you loss all your work.\nAre you sure want to exit?")
-
-
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                i.putExtra("editKey", "editBack");
-                                startActivity(i);
-
-                            }
-                        })
-
-                        .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
-
+                onBackPressed();
 
             }
         });
@@ -425,33 +521,6 @@ public class editFameActivity extends AppCompatActivity {
         });
 
 
-        binding.frame1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//                binding.mainFrame.setImageResource(R.drawable.orangeframe);
-//                binding.frame1.setImageResource(R.drawable.edit_frame);
-            }
-        });
-
-        binding.frame2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                binding.mainFrame.setImageResource(R.drawable.yellowframe);
-//                binding.frame2.setImageResource(R.drawable.edit_frame);
-            }
-        });
-
-        binding.frame3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//                binding.mainFrame.setImageResource(R.drawable.greenblue2);
-//                binding.frame3.setImageResource(R.drawable.edit_frame);
-            }
-        });
-
-
         binding.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -479,11 +548,22 @@ public class editFameActivity extends AppCompatActivity {
                                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                     byte[] byteArray = stream.toByteArray();
 
+                                    String saveThis = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                                    Log.d("byteArray", String.valueOf(saveThis));
 
-//                getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
-                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                    i.putExtra("editKey", "editDownloadImage");
-                                    i.putExtra("imgData", byteArray);
+                                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                    myEdit.putString("imgData", saveThis);
+                                    myEdit.apply();
+
+
+                                    // getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
+                                    Intent i = new Intent(getApplicationContext(), downloadImageActivity.class);
+                                    i.putExtra("sub_cat_idkey", sub_cat_id);
+                                    i.putExtra("template_idkey", template_id);
+                                    i.putExtra("cat_idkey", categoryid);
+                                    i.putExtra("heightKey", String.valueOf(heightKey));
+                                    i.putExtra("widthKey", String.valueOf(widthKey));
                                     startActivity(i);
 
                                 } catch (Exception ex) {
@@ -493,7 +573,7 @@ public class editFameActivity extends AppCompatActivity {
 
                         })
 
-                        .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg_2).show();
+                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
             }
@@ -541,71 +621,96 @@ public class editFameActivity extends AppCompatActivity {
                     } else if (sTExt2.equals("SELECTED2")) {
 
                         try {
+
                             enterText.setText(binding.editTextFrag2.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED3")) {
 
                         try {
+
                             enterText.setText(binding.editTextFrag3.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED4")) {
 
                         try {
+
+
                             enterText.setText(binding.editTextFrag4.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED5")) {
 
                         try {
+
+
                             enterText.setText(binding.editTextFrag5.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED6")) {
 
                         try {
+
+                            binding.editTextFrag6.setTextSize(22);
                             enterText.setText(binding.editTextFrag6.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED7")) {
 
                         try {
+
+                            binding.editTextFrag7.setTextSize(22);
                             enterText.setText(binding.editTextFrag7.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED8")) {
 
                         try {
+
+                            binding.editTextFrag8.setTextSize(22);
                             enterText.setText(binding.editTextFrag8.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED9")) {
 
                         try {
+
+                            binding.editTextFrag9.setTextSize(22);
                             enterText.setText(binding.editTextFrag9.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
                     } else if (sTExt2.equals("SELECTED10")) {
 
                         try {
+
+                            binding.editTextFrag10.setTextSize(22);
                             enterText.setText(binding.editTextFrag10.getText().toString());
                             enterText.setSelection(enterText.getText().length());
+
 
                         } catch (Exception e) {
                         }
@@ -633,12 +738,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag.setText(text);
+                                        binding.editTextFrag.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    String text = enterText.getText().toString();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag.setText(text);
+                                        binding.editTextFrag.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
 
-                                    binding.editTextFrag.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                    }
 
 
                                 } catch (Exception e) {
@@ -647,11 +761,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag2.setText(text);
+                                        binding.editTextFrag2.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag2.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag2.setText(text);
+                                        binding.editTextFrag2.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -659,11 +783,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag3.setText(text);
+                                        binding.editTextFrag3.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag3.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag3.setText(text);
+                                        binding.editTextFrag3.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -671,22 +805,42 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag4.setText(text);
+                                        binding.editTextFrag4.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag4.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag4.setText(text);
+                                        binding.editTextFrag4.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
                                 } catch (Exception e) {
                                 }
                             } else if (sTExt.equals("SELECTED5")) {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag5.setText(text);
+                                        binding.editTextFrag5.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag5.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag5.setText(text);
+                                        binding.editTextFrag5.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -694,11 +848,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag6.setText(text);
+                                        binding.editTextFrag6.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag6.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag6.setText(text);
+                                        binding.editTextFrag6.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -706,11 +870,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag7.setText(text);
+                                        binding.editTextFrag7.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag7.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag7.setText(text);
+                                        binding.editTextFrag7.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -718,11 +892,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag8.setText(text);
+                                        binding.editTextFrag8.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag8.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag8.setText(text);
+                                        binding.editTextFrag8.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -730,11 +914,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag9.setText(text);
+                                        binding.editTextFrag9.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag9.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag9.setText(text);
+                                        binding.editTextFrag9.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -742,11 +936,21 @@ public class editFameActivity extends AppCompatActivity {
 
                                 try {
 
-                                    String text = enterText.getText().toString();
+                                    if (enterText.length() <= 3) {
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag10.setText(text);
+                                        binding.editTextFrag10.setTextSize(30);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+                                    } else {
 
-                                    binding.editTextFrag10.setText(text);
-                                    enterText.setText("");
-                                    dlg2.dismiss();
+                                        String text = enterText.getText().toString();
+                                        binding.editTextFrag10.setText(text);
+                                        binding.editTextFrag10.setTextSize(22);
+                                        enterText.setText("");
+                                        dlg2.dismiss();
+
+                                    }
 
                                 } catch (Exception e) {
                                 }
@@ -800,131 +1004,244 @@ public class editFameActivity extends AppCompatActivity {
                 enterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        String text = enterText.getText().toString();
                         if (enterText.getText().toString().equals("")) {
 
                             enterText.setError("Missing text ?");
                             // Toast.makeText(editFameActivity.this, "Missing Text ?", Toast.LENGTH_SHORT).show();
                         } else {
 
-                            String text = enterText.getText().toString();
 
-                            if (binding.editTextFrag.getText().toString().equals("Enter your 1 text here")) {
+                            if (enterText.length() <= 3) {
 
-                                binding.editTextFrag.setText(text);
-                                binding.editTextFrag.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag.setVisibility(View.VISIBLE);
+                                if (binding.editTextFrag.getText().toString().equals("Enter your 1 text here")) {
 
-                                binding.editTextFrag.requestFocus();
-                                enterText.setText("");
-                                highlightText1();
-                                dlg2.dismiss();
+                                    binding.editTextFrag.setText(text);
 
-                            } else if (binding.editTextFrag2.getText().toString().equals("Enter your 2 text here")) {
+                                    binding.editTextFrag.setTextSize(30);
+                                    binding.editTextFrag.setVisibility(View.VISIBLE);
 
+                                    binding.editTextFrag.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                                binding.editTextFrag2.setText(text);
-                                binding.editTextFrag2.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag2.setVisibility(View.VISIBLE);
+                                } else if (binding.editTextFrag2.getText().toString().equals("Enter your 2 text here")) {
 
-                                binding.editTextFrag2.requestFocus();
-                                enterText.setText("");
-                                highlightText2();
-                                dlg2.dismiss();
+                                    binding.editTextFrag2.setText(text);
 
-                            } else if (binding.editTextFrag3.getText().toString().equals("Enter your 3 text here")) {
-                                binding.editTextFrag3.setText(text);
-                                binding.editTextFrag3.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag3.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag2.setTextSize(30);
+                                    binding.editTextFrag2.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag3.requestFocus();
-                                enterText.setText("");
-                                highlightText3();
-                                dlg2.dismiss();
+                                    binding.editTextFrag2.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                            } else if (binding.editTextFrag4.getText().toString().equals("Enter your 4 text here")) {
+                                } else if (binding.editTextFrag3.getText().toString().equals("Enter your 3 text here")) {
+                                    binding.editTextFrag3.setText(text);
 
-                                binding.editTextFrag4.setText(text);
-                                binding.editTextFrag4.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag4.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag3.setTextSize(30);
+                                    binding.editTextFrag3.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag4.requestFocus();
-                                enterText.setText("");
-                                highlightText4();
-                                dlg2.dismiss();
+                                    binding.editTextFrag3.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                            } else if (binding.editTextFrag5.getText().toString().equals("Enter your 5 text here")) {
+                                } else if (binding.editTextFrag4.getText().toString().equals("Enter your 4 text here")) {
+                                    binding.editTextFrag4.setText(text);
 
-                                binding.editTextFrag5.setText(text);
-                                binding.editTextFrag5.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag5.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag4.setTextSize(30);
+                                    binding.editTextFrag4.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag5.requestFocus();
-                                enterText.setText("");
-                                highlightText5();
-                                dlg2.dismiss();
+                                    binding.editTextFrag4.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                            } else if (binding.editTextFrag6.getText().toString().equals("Enter your 6 text here")) {
+                                } else if (binding.editTextFrag5.getText().toString().equals("Enter your 5 text here")) {
+                                    binding.editTextFrag5.setText(text);
 
-                                binding.editTextFrag6.setText(text);
-                                binding.editTextFrag6.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag6.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag5.setTextSize(30);
+                                    binding.editTextFrag5.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag6.requestFocus();
-                                enterText.setText("");
-                                hightlightText6();
-                                dlg2.dismiss();
+                                    binding.editTextFrag5.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                            } else if (binding.editTextFrag7.getText().toString().equals("Enter your 7 text here")) {
+                                } else if (binding.editTextFrag6.getText().toString().equals("Enter your 6 text here")) {
+                                    binding.editTextFrag6.setText(text);
 
-                                binding.editTextFrag7.setText(text);
-                                binding.editTextFrag7.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag7.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag6.setTextSize(30);
+                                    binding.editTextFrag6.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag7.requestFocus();
-                                enterText.setText("");
-                                highlightText7();
-                                dlg2.dismiss();
+                                    binding.editTextFrag6.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
+                                } else if (binding.editTextFrag7.getText().toString().equals("Enter your 7 text here")) {
+                                    binding.editTextFrag7.setText(text);
 
-                            } else if (binding.editTextFrag8.getText().toString().equals("Enter your 8 text here")) {
+                                    binding.editTextFrag7.setTextSize(30);
+                                    binding.editTextFrag7.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag8.setText(text);
-                                binding.editTextFrag8.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag8.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag7.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                                binding.editTextFrag8.requestFocus();
-                                enterText.setText("");
-                                highlightText8();
-                                dlg2.dismiss();
+                                } else if (binding.editTextFrag8.getText().toString().equals("Enter your 8 text here")) {
+                                    binding.editTextFrag8.setText(text);
 
-                            } else if (binding.editTextFrag9.getText().toString().equals("Enter your 9 text here")) {
+                                    binding.editTextFrag8.setTextSize(30);
+                                    binding.editTextFrag8.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag9.setText(text);
-                                binding.editTextFrag9.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag9.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag8.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                                binding.editTextFrag9.requestFocus();
-                                enterText.setText("");
-                                highlightText9();
-                                dlg2.dismiss();
+                                } else if (binding.editTextFrag9.getText().toString().equals("Enter your 9 text here")) {
+                                    binding.editTextFrag9.setText(text);
 
-                            } else if (binding.editTextFrag10.getText().toString().equals("Enter your 10 text here")) {
+                                    binding.editTextFrag9.setTextSize(30);
+                                    binding.editTextFrag9.setVisibility(View.VISIBLE);
 
-                                binding.editTextFrag10.setText(text);
-                                binding.editTextFrag10.setTextColor(Color.parseColor("#ffffff"));
-                                binding.editTextFrag10.setVisibility(View.VISIBLE);
+                                    binding.editTextFrag9.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
 
-                                binding.editTextFrag10.requestFocus();
-                                enterText.setText("");
-                                highlightText10();
-                                dlg2.dismiss();
+                                } else if (binding.editTextFrag10.getText().toString().equals("Enter your 10 text here")) {
+                                    binding.editTextFrag10.setText(text);
+
+                                    binding.editTextFrag10.setTextSize(30);
+                                    binding.editTextFrag10.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag10.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
+
+                                } else {
+                                    Toast.makeText(editFameActivity.this, "You can add maximum 10 text !", Toast.LENGTH_SHORT).show();
+                                    enterText.setText("");
+                                    dlg2.dismiss();
+                                }
+
                             } else {
-                                Toast.makeText(editFameActivity.this, "You can add maximum 10 text !", Toast.LENGTH_SHORT).show();
-                                enterText.setText("");
-                                dlg2.dismiss();
-                            }
 
+
+                                if (binding.editTextFrag.getText().toString().equals("Enter your 1 text here")) {
+
+                                    binding.editTextFrag.setText(text);
+                                    binding.editTextFrag.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag.requestFocus();
+                                    enterText.setText("");
+                                    highlightText1();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag2.getText().toString().equals("Enter your 2 text here")) {
+
+
+                                    binding.editTextFrag2.setText(text);
+                                    binding.editTextFrag2.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag2.requestFocus();
+                                    enterText.setText("");
+                                    highlightText2();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag3.getText().toString().equals("Enter your 3 text here")) {
+                                    binding.editTextFrag3.setText(text);
+                                    binding.editTextFrag3.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag3.requestFocus();
+                                    enterText.setText("");
+                                    highlightText3();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag4.getText().toString().equals("Enter your 4 text here")) {
+
+                                    binding.editTextFrag4.setText(text);
+                                    binding.editTextFrag4.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag4.requestFocus();
+                                    enterText.setText("");
+                                    highlightText4();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag5.getText().toString().equals("Enter your 5 text here")) {
+
+                                    binding.editTextFrag5.setText(text);
+                                    binding.editTextFrag5.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag5.requestFocus();
+                                    enterText.setText("");
+                                    highlightText5();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag6.getText().toString().equals("Enter your 6 text here")) {
+
+                                    binding.editTextFrag6.setText(text);
+                                    binding.editTextFrag6.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag6.requestFocus();
+                                    enterText.setText("");
+                                    hightlightText6();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag7.getText().toString().equals("Enter your 7 text here")) {
+
+                                    binding.editTextFrag7.setText(text);
+                                    binding.editTextFrag7.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag7.requestFocus();
+                                    enterText.setText("");
+                                    highlightText7();
+                                    dlg2.dismiss();
+
+
+                                } else if (binding.editTextFrag8.getText().toString().equals("Enter your 8 text here")) {
+
+                                    binding.editTextFrag8.setText(text);
+                                    binding.editTextFrag8.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag8.requestFocus();
+                                    enterText.setText("");
+                                    highlightText8();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag9.getText().toString().equals("Enter your 9 text here")) {
+
+                                    binding.editTextFrag9.setText(text);
+                                    binding.editTextFrag9.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag9.requestFocus();
+                                    enterText.setText("");
+                                    highlightText9();
+                                    dlg2.dismiss();
+
+                                } else if (binding.editTextFrag10.getText().toString().equals("Enter your 10 text here")) {
+
+                                    binding.editTextFrag10.setText(text);
+                                    binding.editTextFrag10.setVisibility(View.VISIBLE);
+
+                                    binding.editTextFrag10.requestFocus();
+                                    enterText.setText("");
+                                    highlightText10();
+                                    dlg2.dismiss();
+                                } else {
+                                    Toast.makeText(editFameActivity.this, "You can add maximum 10 text !", Toast.LENGTH_SHORT).show();
+                                    enterText.setText("");
+                                    dlg2.dismiss();
+                                }
+
+                            }
                         }
 
 
@@ -1203,7 +1520,7 @@ public class editFameActivity extends AppCompatActivity {
         String colorData = String.valueOf(Color.parseColor("#b6370d"));
 
 
-       // color model //
+        // color model //
 
         colorModel = new textColorModel[]{
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
@@ -1230,54 +1547,44 @@ public class editFameActivity extends AppCompatActivity {
                         "#5d00cb", "#6d1ad0", "#7d32d5", "#8e4ddc", "#ae80e5", "#be98ea", "#c6a6ed", "#cdb2ef", "#dfccf5"),
                 //2)
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#e402ae"), Color.parseColor("#e71bb7"), Color.parseColor("#e833bf"), Color.parseColor("#eb4dc7"), Color.parseColor("#ee65cf"), Color.parseColor("#f180d7"), Color.parseColor("#f499df"), Color.parseColor("#f7b2e7"), Color.parseColor("#faccef"),
-                        "#e402ae", "#e71bb7", "#e833bf", "#eb4dc7", "#ee65cf", "#f180d7", "#f499df", "#f7b2e7", "#faccef"),
+                new textColorModel(Color.parseColor("#e402ae"), Color.parseColor("#e71bb7"), Color.parseColor("#e833bf"), Color.parseColor("#eb4dc7"), Color.parseColor("#ee65cf"), Color.parseColor("#f180d7"), Color.parseColor("#f499df"), Color.parseColor("#f7b2e7"), Color.parseColor("#faccef"), "#e402ae", "#e71bb7", "#e833bf", "#eb4dc7", "#ee65cf", "#f180d7", "#f499df", "#f7b2e7", "#faccef"),
 
                 //3)
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#ffa413"), Color.parseColor("#ffad2a"), Color.parseColor("#ffb642"), Color.parseColor("#ffbf5a"), Color.parseColor("#ffc871"), Color.parseColor("#ffd188"), Color.parseColor("#ffdb9f"), Color.parseColor("#ffe4b8"), Color.parseColor("#ffedd0"),
-                        "#ffa413", "#ffad2a", "#ffb642", "#ffbf5a", "#ffc871", "#ffd188", "#ffdb9f", "#ffe4b8", "#ffedd0"),
+                new textColorModel(Color.parseColor("#ffa413"), Color.parseColor("#ffad2a"), Color.parseColor("#ffb642"), Color.parseColor("#ffbf5a"), Color.parseColor("#ffc871"), Color.parseColor("#ffd188"), Color.parseColor("#ffdb9f"), Color.parseColor("#ffe4b8"), Color.parseColor("#ffedd0"), "#ffa413", "#ffad2a", "#ffb642", "#ffbf5a", "#ffc871", "#ffd188", "#ffdb9f", "#ffe4b8", "#ffedd0"),
 
                 //4)
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#027f6a"), Color.parseColor("#198c79"), Color.parseColor("#339987"), Color.parseColor("#4da597"), Color.parseColor("#66b2a6"), Color.parseColor("#80beb4"), Color.parseColor("#99ccc3"), Color.parseColor("#b2d9d2"), Color.parseColor("#cce5e1"),
-                        "#027f6a", "#198c79", "#339987", "#4da597", "#66b2a6", "#80beb4", "#99ccc3", "#b2d9d2", "#cce5e1"),
+                new textColorModel(Color.parseColor("#027f6a"), Color.parseColor("#198c79"), Color.parseColor("#339987"), Color.parseColor("#4da597"), Color.parseColor("#66b2a6"), Color.parseColor("#80beb4"), Color.parseColor("#99ccc3"), Color.parseColor("#b2d9d2"), Color.parseColor("#cce5e1"), "#027f6a", "#198c79", "#339987", "#4da597", "#66b2a6", "#80beb4", "#99ccc3", "#b2d9d2", "#cce5e1"),
 
                 //5
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#009900"), Color.parseColor("#1ba319"), Color.parseColor("#33ad33"), Color.parseColor("#4db84d"), Color.parseColor("#66c266"), Color.parseColor("#80cc7f"), Color.parseColor("#99d69a"), Color.parseColor("#b1e0b2"), Color.parseColor("#ccebcb"),
-                        "#009900", "#1ba319", "#33ad33", "#4db84d", "#66c266", "#80cc7f", "#99d69a", "#b1e0b2", "#ccebcb"),
+                new textColorModel(Color.parseColor("#009900"), Color.parseColor("#1ba319"), Color.parseColor("#33ad33"), Color.parseColor("#4db84d"), Color.parseColor("#66c266"), Color.parseColor("#80cc7f"), Color.parseColor("#99d69a"), Color.parseColor("#b1e0b2"), Color.parseColor("#ccebcb"), "#009900", "#1ba319", "#33ad33", "#4db84d", "#66c266", "#80cc7f", "#99d69a", "#b1e0b2", "#ccebcb"),
 
                 //6
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#fad306"), Color.parseColor("#fad71c"), Color.parseColor("#fbdb37"), Color.parseColor("#fbe04f"), Color.parseColor("#fce468"), Color.parseColor("#fce981"), Color.parseColor("#fdec9b"), Color.parseColor("#fdf1b4"), Color.parseColor("#fef6cd"),
-                        "#fad306", "#fad71c", "#fbdb37", "#fbe04f", "#fce468", "#fce981", "#fdec9b", "#fdf1b4", "#fef6cd"),
+                new textColorModel(Color.parseColor("#fad306"), Color.parseColor("#fad71c"), Color.parseColor("#fbdb37"), Color.parseColor("#fbe04f"), Color.parseColor("#fce468"), Color.parseColor("#fce981"), Color.parseColor("#fdec9b"), Color.parseColor("#fdf1b4"), Color.parseColor("#fef6cd"), "#fad306", "#fad71c", "#fbdb37", "#fbe04f", "#fce468", "#fce981", "#fdec9b", "#fdf1b4", "#fef6cd"),
 
                 //7
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#ff0443"), Color.parseColor("#ff1b56"), Color.parseColor("#ff3669"), Color.parseColor("#ff4e7b"), Color.parseColor("#ff678e"), Color.parseColor("#ff80a1"), Color.parseColor("#ff9ab4"), Color.parseColor("#ffb3c7"), Color.parseColor("#ffccd9"),
-                        "#ff0443", "#ff1b56", "#ff3669", "#ff4e7b", "#ff678e", "#ff80a1", "#ff9ab4", "#ffb3c7", "#ffccd9"),
+                new textColorModel(Color.parseColor("#ff0443"), Color.parseColor("#ff1b56"), Color.parseColor("#ff3669"), Color.parseColor("#ff4e7b"), Color.parseColor("#ff678e"), Color.parseColor("#ff80a1"), Color.parseColor("#ff9ab4"), Color.parseColor("#ffb3c7"), Color.parseColor("#ffccd9"), "#ff0443", "#ff1b56", "#ff3669", "#ff4e7b", "#ff678e", "#ff80a1", "#ff9ab4", "#ffb3c7", "#ffccd9"),
 
                 //8
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#49b109"), Color.parseColor("#5ab922"), Color.parseColor("#6ec13a"), Color.parseColor("#81c953"), Color.parseColor("#92cf6c"), Color.parseColor("#a4d984"), Color.parseColor("#b5e09d"), Color.parseColor("#c7e8b5"), Color.parseColor("#dbeece"),
-                        "#49b109", "#5ab922", "#6ec13a", "#81c953", "#92cf6c", "#a4d984", "#b5e09d", "#c7e8b5", "#dbeece"),
+                new textColorModel(Color.parseColor("#49b109"), Color.parseColor("#5ab922"), Color.parseColor("#6ec13a"), Color.parseColor("#81c953"), Color.parseColor("#92cf6c"), Color.parseColor("#a4d984"), Color.parseColor("#b5e09d"), Color.parseColor("#c7e8b5"), Color.parseColor("#dbeece"), "#49b109", "#5ab922", "#6ec13a", "#81c953", "#92cf6c", "#a4d984", "#b5e09d", "#c7e8b5", "#dbeece"),
 
 
                 //9
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#9a0af1"), Color.parseColor("#a423f3"), Color.parseColor("#ae3cf3"), Color.parseColor("#b854f5"), Color.parseColor("#c16cf6"), Color.parseColor("#cc85f8"), Color.parseColor("#d59df9"), Color.parseColor("#e0b6fb"), Color.parseColor("#ebcefc"),
-                        "#9a0af1", "#a423f3", "#ae3cf3", "#b854f5", "#c16cf6", "#cc85f8", "#d59df9", "#e0b6fb", "#ebcefc"),
+                new textColorModel(Color.parseColor("#9a0af1"), Color.parseColor("#a423f3"), Color.parseColor("#ae3cf3"), Color.parseColor("#b854f5"), Color.parseColor("#c16cf6"), Color.parseColor("#cc85f8"), Color.parseColor("#d59df9"), Color.parseColor("#e0b6fb"), Color.parseColor("#ebcefc"), "#9a0af1", "#a423f3", "#ae3cf3", "#b854f5", "#c16cf6", "#cc85f8", "#d59df9", "#e0b6fb", "#ebcefc"),
 
                 //10
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#09d0eb"), Color.parseColor("#1fd5ed"), Color.parseColor("#37daf0"), Color.parseColor("#4fdef2"), Color.parseColor("#6ae3f4"), Color.parseColor("#82e7f5"), Color.parseColor("#9aecf7"), Color.parseColor("#b4f0fa"), Color.parseColor("#cdf6fb"),
-                        "#09d0eb", "#1fd5ed", "#37daf0", "#4fdef2", "#6ae3f4", "#82e7f5", "#9aecf7", "#b4f0fa", "#cdf6fb"),
+                new textColorModel(Color.parseColor("#09d0eb"), Color.parseColor("#1fd5ed"), Color.parseColor("#37daf0"), Color.parseColor("#4fdef2"), Color.parseColor("#6ae3f4"), Color.parseColor("#82e7f5"), Color.parseColor("#9aecf7"), Color.parseColor("#b4f0fa"), Color.parseColor("#cdf6fb"), "#09d0eb", "#1fd5ed", "#37daf0", "#4fdef2", "#6ae3f4", "#82e7f5", "#9aecf7", "#b4f0fa", "#cdf6fb"),
 
                 //10
                 // new textColorModel(colorData,colorData,colorData, 1             colorData,colorData,  2       Data,colorData,colorData,colorDa  3                                    4                                       5                                        6                                     7                                         8                                    9      t1),
-                new textColorModel(Color.parseColor("#000000"), Color.parseColor("#1a1a1a"), Color.parseColor("#333333"), Color.parseColor("#4d4d4d"), Color.parseColor("#808080"), Color.parseColor("#999999"), Color.parseColor("#e5e5e5"), Color.parseColor("#ffffff"), Color.parseColor("#ffffff"),
-                        "#000000", "#1a1a1a", "#333333", "#4d4d4d", "#808080", "#999999", "#e5e5e5", "#ffffff", "#ffffff"),
+                new textColorModel(Color.parseColor("#000000"), Color.parseColor("#1a1a1a"), Color.parseColor("#333333"), Color.parseColor("#4d4d4d"), Color.parseColor("#808080"), Color.parseColor("#999999"), Color.parseColor("#e5e5e5"), Color.parseColor("#ffffff"), Color.parseColor("#ffffff"), "#000000", "#1a1a1a", "#333333", "#4d4d4d", "#808080", "#999999", "#e5e5e5", "#ffffff", "#ffffff"),
 
 
         };
@@ -1287,7 +1594,7 @@ public class editFameActivity extends AppCompatActivity {
         colorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         //for  adding scroll bar in recyclerview
-        new FastScrollerBuilder(colorRecyclerView).build();
+        //   new FastScrollerBuilder(colorRecyclerView).build();
         colorRecyclerView.setHasFixedSize(true);
         colorRecyclerView.setAdapter(colorAdapter);
 
@@ -1447,78 +1754,13 @@ public class editFameActivity extends AppCompatActivity {
 
         // font model
 
-        newFontModel = new fontModelNew[]{
-
-                new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/instagram.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/abril.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/alpha.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/comfortaa.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/comfortaa.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/dosis.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/indieflower.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/latoregular.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/lora.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/merriwheather.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/miodakregular.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/opensans.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/oswald.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/pacifio.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/ptserief.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/quicksand.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/shadowlight.ttf"),
-                new fontModelNew(getCurrentTextForfont, "fonts/spacemono.ttf"),
-
-        };
+        fontModelData();
 
         newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
         fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
         fontrecyclerview.setHasFixedSize(true);
-        new FastScrollerBuilder(fontrecyclerview).build();
+        //      new FastScrollerBuilder(fontrecyclerview).build();
         fontrecyclerview.setAdapter(newFontAdapter);
-
 
 
         binding.dummyButonForAddFont.setOnClickListener(new View.OnClickListener() {
@@ -1539,51 +1781,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1598,51 +1796,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag2.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1656,51 +1810,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag3.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1714,51 +1824,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag4.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1772,51 +1838,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag5.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1831,51 +1853,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag6.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1890,51 +1868,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag7.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -1951,48 +1885,7 @@ public class editFameActivity extends AppCompatActivity {
 
                             newFontModel = new fontModelNew[]{
 
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
+
                             };
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
@@ -2008,51 +1901,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag9.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -2067,51 +1916,7 @@ public class editFameActivity extends AppCompatActivity {
                             getCurrentTextForfont = binding.editTextFrag10.getText().toString();
 
 
-                            newFontModel = new fontModelNew[]{
-
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
-                                    new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
-                            };
+                            fontModelData();
 
                             newFontAdapter = new font_adapter_new(newFontModel, cancelIMg);
                             fontrecyclerview.setLayoutManager(new LinearLayoutManager(editFameActivity.this));
@@ -2269,6 +2074,11 @@ public class editFameActivity extends AppCompatActivity {
                 new shapeModel(R.drawable.panchami, R.drawable.ring, R.drawable.sevenangle, R.drawable.sixangle, "panchami", "ring", "sevenangle", "sixangle"),
                 new shapeModel(R.drawable.sixkon, R.drawable.star, R.drawable.starcircle, R.drawable.starfill, "sixkon", "star", "starcircle", "starfill"),
                 new shapeModel(R.drawable.sun, R.drawable.tenkon, R.drawable.trianlge, R.drawable.fourstar, "sun", "tenkon", "trianlge", "fourstar"),
+                new shapeModel(R.drawable.new1, R.drawable.new2, R.drawable.new3, R.drawable.new4, "new1", "new2", "new3", "new4"),
+                new shapeModel(R.drawable.new5, R.drawable.new6, R.drawable.new7, R.drawable.new8, "new5", "new6", "new7", "new8"),
+                new shapeModel(R.drawable.new9, R.drawable.new10, R.drawable.new11, R.drawable.new12, "new9", "new10", "new11", "new12"),
+                new shapeModel(R.drawable.new13, R.drawable.new14, R.drawable.new15, R.drawable.new16, "new13", "new14", "new15", "new16"),
+                new shapeModel(R.drawable.new17, R.drawable.new18, R.drawable.new19, R.drawable.threeshape, "new17", "new18", "new19", "threeshape"),
 
 
         };
@@ -2276,7 +2086,7 @@ public class editFameActivity extends AppCompatActivity {
 
         adapter = new shapeAdapter(model, cancelShapes);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        new FastScrollerBuilder(recyclerView).build();
+        //  new FastScrollerBuilder(recyclerView).build();
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
@@ -2370,6 +2180,7 @@ public class editFameActivity extends AppCompatActivity {
                     binding.right.animate().alpha(1.0f);
                     binding.wrong.setVisibility(View.VISIBLE);
                     binding.right.setVisibility(View.VISIBLE);
+
                 }
 
 
@@ -2408,7 +2219,7 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.editTextFrag.setText("Enter your 1 text here");
                             binding.editTextFrag.setVisibility(View.GONE);
-                            binding.editTextFrag.setTextColor(Color.parseColor("#ffffff"));
+
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2420,7 +2231,6 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.editTextFrag2.setText("Enter your 2 text here");
                             binding.editTextFrag2.setVisibility(View.GONE);
-                            binding.editTextFrag2.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag2.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2433,7 +2243,6 @@ public class editFameActivity extends AppCompatActivity {
 
                             binding.editTextFrag3.setText("Enter your 3 text here");
                             binding.editTextFrag3.setVisibility(View.GONE);
-                            binding.editTextFrag3.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag3.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2445,7 +2254,6 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.editTextFrag4.setText("Enter your 4 text here");
                             binding.editTextFrag4.setVisibility(View.GONE);
-                            binding.editTextFrag4.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag4.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2458,7 +2266,6 @@ public class editFameActivity extends AppCompatActivity {
 
                             binding.editTextFrag5.setText("Enter your 5 text here");
                             binding.editTextFrag5.setVisibility(View.GONE);
-                            binding.editTextFrag5.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag5.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2470,7 +2277,6 @@ public class editFameActivity extends AppCompatActivity {
 
                             binding.editTextFrag6.setText("Enter your 6 text here");
                             binding.editTextFrag6.setVisibility(View.GONE);
-                            binding.editTextFrag6.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag6.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2481,7 +2287,6 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.editTextFrag7.setText("Enter your 7 text here");
                             binding.editTextFrag7.setVisibility(View.GONE);
-                            binding.editTextFrag7.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag7.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2493,7 +2298,6 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.editTextFrag8.setText("Enter your 8 text here");
                             binding.editTextFrag8.setVisibility(View.GONE);
-                            binding.editTextFrag8.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag8.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2506,7 +2310,6 @@ public class editFameActivity extends AppCompatActivity {
 
                             binding.editTextFrag9.setText("Enter your 9 text here");
                             binding.editTextFrag9.setVisibility(View.GONE);
-                            binding.editTextFrag9.setTextColor(Color.parseColor("#ffffff"));
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag9.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2517,7 +2320,7 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.editTextFrag10.setText("Enter your 10 text here");
                             binding.editTextFrag10.setVisibility(View.GONE);
-                            binding.editTextFrag10.setTextColor(Color.parseColor("#ffffff"));
+
                             Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/poppins.ttf");
                             binding.editTextFrag10.setTypeface(typeface);
                             binding.editTextOnly.setVisibility(View.INVISIBLE);
@@ -2536,7 +2339,6 @@ public class editFameActivity extends AppCompatActivity {
                         try {
                             binding.txtS1.setText("SHAPE_1");
                             binding.shape1.setVisibility(View.GONE);
-                            binding.shape1.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2548,7 +2350,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS2.setText("SHAPE_2");
                             binding.shape2.setVisibility(View.GONE);
-                            binding.shape2.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2560,7 +2361,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS3.setText("SHAPE_3");
                             binding.shape3.setVisibility(View.GONE);
-                            binding.shape3.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2572,7 +2372,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS4.setText("SHAPE_4");
                             binding.shape4.setVisibility(View.GONE);
-                            binding.shape4.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2584,7 +2383,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS5.setText("SHAPE_5");
                             binding.shape5.setVisibility(View.GONE);
-                            binding.shape5.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2596,7 +2394,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS6.setText("SHAPE_6");
                             binding.shape6.setVisibility(View.GONE);
-                            binding.shape6.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2608,7 +2405,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS7.setText("SHAPE_7");
                             binding.shape7.setVisibility(View.GONE);
-                            binding.shape7.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2620,7 +2416,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS8.setText("SHAPE_8");
                             binding.shape8.setVisibility(View.GONE);
-                            binding.shape8.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2632,7 +2427,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS9.setText("SHAPE_9");
                             binding.shape9.setVisibility(View.GONE);
-                            binding.shape9.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -2644,7 +2438,6 @@ public class editFameActivity extends AppCompatActivity {
                             //for put empty string or data
                             binding.txtS10.setText("SHAPE_10");
                             binding.shape10.setVisibility(View.GONE);
-                            binding.shape10.setColorFilter(Color.parseColor("#ffffff"));
 
 
                         } catch (Exception e) {
@@ -6295,6 +6088,73 @@ public class editFameActivity extends AppCompatActivity {
         binding.editTextOnly.setVisibility(View.INVISIBLE);
     }
 
+    public void fontModelData() {
+
+
+        newFontModel = new fontModelNew[]{
+                new fontModelNew(getCurrentTextForfont, "fonts/poppins_medium.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/poor_richard.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/instagram.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/port_lligat_sans.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/playfail_display.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/pirata_one.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/pattaya.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/porter_sans_block.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/postnobillscolombo_medium.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/potta_one.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/praiseregular.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/quintessential_regular.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/qahiri_regular.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rancho.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/redressed.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rufina.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/alegreya.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/balloo.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/coda.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/dancing.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/east.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/julius.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/libre.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/limelight.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/lobster.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/monoton.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/moondance.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/niccone.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/nobla.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/nothing.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/pasiion.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/raleway.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rowdies.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rubic.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rubicregular.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rubies.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/rye.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/sevillana.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/sey.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/sixcaps.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/tekko.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/abril.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/alpha.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/bebas.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/comfortaa.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/dosis.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/indieflower.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/latoregular.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/lora.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/merriwheather.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/miodakregular.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/opensans.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/oswald.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/pacifio.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/ptserief.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/quicksand.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/shadowlight.ttf"),
+                new fontModelNew(getCurrentTextForfont, "fonts/spacemono.ttf"),
+
+
+        };
+    }
 
     private void edittextTouchFALSE() {
         binding.editTextFrag.setOnTouchListener(new View.OnTouchListener() {
@@ -6387,14 +6247,6 @@ public class editFameActivity extends AppCompatActivity {
         point.set(x / 2, y / 2);
     }
 
-    private void setMargins(View view, int left, int top, int right, int bottom) {
-        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            p.setMargins(left, top, right, bottom);
-            view.requestLayout();
-        }
-    }
-
 
     private boolean checkAndRequestPermissions() {
 
@@ -6472,7 +6324,7 @@ public class editFameActivity extends AppCompatActivity {
                     preferenceManager.setString("camera_data", "passed_empty_gallery");
                     getImageFromGallery();
 
-                    //  Toast.makeText(getApplicationContext(), encodedImage, Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(getApplicationContext(), String.valueOf(file_camera_final1.getAbsolutePath()), Toast.LENGTH_SHORT).show();
 
                     // Constant.URI_IMAGE=_uri;
                     //  Constants.ProfilePhoto=imageUri;
@@ -6504,14 +6356,6 @@ public class editFameActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        clearSharedPref();
 
     }
 
@@ -6767,26 +6611,62 @@ public class editFameActivity extends AppCompatActivity {
         return bm;
     }
 
-
     @Override
     public void onBackPressed() {
 
-        new AlertDialog.Builder(editFameActivity.this).setTitle("Warning").setMessage("If you leave this page , you loss all your work.\nAre you sure want to exit?")
+
+            Constant.viewVisibleAnimator(binding.coord);
 
 
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        i.putExtra("editKey", "editBack");
-                        startActivity(i);
+        new CountDownTimer(2500, 1000) {
 
-                    }
+            public void onTick(long millisUntilFinished) {
 
-                })
 
-                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+            }
 
+            public void onFinish() {
+                Constant.viewGoneAnimator(binding.coord);
+            }
+        }.start();
+
+        if (binding.coord.getVisibility() == View.VISIBLE) {
+            new AlertDialog.Builder(editFameActivity.this).setTitle("Warning").setMessage("If you leave this page , you loss all your work.\nAre you sure want to exit?")
+
+
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            onBackPressed2();
+
+                        }
+
+                    })
+
+                    .setNegativeButton(android.R.string.no, null).setIcon(null).show();
+
+        }
+
+
+    }
+
+    public void setAdapter() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame.setLayoutManager(linearLayoutManager);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame.setHasFixedSize(true);
+        binding.editRecyclerViewFrame.setAdapter(frameadapter);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame2.setLayoutManager(linearLayoutManager2);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame2.setHasFixedSize(true);
+        binding.editRecyclerViewFrame2.setAdapter(frameadapter);
+    }
+
+    public void onBackPressed2() {
+
+        super.onBackPressed();
 
     }
 }

@@ -45,13 +45,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="11dp"
+                        android:layout_marginStart="11dp"
                         android:fontFamily="@font/poppins_medium"
                         android:lineHeight="22.5dp"
                         android:text="About Us"
                         android:textColor="@color/white"
                         android:textFontWeight="500"
-                        android:textSize="15dp" />
+                        android:textSize="15sp" />
 
 
                     <LinearLayout
@@ -96,15 +96,12 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/aboutUs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
                         android:lineHeight="18dp"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing
-elit. In ultricies risus id ligula facilisis, vitae condimen
-tum urna consequat. Nunc ut ante at lacus congue
- mattis. Aenean tellus lacus, lacinia ac faucibus vita
-e, elementum sit amet tortor."
+                        android:text=""
                         android:textColor="@color/white"
                         android:textFontWeight="400"
                         android:textSize="12sp" />
@@ -112,40 +109,6 @@ e, elementum sit amet tortor."
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="23dp"
-                    android:layout_marginTop="13dp"
-                    android:layout_marginEnd="23dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="24dp"
-                        android:text="Area of specialization"
-                        android:textColor="@color/appOrangeTheme"
-                        android:textFontWeight="400"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="18dp"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing
-elit. In ultricies risus id ligula facilisis, vitae condimen
-tum urna consequat. Nunc ut ante at lacus congue
- mattis. Aenean tellus lacus, lacinia ac faucibus vita
-e, elementum sit amet tortor."
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="12sp" />
-
-
-                </LinearLayout>
 
 
             </LinearLayout>

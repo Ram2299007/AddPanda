@@ -64,179 +64,25 @@
             android:layout_marginLeft="12dp"
             android:layout_marginTop="31dp"
             android:layout_marginRight="12dp"
-            android:background="@drawable/low_radius_noti"
+            android:layout_marginBottom="80dp"
             android:orientation="vertical">
 
 
-            <LinearLayout
-                android:id="@+id/noti1"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/notiRecyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="95dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="225dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="15dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="21dp"
-                        android:text="Lorem Ipsum es simplemente el texto de relleno de ? "
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="225dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="15dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="15dp"
-                        android:text="35 mins"
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="61dp"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginStart="60dp"
-                    android:layout_height="61dp"
-                    android:src="@drawable/notiicon"/>
+                android:layout_height="wrap_content" />
 
 
-
-
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginRight="12dp"
-            android:background="@drawable/low_radius_noti"
-            android:orientation="vertical">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="95dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="225dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="15dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="21dp"
-                        android:text="Lorem Ipsum es simplemente el texto de relleno de ? "
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="225dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="15dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="15dp"
-                        android:text="35 mins"
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="61dp"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginStart="60dp"
-                    android:layout_height="61dp"
-                    android:src="@drawable/notiicon"/>
-
-
-
-
-
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginRight="12dp"
-            android:background="@drawable/low_radius_noti"
-            android:orientation="vertical">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="95dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="225dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="15dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="21dp"
-                        android:text="Lorem Ipsum es simplemente el texto de relleno de ? "
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="225dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="15dp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="15dp"
-                        android:text="35 mins"
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="61dp"
-                    android:layout_marginTop="9dp"
-                    android:layout_marginStart="60dp"
-                    android:layout_height="61dp"
-                    android:src="@drawable/notiicon"/>
-
-
-
-
-
-            </LinearLayout>
         </LinearLayout>
 
 
     </LinearLayout>
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
 
 </RelativeLayout>

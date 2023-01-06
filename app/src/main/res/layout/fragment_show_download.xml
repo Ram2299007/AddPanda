@@ -54,7 +54,7 @@
                             android:text="Downloads"
                             android:textColor="@color/white"
                             android:textFontWeight="500"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
 
                         <LinearLayout

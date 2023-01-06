@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+    tools:context=".Screens.checkVerificationScreen">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="19.91dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/backArrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_arrow_back_24"
+                        app:tint="@color/icon_tints" />
+
+                    <TextView
+                        android:id="@+id/profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="11dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="22.5dp"
+                        android:text="Check verification"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="15dp" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="30dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="46dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:lineHeight="21dp"
+                    android:text="Only an image of your original check\n
+will be accepted"
+                    android:textColor="@color/white"
+                    android:textFontWeight="400"
+                    android:textSize="14sp"
+                    android:layout_marginStart="25dp"/>
+
+
+                <LinearLayout
+                    android:layout_marginStart="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="Step"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:textSize="14sp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="1"
+                        android:textColor="#EB4A8E"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="5dp"
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="/"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="2dp"
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="2"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="2dp"
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="(upload front side of check )"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="2dp"
+                        android:textSize="14sp"
+                        />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_marginTop="14dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="163dp"
+                    android:src="@drawable/checklogo"
+                    android:layout_marginRight="25dp"/>
+
+                <LinearLayout
+                    android:layout_marginStart="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="Step"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:textSize="14sp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="2"
+                        android:textColor="#EB4A8E"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="5dp"
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="/"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="2dp"
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="2"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="2dp"
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="21dp"
+                        android:text="(upload front side of check )"
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:layout_marginStart="2dp"
+                        android:textSize="14sp"
+                        />
+
+                </LinearLayout>
+                <ImageView
+                    android:layout_marginTop="14dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="163dp"
+                    android:src="@drawable/checklogo"
+                    android:layout_marginRight="25dp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+
+                    android:id="@+id/personal"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="90dp"
+
+                    android:background="@drawable/orangebuttonhovereffect_for_all"
+
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:inputType="phone"
+                    android:lineHeight="24dp"
+                    android:layout_marginTop="21dp"
+                    android:text="Submit"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="16dp" />
+
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>

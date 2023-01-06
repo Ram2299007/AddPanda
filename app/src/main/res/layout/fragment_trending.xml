@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/appThemeColor"
     android:layout_height="match_parent"
-    tools:context=".Fragments.trendingFragment">
-
+    android:background="@color/appThemeColor"
+   >
 
 
     <ScrollView
@@ -55,7 +54,7 @@
                             android:text="Home Page"
                             android:textColor="@color/white"
                             android:textFontWeight="500"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
 
                         <LinearLayout
@@ -70,27 +69,27 @@
                                 android:id="@+id/gtranslate"
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
-                                app:tint="@color/icon_tints"
                                 android:layout_gravity="center"
                                 android:layout_marginEnd="13.4dp"
-                                android:src="@drawable/gtranslate" />
+                                android:src="@drawable/gtranslate"
+                                app:tint="@color/icon_tints" />
 
                             <ImageView
                                 android:id="@+id/edit"
                                 android:layout_width="16.35dp"
                                 android:layout_height="19dp"
                                 android:layout_gravity="center"
-                                app:tint="@color/icon_tints"
                                 android:layout_marginEnd="13.4dp"
-                                android:src="@drawable/editsquare" />
+                                android:src="@drawable/editsquare"
+                                app:tint="@color/icon_tints" />
 
                             <ImageView
                                 android:id="@+id/download"
                                 android:layout_width="20dp"
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
-                                app:tint="@color/icon_tints"
-                                android:src="@drawable/download" />
+                                android:src="@drawable/download"
+                                app:tint="@color/icon_tints" />
                         </LinearLayout>
 
 
@@ -150,21 +149,62 @@
 
                     </LinearLayout>
 
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/viewPagerId"
+                    <RelativeLayout
+                        android:id="@+id/viepagerCroperId"
                         android:layout_width="match_parent"
-                        android:layout_height="287dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:layout_marginBottom="29dp"
-                        android:background="@drawable/round_drawable"
-                        android:contentDescription="@string/app_name"
-                        android:lineHeight="16.5dp" />
+
+                        android:orientation="vertical">
+
+
+                        <ImageView
+                            android:id="@+id/viewPagerBackImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="287dp"
+                            android:background="@drawable/round_drawable"
+                            android:contentDescription="@string/app_name"
+                            android:lineHeight="16.5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/trendingbanner" />
+
+                        <androidx.viewpager.widget.ViewPager
+                            android:id="@+id/viewPagerId"
+                            android:layout_width="wrap_content"
+
+                            android:layout_height="287dp"
+                            android:contentDescription="@string/app_name"/>
+
+
+                    </RelativeLayout>
+
+                    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+                        android:id="@+id/dots_indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        app:selectedDotColor="@color/appOrangeTheme"
+                        app:dotsColor="@color/button_Normal_color"
+                        app:dotsSize="7dp"
+                        app:dotsWidthFactor="1.5"
+                        />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/autoClick"
+                        android:layout_width="1dp"
+                        android:layout_height="1dp"
+                        android:visibility="gone" />
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="14dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginRight="14dp"
                         android:orientation="vertical">
 
@@ -172,6 +212,7 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerview"
                             android:layout_width="match_parent"
+                            android:orientation="vertical"
                             android:layout_height="match_parent"
                             android:layout_marginBottom="70dp">
 
@@ -190,5 +231,10 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </ScrollView>
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
 </RelativeLayout>

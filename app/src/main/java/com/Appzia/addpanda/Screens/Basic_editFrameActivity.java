@@ -3,13 +3,17 @@ package com.Appzia.addpanda.Screens;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +21,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -39,8 +45,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Appzia.addpanda.Adapter.frameAdapter;
 import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
+import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivityBasicEditFrameBinding;
 import com.Appzia.addpanda.sharedPreference.PreferenceManager;
 import com.google.android.material.bottomappbar.BottomAppBar;
@@ -59,10 +68,12 @@ public class Basic_editFrameActivity extends AppCompatActivity {
     ActivityBasicEditFrameBinding binding;
     Animation animation, animation2;
     EditText enterText;
+    private boolean isZoomAndRotate;
     Button enterButton;
     Button editButton;
     TextView titleText;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+    public static frameAdapter frameadapter;
     File file_camera, file_camera_final1;
     PreferenceManager preferenceManager;
     String previouslyEncodedGalley, previouslyEncodedCamera;
@@ -71,8 +82,8 @@ public class Basic_editFrameActivity extends AppCompatActivity {
     // for moving edittext variable section
     float[] lastEvent = null;
     float d = 0f;
+    byte[] byteArray;
     float newRot = 0f;
-    private boolean isZoomAndRotate;
     private boolean isOutSide;
     private static final int NONE = 0;
     private static final int DRAG = 1;
@@ -82,12 +93,67 @@ public class Basic_editFrameActivity extends AppCompatActivity {
     private PointF mid = new PointF();
     float oldDist = 1f;
     private float xCoOrdinate, yCoOrdinate;
+    String token;
+    String template_idKey;
+    public static RelativeLayout mainRelativeLayout, mainLayout;
+    String categoryid;
+    String sub_cat_id;
+    String template_id;
+    Context mContext;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
+
+        token = sh.getString("TOKEN_SF", "");
+        template_idKey = sh.getString("template_idKey", "");
+
+        mainRelativeLayout = (RelativeLayout) findViewById(R.id.mainRelativeLayout);
+        mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
+
+        categoryid = getIntent().getStringExtra("categoryidKey");
+
+        sub_cat_id = getIntent().getStringExtra("sub_cat_idKey");
+        template_id = getIntent().getStringExtra("template_idKeyKey");
+//        Constant.frameList.clear();
+//        Constant.frameListTwo.clear();
+
+        Constant.NetworkCheck(mContext);
+        if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+
+            Webservice.get_frame_list_twoBasic(mContext, token, Basic_editFrameActivity.this, categoryid, sub_cat_id, template_idKey);
+        }
+        else {
+            Constant.NetworkCheckDialogue(mContext);
+            Constant.dialogForNetwork.show();
+
+            AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Constant.dialogForNetwork.dismiss();
+
+                }
+            });
+
+
+        }
+        Constant.getSfFuncion(getApplicationContext());
+        String imgDta = Constant.getSF.getString("originalImageKey", "empty");
+        Log.d("##imgDta", imgDta);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBasicEditFrameBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mContext = binding.getRoot().getContext();
 
 
         //By default on each activity android studio
@@ -101,6 +167,27 @@ public class Basic_editFrameActivity extends AppCompatActivity {
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
         bottomBarBackground.setShapeAppearanceModel(bottomBarBackground.getShapeAppearanceModel().toBuilder().setTopRightCorner(CornerFamily.ROUNDED, 10).setTopLeftCorner(CornerFamily.ROUNDED, 10).build());
+
+
+        try {
+
+            try {
+                SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                String s1 = sh.getString("imgData", "");
+                byteArray = Base64.decode(s1, Base64.DEFAULT);
+
+
+            } catch (Exception ex) {
+                Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            Drawable dr = new BitmapDrawable(bmp);
+            binding.mainLayout.setBackgroundDrawable(dr);
+        } catch (Exception ex) {
+            Toast.makeText(this, "BITMAP ERROR :" + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -125,7 +212,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -149,7 +236,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -172,7 +259,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -196,7 +283,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
                                 })
 
-                                .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
                         break;
@@ -227,7 +314,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
                         })
 
-                        .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
             }
@@ -253,7 +340,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                             }
                         })
 
-                        .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg).show();
+                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
             }
@@ -271,7 +358,6 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
-                                binding.right.performClick();
                                 try {
 
                                     Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
@@ -287,11 +373,21 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                     byte[] byteArray = stream.toByteArray();
 
+                                    String saveThis = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                                    Log.d("byteArray", String.valueOf(saveThis));
 
-//                getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
-                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                    i.putExtra("editKey", "editDownloadImage2");
-                                    i.putExtra("imgData", byteArray);
+                                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                    myEdit.putString("imgData", saveThis);
+                                    myEdit.apply();
+
+
+                                    // getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
+                                    Intent i = new Intent(getApplicationContext(), downloadImageActivity.class);
+                                    i.putExtra("sub_cat_idkey", sub_cat_id);
+                                    i.putExtra("template_idkey", template_id);
+                                    i.putExtra("cat_idkey", categoryid);
+
                                     startActivity(i);
 
                                 } catch (Exception ex) {
@@ -301,7 +397,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
                         })
 
-                        .setNegativeButton(android.R.string.no, null).setIcon(R.drawable.warning_svg_2).show();
+                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
 
 
             }
@@ -522,8 +618,6 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                 enterText.setFilters(filterArray);
 
 
-
-
                 enterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -535,7 +629,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                         } else {
                             String text = enterText.getText().toString();
 
-                            binding.phoneText.setText("+91-"+text);
+                            binding.phoneText.setText("+91-" + text);
                             binding.phoneText.setVisibility(View.VISIBLE);
                             binding.phoneImg.setVisibility(View.VISIBLE);
 
@@ -840,6 +934,19 @@ public class Basic_editFrameActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    public void setAdapter() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame.setLayoutManager(linearLayoutManager);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame.setHasFixedSize(true);
+        binding.editRecyclerViewFrame.setAdapter(frameadapter);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame2.setLayoutManager(linearLayoutManager2);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame2.setHasFixedSize(true);
+        binding.editRecyclerViewFrame2.setAdapter(frameadapter);
     }
 
 
