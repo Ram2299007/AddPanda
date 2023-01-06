@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+    tools:context=".Screens.MobileVerification">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="83dp"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:lineHeight="30dp"
+            android:text="Mobile Verification"
+
+            android:textColor="@color/white"
+            android:textFontWeight="500"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="199dp"
+            android:layout_marginTop="26dp"
+            android:src="@drawable/mobileverificationlogo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginTop="21dp"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:lineHeight="24dp"
+            android:text="Enter 4 Digit OTP"
+            android:textColor="@color/white"
+            android:textFontWeight="500"
+            android:textSize="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:lineHeight="22.5dp"
+            android:text="We’ve sent an SMS with the OTP to"
+            android:textColor="@color/white"
+            android:textFontWeight="600"
+            android:textSize="15dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="center"
+                android:lineHeight="24dp"
+                android:text="9988998899"
+                android:textColor="@color/white"
+                android:textFontWeight="600"
+                android:textSize="16dp" />
+
+            <ImageView
+                android:id="@+id/editPhoneID"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="14dp"
+                android:src="@drawable/box"
+                app:tint="@color/icon_tints" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/one"
+                android:layout_width="48dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/button_color_hover_for_all"
+                android:gravity="center"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:maxLength="1"
+                android:textColorHint="#5A5E61"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <EditText
+                android:id="@+id/two"
+                android:layout_width="48dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/button_color_hover_for_all"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColorHint="#5A5E61"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <EditText
+                android:id="@+id/three"
+                android:layout_width="48dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/button_color_hover_for_all"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColorHint="#5A5E61"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <EditText
+                android:id="@+id/four"
+                android:layout_width="48dp"
+                android:layout_height="50dp"
+                android:background="@drawable/button_color_hover_for_all"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textColorHint="#5A5E61"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:lineHeight="21dp"
+                android:text="Resend OTP in"
+                android:textColor="@color/white"
+                android:textFontWeight="400"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+
+                android:fontFamily="@font/poppins"
+                android:lineHeight="21dp"
+                android:text="28 Sec"
+                android:textColor="#F48533"
+                android:textFontWeight="400"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/edittext_radius"
+
+                android:backgroundTint="#F48533"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/sb"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="87dp"
+                    android:progressDrawable="@android:color/transparent"
+                    android:thumb="@drawable/slidesvg" />
+
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

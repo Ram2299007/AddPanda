@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+    tools:context=".Fragments.createVisingCardVerticalFragment">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="19.91dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/backArrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_arrow_back_24"
+                        app:tint="@color/icon_tints" />
+
+                    <TextView
+                        android:id="@+id/profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="11dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="22.5dp"
+                        android:text="Create Visiting card"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="15dp" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="30dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/notification"
+                            android:layout_width="20dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+
+                            android:src="@drawable/notification"
+                            app:tint="@color/icon_tints" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="21.11dp"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/vertiRow"
+                            android:layout_width="147.74dp"
+                            android:layout_height="251.55dp"
+                            android:layout_marginEnd="21.94dp"
+                            android:src="@drawable/verticalblue" />
+
+                        <ImageView
+                            android:layout_width="147.74dp"
+                            android:layout_height="251.55dp"
+                            android:src="@drawable/verticalred" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20.66dp"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="147.74dp"
+                            android:layout_height="251.55dp"
+                            android:layout_marginEnd="21.94dp"
+                            android:src="@drawable/verticalblue" />
+
+                        <ImageView
+                            android:layout_width="147.74dp"
+                            android:layout_height="251.55dp"
+                            android:src="@drawable/verticalred" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20.66dp"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginBottom="90dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="147.74dp"
+                            android:layout_height="251.55dp"
+                            android:layout_marginEnd="21.94dp"
+                            android:src="@drawable/verticalblue" />
+
+                        <ImageView
+                            android:layout_width="147.74dp"
+                            android:layout_height="251.55dp"
+                            android:src="@drawable/verticalred" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/verticalView"
+        android:layout_width="26dp"
+        android:layout_height="39dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="18dp"
+        android:src="@drawable/orangevertical" />
+
+    <ImageView
+        android:id="@+id/horizonatlView"
+        android:layout_width="39dp"
+        android:layout_height="26dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="55dp"
+        android:src="@drawable/whitehori" />
+
+</RelativeLayout>

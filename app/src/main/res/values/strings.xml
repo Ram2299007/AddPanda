@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">AddPanda</string>
+    <string name="home">Home</string>
+    <string name="downloads">Downloads</string>
+    <string name="create">Create</string>
+    <string name="category">Category</string>
+    <string name="create2">Create</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string-array name="spinnerData">
+        <item>Select size for post</item>
+
+
+    </string-array>
+
+
+    <string name="facebook_app_id">478790567701456</string>
+    <string name="fb_login_protocol_scheme">fb478790567701456</string>
+    <string name="facebook_client_token">9ccd113da3bf9d1fdd66cac39a9fd5a8</string>
+
+
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/white"
+    android:gravity="center"
+    tools:context=".Screens.testScreen">
+
+
+    <RelativeLayout
+        android:id="@+id/edttextFragRel2"
+        android:layout_width="wrap_content"
+        android:padding="2dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/highlight_dotted_for_edit_framwork"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/editTextFrag2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#FFD600"
+            android:orientation="horizontal" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

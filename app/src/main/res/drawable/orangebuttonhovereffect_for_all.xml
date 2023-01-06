@@ -1,0 +1,10 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:drawable="@drawable/orange_button_hover_color" android:state_pressed="true" />
+
+    <item android:drawable="@drawable/orange_button_hover_color" android:state_focused="true" />
+
+    <item android:drawable="@drawable/orangebuttondefault_color" android:state_active="true" />
+    <item android:drawable="@drawable/orangebuttondefault_color" />
+</selector>

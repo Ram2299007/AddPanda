@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+    tools:context=".Fragments.createVisingCardHorizontalFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="19.91dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/backArrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    app:tint="@color/icon_tints" />
+
+                <TextView
+                    android:id="@+id/profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="11dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:lineHeight="22.5dp"
+                    android:text="Create Visiting card"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="15dp" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="30dp"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/notification"
+                        android:layout_width="20dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+
+                        android:src="@drawable/notification"
+                        app:tint="@color/icon_tints" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/hori"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        tools:ignore="SpeakableTextPresentCheck">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/horirow"
+                android:layout_width="287.25dp"
+                android:layout_height="164dp"
+                android:layout_marginStart="12.75dp"
+                android:layout_marginEnd="12.75dp"
+                android:src="@drawable/frame1_hori" />
+
+            <ImageView
+                android:layout_width="287.25dp"
+                android:layout_height="164dp"
+                android:layout_marginEnd="12.75dp"
+                android:src="@drawable/frame2_hori" />
+
+            <ImageView
+                android:layout_width="287.25dp"
+                android:layout_height="164dp"
+                android:layout_marginEnd="12.75dp"
+                android:src="@drawable/frame1_hori" />
+
+            <ImageView
+                android:layout_width="287.25dp"
+                android:layout_height="164dp"
+                android:layout_marginEnd="12.75dp"
+                android:src="@drawable/frame2_hori" />
+
+            <ImageView
+                android:layout_width="287.25dp"
+                android:layout_height="164dp"
+                android:layout_marginEnd="12.75dp"
+                android:src="@drawable/frame1_hori" />
+
+            <ImageView
+                android:layout_width="287.25dp"
+                android:layout_height="164dp"
+                android:layout_marginEnd="12.75dp"
+                android:src="@drawable/frame2_hori" />
+
+
+        </LinearLayout>
+
+
+    </HorizontalScrollView>
+
+    <ImageView
+        android:id="@+id/horizonatlView"
+        android:layout_width="39dp"
+        android:layout_height="26dp"
+        android:layout_below="@id/hori"
+        android:layout_alignEnd="@id/verticalView"
+
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="39dp"
+        android:src="@drawable/horicard" />
+
+    <ImageView
+
+        android:id="@+id/verticalView"
+        android:layout_width="26dp"
+        android:layout_height="39dp"
+        android:layout_below="@id/hori"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="21dp"
+        android:src="@drawable/verticalcard" />
+
+
+</RelativeLayout>

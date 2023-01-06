@@ -1,0 +1,10 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:drawable="@drawable/button_home_bg_orangeborder" android:state_pressed="true" />
+
+    <item android:drawable="@drawable/button_home_bg_orangeborder" android:state_focused="true" />
+
+    <item android:drawable="@drawable/button_home_bg" android:state_active="true" />
+    <item android:drawable="@drawable/button_home_bg" />
+</selector>

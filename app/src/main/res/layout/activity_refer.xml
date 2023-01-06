@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+
+    tools:context=".Screens.ReferActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/skip"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="26dp"
+            android:fontFamily="@font/poppins_medium"
+            android:lineHeight="24dp"
+            android:text="SKIP"
+            android:textColor="@color/white_text_color"
+            android:textFontWeight="500"
+            android:textSize="16dp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="316dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="152dp"
+            android:background="@drawable/referalbackground"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/refer2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="center"
+                android:lineHeight="27dp"
+                android:text="Refer A Friend And \n Get Rewarded"
+                android:textColor="@color/black"
+                android:textFontWeight="500"
+                android:textSize="18sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="1.5dp"
+                    android:src="@drawable/rupee" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:lineHeight="36dp"
+                    android:text="100"
+                    android:textColor="#F48533"
+                    android:textFontWeight="500"
+                    android:textSize="24dp" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+
+                android:fontFamily="@font/poppins_medium"
+                android:gravity="center"
+                android:lineHeight="27dp"
+                android:text="On Each Referral!"
+
+                android:textColor="@color/black"
+                android:textFontWeight="500"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+
+                android:layout_marginBottom="25dp"
+
+                android:backgroundTint="#F48533"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.appcompat.widget.AppCompatButton
+
+                    android:id="@+id/syncContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="27dp"
+
+                    android:background="@drawable/orangebuttonhovereffect_for_all"
+
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:inputType="phone"
+                    android:lineHeight="24dp"
+                    android:text="Synchronise Contacts"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="16dp" />
+
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

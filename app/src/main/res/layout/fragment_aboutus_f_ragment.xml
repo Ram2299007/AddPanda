@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appThemeColor"
+    tools:context=".Fragments.profileFragment">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="19.91dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/backArrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_arrow_back_24"
+                        app:tint="@color/icon_tints" />
+
+                    <TextView
+                        android:id="@+id/profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="11dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="22.5dp"
+                        android:text="About Us"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="15dp" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="30dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/notification"
+                            android:layout_width="20dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+
+                            android:src="@drawable/notification"
+                            app:tint="@color/icon_tints" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="23dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="24dp"
+                        android:text="Mission"
+                        android:textColor="@color/appOrangeTheme"
+                        android:textFontWeight="400"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="18dp"
+                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing
+elit. In ultricies risus id ligula facilisis, vitae condimen
+tum urna consequat. Nunc ut ante at lacus congue
+ mattis. Aenean tellus lacus, lacinia ac faucibus vita
+e, elementum sit amet tortor."
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="13dp"
+                    android:layout_marginEnd="23dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="24dp"
+                        android:text="Area of specialization"
+                        android:textColor="@color/appOrangeTheme"
+                        android:textFontWeight="400"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:lineHeight="18dp"
+                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing
+elit. In ultricies risus id ligula facilisis, vitae condimen
+tum urna consequat. Nunc ut ante at lacus congue
+ mattis. Aenean tellus lacus, lacinia ac faucibus vita
+e, elementum sit amet tortor."
+                        android:textColor="@color/white"
+                        android:textFontWeight="400"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>

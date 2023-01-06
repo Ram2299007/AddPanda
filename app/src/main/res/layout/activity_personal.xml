@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/appThemeColor"
+    tools:context=".Screens.Personal">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="83dp"
+                    android:layout_height="83dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="84dp"
+                    android:layout_marginBottom="18dp"
+                    android:src="@drawable/group2" />
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="101.1dp"
+                    android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Enter Name"
+                    android:inputType="textPersonName"
+                    android:lineHeight="21dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textSize="14dp" />
+
+                <EditText
+
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Enter Email"
+                    android:inputType="textEmailAddress"
+                    android:lineHeight="21dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textSize="14dp" />
+
+                <EditText
+                    android:id="@+id/mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Enter mobile no"
+                    android:inputType="phone"
+                    android:lineHeight="21dp"
+                    android:maxLength="10"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textSize="14dp" />
+
+                <EditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Enter Address"
+                    android:inputType="textPostalAddress"
+                    android:lineHeight="21dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textSize="14dp" />
+
+                <EditText
+                    android:id="@+id/dob"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Enter DOB"
+                    android:inputType="date"
+                    android:lineHeight="21dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textSize="14dp" />
+
+                <EditText
+                    android:id="@+id/political"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="23dp"
+                    android:background="@drawable/button_color_hover_for_all"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center"
+                    android:hint="Enter Political interest(optional)"
+                    android:inputType="text"
+                    android:lineHeight="21dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/whitetograyforbutton"
+                    android:textSize="14dp" />
+
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+
+                android:layout_height="match_parent">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="19dp"
+                    android:background="@drawable/edittext_radius"
+                    android:backgroundTint="#F48533"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatSeekBar
+                        android:id="@+id/sb"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_gravity="center_vertical"
+                        android:paddingStart="87dp"
+                        android:progressDrawable="@android:color/transparent"
+                        android:thumb="@drawable/slidesvg" />
+
+
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>
