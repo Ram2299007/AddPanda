@@ -98,7 +98,7 @@ public class SignInActivity extends AppCompatActivity {
 
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                    Webservice.verify_otp(mContext, type, otp, token, binding.mobileNo.getText().toString());
+                  //  Webservice.verify_otp(mContext, type, otp, token, binding.mobileNo.getText().toString());
                     Webservice.social_media_login_FOR_CHECK(mContext, "1", FirebaseAuth.getInstance().getUid(), token);
                 } else {
                     Constant.NetworkCheckDialogue(mContext);
@@ -678,5 +678,9 @@ public class SignInActivity extends AppCompatActivity {
         return true;
     }
 
-
+    @Override
+    public void onBackPressed() {
+      finish();
+      finishAffinity();
+    }
 }

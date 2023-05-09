@@ -6151,8 +6151,6 @@ public class editFameActivity extends AppCompatActivity {
                 new fontModelNew(getCurrentTextForfont, "fonts/quicksand.ttf"),
                 new fontModelNew(getCurrentTextForfont, "fonts/shadowlight.ttf"),
                 new fontModelNew(getCurrentTextForfont, "fonts/spacemono.ttf"),
-
-
         };
     }
 

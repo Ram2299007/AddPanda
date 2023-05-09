@@ -274,4 +274,10 @@ public class MobileVerification extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+      Intent intent = new Intent(getApplicationContext(),SignInActivity.class);
+      startActivity(intent);
+    }
 }

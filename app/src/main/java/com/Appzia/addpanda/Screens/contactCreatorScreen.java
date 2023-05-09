@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
@@ -42,7 +43,12 @@ public class contactCreatorScreen extends AppCompatActivity {
                 binding.personal.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                       startActivity(new Intent(getApplicationContext(),contentcreatorPersonalJoinScreen.class));
+                        if(binding.checkbox.isChecked()){
+                            startActivity(new Intent(getApplicationContext(),contentcreatorPersonalJoinScreen.class));
+                        }else{
+                            Toast.makeText(contactCreatorScreen.this, "Please agree to continue.", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
             } else if (contactValue.equals("data2")) {
@@ -51,7 +57,11 @@ public class contactCreatorScreen extends AppCompatActivity {
                 binding.personal.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(getApplicationContext(),contentcreatorBusinessJoinScreen.class));
+                        if(binding.checkbox.isChecked()){
+                            startActivity(new Intent(getApplicationContext(),contentcreatorBusinessJoinScreen.class));
+                        }else{
+                            Toast.makeText(contactCreatorScreen.this, "Please agree to continue.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 

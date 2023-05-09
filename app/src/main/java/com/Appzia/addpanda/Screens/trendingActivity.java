@@ -93,7 +93,7 @@ public class trendingActivity extends AppCompatActivity {
 
         try {
             BasicKey = getIntent().getStringExtra(Constant.BasicKeyMain);
-//            Toast.makeText(mContext, BasicKey, Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(mContext, BasicKey, Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
 
         }
@@ -322,16 +322,10 @@ public class trendingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-
-
                     Bitmap bitmap = Bitmap.createBitmap(binding.viepagerCroperId.getWidth(), binding.viepagerCroperId.getHeight(), Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bitmap);
                     binding.viepagerCroperId.draw(canvas);
 
-
-                    // for set background in relative layout
-
-                    //  Drawable dr = new BitmapDrawable(bitmap);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);

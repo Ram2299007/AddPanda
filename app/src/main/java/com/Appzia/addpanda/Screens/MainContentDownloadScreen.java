@@ -3,22 +3,28 @@ package com.Appzia.addpanda.Screens;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Interface.OnBackPressedListener;
@@ -46,6 +52,7 @@ public class MainContentDownloadScreen extends AppCompatActivity {
     File outFile, imageFile;
     String path;
     Context mContext;
+    LinearLayout webp,png,jpeg;
 
 
     @Override
@@ -148,46 +155,165 @@ public class MainContentDownloadScreen extends AppCompatActivity {
             }
         });
 
+        final Dialog dialogLayoutColor = new Dialog(MainContentDownloadScreen.this);
+        dialogLayoutColor.setContentView(R.layout.download_format_row);
+        dialogLayoutColor.setCanceledOnTouchOutside(true);
+        dialogLayoutColor.setCancelable(true);
+        dialogLayoutColor.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
+        dialogLayoutColor.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialogLayoutColor.getWindow().setGravity(Gravity.CENTER);
+        WindowManager.LayoutParams layoutParams = dialogLayoutColor.getWindow().getAttributes();
+
+        layoutParams.y = 170; // top margin
+        dialogLayoutColor.getWindow().setAttributes(layoutParams);
+
+        png = dialogLayoutColor.findViewById(R.id.png);
+        jpeg = dialogLayoutColor.findViewById(R.id.jpeg);
+        webp = dialogLayoutColor.findViewById(R.id.webp);
+
+
+
 
         binding.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                binding.mainLayout.draw(canvas);
+                png.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                //   Drawable dr = new BitmapDrawable(bitmap);
+                        Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        binding.mainLayout.draw(canvas);
+
+                        //   Drawable dr = new BitmapDrawable(bitmap);
 
 
-                FileOutputStream outStream = null;
+                        FileOutputStream outStream = null;
 
-                // Write to SD Card
-                try {
-                    File sdCard = Environment.getExternalStorageDirectory();
-                    File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
-                    dir.mkdirs();
+                        // Write to SD Card
+                        try {
+                            File sdCard = Environment.getExternalStorageDirectory();
+                            File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
+                            dir.mkdirs();
 
-                    String fileName = String.format("%d.png", System.currentTimeMillis());
-                    outFile = new File(dir, fileName);
+                            String fileName = String.format("%d.png", System.currentTimeMillis());
+                            outFile = new File(dir, fileName);
 
-                    outStream = new FileOutputStream(outFile);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-                    outStream.flush();
-                    outStream.close();
+                            outStream = new FileOutputStream(outFile);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+                            outStream.flush();
+                            outStream.close();
 
-                    Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
-                    Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
+                            Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
+                            Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
 
-                } catch (FileNotFoundException e) {
+                        } catch (FileNotFoundException e) {
 
-                    Log.d("FileNotFoundException", e.getMessage());
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    Log.d("IOException", e.getMessage());
-                } finally {
+                            Log.d("FileNotFoundException", e.getMessage());
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            Log.d("IOException", e.getMessage());
+                        } finally {
 
-                }
+                        }
+
+                        dialogLayoutColor.dismiss();
+
+                    }
+                });
+                jpeg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        binding.mainLayout.draw(canvas);
+
+                        //   Drawable dr = new BitmapDrawable(bitmap);
+
+
+                        FileOutputStream outStream = null;
+
+                        // Write to SD Card
+                        try {
+                            File sdCard = Environment.getExternalStorageDirectory();
+                            File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
+                            dir.mkdirs();
+
+                            String fileName = String.format("%d.jpeg", System.currentTimeMillis());
+                            outFile = new File(dir, fileName);
+
+                            outStream = new FileOutputStream(outFile);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                            outStream.flush();
+                            outStream.close();
+
+                            Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
+                            Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
+
+                        } catch (FileNotFoundException e) {
+
+                            Log.d("FileNotFoundException", e.getMessage());
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            Log.d("IOException", e.getMessage());
+                        } finally {
+
+                        }
+                        dialogLayoutColor.dismiss();
+
+                    }
+                });
+                webp.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        binding.mainLayout.draw(canvas);
+
+                        //   Drawable dr = new BitmapDrawable(bitmap);
+
+
+                        FileOutputStream outStream = null;
+
+                        // Write to SD Card
+                        try {
+                            File sdCard = Environment.getExternalStorageDirectory();
+                            File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
+                            dir.mkdirs();
+
+                            String fileName = String.format("%d.webp", System.currentTimeMillis());
+                            outFile = new File(dir, fileName);
+
+                            outStream = new FileOutputStream(outFile);
+                            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outStream);
+                            outStream.flush();
+                            outStream.close();
+
+                            Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
+                            Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
+
+                        } catch (FileNotFoundException e) {
+
+                            Log.d("FileNotFoundException", e.getMessage());
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            Log.d("IOException", e.getMessage());
+                        }
+                        dialogLayoutColor.dismiss();
+                    }
+                });
+
+
+
+                dialogLayoutColor.show();
+
+                Window window = dialogLayoutColor.getWindow();
+                window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
 
             }
         });
@@ -272,8 +398,8 @@ public class MainContentDownloadScreen extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        intent.putExtra("editKey","editDownload");
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("editKey", "editDownload");
         startActivity(intent);
     }
 }

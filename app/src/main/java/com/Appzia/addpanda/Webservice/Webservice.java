@@ -2045,7 +2045,6 @@ public class Webservice {
                                         String accountType = Constant.getSF.getString(Constant.ACC_TYPE, "");
 
 
-
                                         Constant.categoryNames.add(category_name);
 
 
@@ -3462,7 +3461,7 @@ public class Webservice {
         }
     }
 
-    public static void get_Template_list(final Context mContext, String token, String category_id, String sub_cat_id, trendingActivity trendingActivity,String tempLang) {
+    public static void get_Template_list(final Context mContext, String token, String category_id, String sub_cat_id, trendingActivity trendingActivity, String tempLang) {
 
         try {
             Constant.trendingSubList.clear();
@@ -3522,8 +3521,6 @@ public class Webservice {
                                     com.Appzia.addpanda.Screens.trendingActivity.shimmerFrameLayout.stopShimmer();
                                     com.Appzia.addpanda.Screens.trendingActivity.shimmerFrameLayout.setVisibility(View.GONE);
                                     com.Appzia.addpanda.Screens.trendingActivity.CoLayout.setVisibility(View.VISIBLE);
-
-
 
 
                                     com.Appzia.addpanda.Screens.trendingActivity.setAdapter();
@@ -6080,7 +6077,10 @@ public class Webservice {
                             try {
                                 int status = response.getInt("error_code");
 
-                                if (status == 200) {
+
+                                if (status == 404) {
+                                    Toast.makeText(mContext, "Content data not found", Toast.LENGTH_SHORT).show();
+                                } else if (status == 200) {
 
 
                                     JSONArray arr = response.getJSONArray("data");
@@ -6176,7 +6176,10 @@ public class Webservice {
                             try {
                                 int status = response.getInt("error_code");
 
-                                if (status == 200) {
+                                if (status == 404) {
+                                    String message = response.getString("message");
+                                    Toast.makeText(mContext, "Notification not found.", Toast.LENGTH_SHORT).show();
+                                } else if (status == 200) {
 
 
                                     JSONArray arr = response.getJSONArray("data");
@@ -6294,32 +6297,18 @@ public class Webservice {
                                 int status = response.getInt("error_code");
 
                                 if (status == 200) {
+
+
+                                    if (partner.equals("1")) {
+                                        assert portfolio != null;
+                                        portfolio.delete();
+                                        contentcreatorPersonalJoinScreen.totalexp.setText("");
+                                    } else if (partner.equals("2")) {
+                                        assert portfolio != null;
+                                        portfolio.delete();
+                                        contentcreatorBusinessJoinScreen.totalexp.setText("");
+                                    }
                                     Toast.makeText(mContext, "Upload successfully !", Toast.LENGTH_SHORT).show();
-                                    assert portfolio != null;
-                                    portfolio.delete();
-                                    //  JSONArray arr = response.getJSONArray("data");
-
-
-//                                    for (int i = 0; i < arr.length(); i++) {
-//                                        JSONObject obj2 = arr.getJSONObject(i);
-//                                        String notification_id = obj2.getString("notification_id");
-//                                        String subject = obj2.getString("subject");
-//                                        String description = obj2.getString("description");
-//                                        String file = obj2.getString("file");
-//                                        String date = obj2.getString("date");
-//                                        String time = obj2.getString("time");
-//
-//                                        Constant.notiList.add(new notiModel(description,time,file));
-//
-//                                        try {
-//                                            NotificationFragment.progressBar.setVisibility(View.INVISIBLE);
-//                                        }catch (Exception ignored){}
-//
-//
-//                                    }
-
-                                    //  NotificationFragment.setAdapter();
-
 
                                 } else {
                                     String message = response.getString("message");
@@ -6374,6 +6363,7 @@ public class Webservice {
             e.printStackTrace();
         }
     }
+
     public static void add_partner_with_us_data_IS(final Context mContext, String token, String name, String mobile, String email, String experience, InputStream portfolio, String partner, String specialization) {
         try {
 
@@ -6450,7 +6440,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                          //      Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                //      Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -6459,25 +6449,25 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                      //      Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "onFailure: "+responseString);
+                            //      Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onFailure: " + responseString);
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                          //  Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
+                            //  Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
-                            Log.d(TAG, "onFailure: "+errorResponse);
+                            Log.d(TAG, "onFailure: " + errorResponse);
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                           // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "onFailure: "+errorResponse.toString());
+                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onFailure: " + errorResponse.toString());
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7444,7 +7434,9 @@ public class Webservice {
                             try {
                                 int status = response.getInt("error_code");
 
-                                if (status == 200) {
+                                if (status == 404) {
+                                    Toast.makeText(mContext, "Visiting card data not found", Toast.LENGTH_SHORT).show();
+                                } else if (status == 200) {
 
 
                                     JSONArray arr = response.getJSONArray("data");

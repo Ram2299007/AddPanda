@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.categoryParentAdapter;
 import com.Appzia.addpanda.MainActivity;
@@ -276,12 +277,20 @@ public class basicEditsFirstActivity extends AppCompatActivity {
             }
         });
 
+
+
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("editKey", "editFab");
                 startActivity(i);
+            }
+        });
+    binding.video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
         });
 

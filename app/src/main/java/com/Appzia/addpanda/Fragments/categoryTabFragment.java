@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.categoryAdapter;
 import com.Appzia.addpanda.MainActivity;
@@ -99,29 +100,42 @@ public class categoryTabFragment extends Fragment {
         binding.business.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.general.setBackgroundResource(R.drawable.button_home_bg);
-                binding.business.setBackgroundResource(R.drawable.button_home_bg_orange);
+                Toast.makeText(mContext, "Coming soon...", Toast.LENGTH_SHORT).show();
+//                binding.general.setBackgroundResource(R.drawable.button_home_bg);
+//                binding.business.setBackgroundResource(R.drawable.button_home_bg_orange);
+//
+//                Constant.NetworkCheck(mContext);
+//                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+//
+//
+//                    Webservice.get_category_list_display(mContext, token, categoryTabFragment.this, "business");
+//                } else {
+//                    Constant.NetworkCheckDialogue(mContext);
+//                    Constant.dialogForNetwork.show();
+//
+//                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+//
+//                    btn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            Constant.dialogForNetwork.dismiss();
+//
+//                        }
+//                    });
+//
+//                }
+            }
+        });
 
-                Constant.NetworkCheck(mContext);
-                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-
-
-                    Webservice.get_category_list_display(mContext, token, categoryTabFragment.this, "business");
-                } else {
-                    Constant.NetworkCheckDialogue(mContext);
-                    Constant.dialogForNetwork.show();
-
-                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
-
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Constant.dialogForNetwork.dismiss();
-
-                        }
-                    });
-
-                }
+        binding.gtranslate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });   binding.backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               startActivity(new Intent(getActivity(),MainActivity.class));
             }
         });
 

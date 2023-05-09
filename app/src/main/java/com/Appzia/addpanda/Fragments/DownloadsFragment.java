@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.downloadAdapter;
 import com.Appzia.addpanda.R;
@@ -59,8 +60,7 @@ public class DownloadsFragment extends Fragment {
 
             Webservice.get_my_content_creator_list(mContext, token);
             Webservice.get_my_creating_visiting_card_list(mContext, token);
-        }
-        else {
+        } else {
             Constant.NetworkCheckDialogue(mContext);
             Constant.dialogForNetwork.show();
 
@@ -80,9 +80,6 @@ public class DownloadsFragment extends Fragment {
 
     }
 
-
-//
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -90,12 +87,17 @@ public class DownloadsFragment extends Fragment {
         mContext = binding.getRoot().getContext();
 
 
-
         binding.backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new mainFragment()).commit();
+            }
+        });
+        binding.video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -125,7 +127,7 @@ public class DownloadsFragment extends Fragment {
         adapter = new downloadAdapter(mContext);
         downloadRecyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-    //    downloadRecyclerview.scrollToPosition(Constant.downloadList.size() - 1);
+        //    downloadRecyclerview.scrollToPosition(Constant.downloadList.size() - 1);
     }
 
     public void RefreshAndFetchData() {

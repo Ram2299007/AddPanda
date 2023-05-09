@@ -82,7 +82,6 @@ public class profileFragment extends Fragment {
             Webservice.fetch_user_profile_SETDATA(mContext, token);
 
 
-
         } catch (Exception ignored) {
         }
 
@@ -136,6 +135,24 @@ public class profileFragment extends Fragment {
             public void onClick(View v) {
                 assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new mainFragment()).commit();
+            }
+        });
+        binding.userguide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.editframe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.personalsocia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
         });
 

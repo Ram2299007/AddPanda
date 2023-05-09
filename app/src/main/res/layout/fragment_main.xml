@@ -152,6 +152,7 @@
 
 
                                 <androidx.appcompat.widget.AppCompatButton
+                                    android:id="@+id/logo"
                                     android:layout_width="110dp"
                                     android:layout_height="32dp"
                                     android:layout_gravity="center"
@@ -189,6 +190,7 @@
                                     tools:ignore="TouchTargetSizeCheck" />
 
                                 <androidx.appcompat.widget.AppCompatButton
+                                    android:id="@+id/letterhead"
                                     android:layout_width="110dp"
                                     android:layout_height="32dp"
                                     android:layout_gravity="center"

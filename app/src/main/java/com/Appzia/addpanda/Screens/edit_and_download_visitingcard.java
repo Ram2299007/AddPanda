@@ -64,6 +64,8 @@ public class edit_and_download_visitingcard extends AppCompatActivity {
     String whatsappl;
     String yourname;
 
+    String textValue,fbValue,instaValue,captionValue,addressValue,lnkdValue;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -85,6 +87,18 @@ public class edit_and_download_visitingcard extends AppCompatActivity {
             this.captionEdtKey = Constant.getSF.getString("captionEdtKey", "");
             this.template_idKey = Constant.getSF.getString("template_idKey", "");
             this.ProfileKey = Constant.getSF.getString("ProfileKey", "");
+
+
+
+
+            textValue = Constant.getSF.getString("textKey", "");
+            fbValue = Constant.getSF.getString("fbKey", "");
+            instaValue = Constant.getSF.getString("instaKey", "");
+            lnkdValue = Constant.getSF.getString("linkdnKey", "");
+            addressValue = Constant.getSF.getString("addressKey", "");
+            captionValue = Constant.getSF.getString("captionEdtKey", "");
+
+
             final ImageView img = new ImageView(getApplicationContext());
             Picasso.get().load(this.ProfileKey).into(img, new Callback() {
                 public void onSuccess() {
@@ -250,10 +264,10 @@ public class edit_and_download_visitingcard extends AppCompatActivity {
 
                 Uri imgUri = Uri.parse(imageFile.getAbsolutePath());
                 Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
-                whatsappIntent.setType("text/plain");
-                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "AdPanda :");
+                whatsappIntent.setType("image/*");
+                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "*Greeting from "+buainessname+"*"+"\n"+"#"+textValue+"\n"+"#"+captionValue+"\n"+"#"+fbValue);
                 whatsappIntent.putExtra(Intent.EXTRA_STREAM, imgUri);
-                whatsappIntent.setType("image/jpeg");
+                whatsappIntent.setPackage("com.whatsapp");
                 whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 try {

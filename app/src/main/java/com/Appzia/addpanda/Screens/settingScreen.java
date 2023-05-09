@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.Appzia.addpanda.Fragments.profileFragment;
 import com.Appzia.addpanda.MainActivity;
@@ -41,12 +42,10 @@ public class settingScreen extends AppCompatActivity {
     public static ImageView profileId;
 
 
-
-
     @Override
     public void onStart() {
         super.onStart();
-        mContext =binding.getRoot().getContext();
+        mContext = binding.getRoot().getContext();
 
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
         token = sh.getString("TOKEN_SF", "");
@@ -101,6 +100,25 @@ public class settingScreen extends AppCompatActivity {
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
         bottomBarBackground.setShapeAppearanceModel(bottomBarBackground.getShapeAppearanceModel().toBuilder().setTopRightCorner(CornerFamily.ROUNDED, 10).setTopLeftCorner(CornerFamily.ROUNDED, 10).build());
 
+
+        binding.preferedlang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.shareapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.rateus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -160,7 +178,8 @@ public class settingScreen extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), NotificationActivity.class));
             }
-        });    binding.hs.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.hs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), helpAndSupportScreen.class));
@@ -169,8 +188,8 @@ public class settingScreen extends AppCompatActivity {
         binding.backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                intent.putExtra("editKey","editProfile");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("editKey", "editProfile");
                 startActivity(intent);
             }
         });
@@ -194,20 +213,21 @@ public class settingScreen extends AppCompatActivity {
         binding.privacypolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),privacyPolicyScreen.class));
+                startActivity(new Intent(getApplicationContext(), privacyPolicyScreen.class));
             }
-        });     binding.tc.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.tc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),termAndConditionScreen.class));
+                startActivity(new Intent(getApplicationContext(), termAndConditionScreen.class));
             }
         });
     }
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        intent.putExtra("editKey","editProfile");
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("editKey", "editProfile");
         startActivity(intent);
     }
 }

@@ -137,6 +137,7 @@
                         tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                     <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/video"
                         android:layout_width="91dp"
                         android:layout_height="32dp"
                         android:layout_gravity="center"

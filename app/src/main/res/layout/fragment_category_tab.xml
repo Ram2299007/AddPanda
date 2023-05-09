@@ -92,7 +92,7 @@
 
 
                         <ImageView
-                            android:id="@+id/download"
+                            android:id="@+id/gtranslate"
                             android:layout_width="20dp"
                             android:layout_height="16dp"
                             android:layout_gravity="center"

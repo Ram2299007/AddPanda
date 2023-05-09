@@ -47,8 +47,6 @@
             android:name=".Screens.edit_vertical_visiting_card"
             android:exported="true" >
 
-
-
         </activity>
         <activity
             android:name=".Screens.helpAndSupportScreen"

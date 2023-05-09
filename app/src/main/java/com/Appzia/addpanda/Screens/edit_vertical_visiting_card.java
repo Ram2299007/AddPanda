@@ -62,6 +62,8 @@ public class edit_vertical_visiting_card extends AppCompatActivity {
     String web;
     String whatsappl;
     String yourname;
+    String textValue,fbValue,instaValue,captionValue,addressValue,lnkdValue;
+
 
     @Override
     public void onStart() {
@@ -85,6 +87,16 @@ public class edit_vertical_visiting_card extends AppCompatActivity {
             this.template_idKey = Constant.getSF.getString("template_idKey", "");
             this.ProfileKey = Constant.getSF.getString("ProfileKey", "");
             final ImageView img = new ImageView(getApplicationContext());
+
+
+
+            textValue = Constant.getSF.getString("textKey", "");
+            fbValue = Constant.getSF.getString("fbKey", "");
+            instaValue = Constant.getSF.getString("instaKey", "");
+            lnkdValue = Constant.getSF.getString("linkdnKey", "");
+            addressValue = Constant.getSF.getString("addressKey", "");
+            captionValue = Constant.getSF.getString("captionEdtKey", "");
+
             Picasso.get().load(this.ProfileKey).into(img, new Callback() {
                 public void onSuccess() {
                     binding.viewCardImg.setBackgroundDrawable(img.getDrawable());
@@ -178,7 +190,6 @@ public class edit_vertical_visiting_card extends AppCompatActivity {
         binding.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Bitmap bitmap = Bitmap.createBitmap(binding.viewCardImg.getWidth(), binding.viewCardImg.getHeight(), Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 binding.viewCardImg.draw(canvas);
@@ -193,10 +204,10 @@ public class edit_vertical_visiting_card extends AppCompatActivity {
 
                 Uri imgUri = Uri.parse(imageFile.getAbsolutePath());
                 Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
-                whatsappIntent.setType("text/plain");
-                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "AdPanda :");
+                whatsappIntent.setType("image/*");
+                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "*Greeting from "+buainessname+"*"+"\n"+"#"+textValue+"\n"+"#"+captionValue+"\n"+"#"+fbValue);
                 whatsappIntent.putExtra(Intent.EXTRA_STREAM, imgUri);
-                whatsappIntent.setType("image/jpeg");
+                whatsappIntent.setPackage("com.whatsapp");
                 whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 try {
@@ -204,8 +215,6 @@ public class edit_vertical_visiting_card extends AppCompatActivity {
                 } catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(getApplicationContext(), "Apps has not been installed.", Toast.LENGTH_SHORT).show();
                 }
-
-
 
             }
         });

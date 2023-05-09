@@ -277,6 +277,23 @@ public class mainFragment extends Fragment {
         list50 = new ArrayList<>();
 
 
+        binding.logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        }); binding.letterhead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        }); binding.advertise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         binding.mainImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -316,7 +333,7 @@ public class mainFragment extends Fragment {
         binding.visiitngcard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), createVisingCardHorizontalScreens.class));
+                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
         });
 

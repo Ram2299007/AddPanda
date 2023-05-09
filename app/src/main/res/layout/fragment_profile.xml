@@ -196,7 +196,7 @@
                             android:layout_marginStart="21dp"
                             android:fontFamily="@font/poppins_medium"
                             android:lineHeight="21dp"
-                            android:text="100 Points"
+                            android:text="000 Points"
                             android:textColor="@color/white"
 
                             android:textFontWeight="500" />
@@ -319,6 +319,7 @@
                     android:layout_marginTop="11dp"
                     android:background="#8f8e8e" />
                 <LinearLayout
+                    android:id="@+id/userguide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp"
@@ -412,6 +413,7 @@
                     android:layout_marginTop="11dp"
                     android:background="#8f8e8e" />
                 <LinearLayout
+                    android:id="@+id/editframe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp"
@@ -556,6 +558,7 @@
                     android:layout_marginTop="11dp"
                     android:background="#8f8e8e" />
                 <LinearLayout
+                    android:id="@+id/personalsocia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp"

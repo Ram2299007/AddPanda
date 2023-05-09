@@ -30,6 +30,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.MainActivity;
@@ -64,6 +65,7 @@ public class contentcreatorPersonalJoinScreen extends AppCompatActivity {
     ActivityContentcreatorPersonalJoinScreenBinding binding;
     private static final int FILE_SELECT_CODE = 0;
     InputStream InputFile;
+   public static TextView exp,specialisez;
 
 
     String partner_is = "1";
@@ -86,6 +88,7 @@ public class contentcreatorPersonalJoinScreen extends AppCompatActivity {
         totalexp = findViewById(R.id.exp);
         portfolio = findViewById(R.id.special);
         specail = findViewById(R.id.upload);
+
 
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
 
@@ -307,6 +310,7 @@ public class contentcreatorPersonalJoinScreen extends AppCompatActivity {
 
                         Log.d("imageFile111", f.getPath());
                         imageFile=f;
+                        binding.upload.setText(uri.getPath());
                     }catch (Exception e){
                         Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
 
