@@ -16,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -28,7 +27,6 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -41,8 +39,12 @@ import com.google.android.material.shape.MaterialShapeDrawable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Objects;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class downloadImageActivity extends AppCompatActivity {
 
@@ -51,19 +53,26 @@ public class downloadImageActivity extends AppCompatActivity {
     byte[] byteArray;
     public static String path;
     public static File imageFile;
-   public static Context mContext;
+    public static Context mContext;
 
     String categoryid, sub_cat_id, template_id;
     String token;
- public static   String widthKey, heightKey;
+    public static String widthKey, heightKey;
 
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
+
+    String BasicKey;
+
 
     @Override
     protected void onStart() {
         super.onStart();
 
-
+        try {
+            BasicKey = getIntent().getStringExtra(Constant.BasicKeyMain);
+            //  Toast.makeText(mContext, BasicKey, Toast.LENGTH_SHORT).show();
+        } catch (Exception ignored) {
+        }
 
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
 
@@ -76,7 +85,7 @@ public class downloadImageActivity extends AppCompatActivity {
 
 
         //progress bar declaration
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (GifImageView) findViewById(R.id.progressbar);
     }
 
     @Override
@@ -97,6 +106,9 @@ public class downloadImageActivity extends AppCompatActivity {
 
 
         binding.bottomNavigationView.setBackground(null);
+        int is_activeKey = getIntent().getIntExtra("is_activeKey", 2);
+
+        // Toast.makeText(mContext, String.valueOf(is_activeKey), Toast.LENGTH_SHORT).show();
         //Corner radius
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
@@ -199,7 +211,8 @@ public class downloadImageActivity extends AppCompatActivity {
             params.height = Integer.parseInt(heightKey);
             params.width = Integer.parseInt(widthKey);
             binding.downloadImg.setLayoutParams(params);
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
         binding.backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,25 +243,49 @@ public class downloadImageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-           //     Toast.makeText(mContext, String.valueOf(path), Toast.LENGTH_SHORT).show();
+                //     Toast.makeText(mContext, String.valueOf(path), Toast.LENGTH_SHORT).show();
                 Bitmap bitmap = Bitmap.createBitmap(binding.downloadImg.getWidth(), binding.downloadImg.getHeight(), Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 binding.downloadImg.draw(canvas);
 
-                getImageUri(mContext, bitmap);
-                Uri selectedImageUri = Uri.parse(path);
+                Uri uri = getImageUri(mContext, bitmap);
 
-                String selectedImagePath = getRealPathFromURIForGallery(selectedImageUri);
-                imageFile = new File(selectedImagePath);
+                File f = new File(getCacheDir() + "/temp." + "jpg");
+                try {
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    FileOutputStream fs = new FileOutputStream(f);
+                    int read = 0;
+                    int bufferSize = 1024;
+                    final byte[] buffers = new byte[bufferSize];
+                    while ((read = is.read(buffers)) != -1) {
+                        fs.write(buffers, 0, read);
+                    }
+                    is.close();
+                    fs.close();
 
-                Log.d("#imagefile", String.valueOf(imageFile));
+                    Log.d("imageFile111", f.getPath());
+                    imageFile = f;
+
+                } catch (Exception e) {
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
 
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
 
 
+                    int is_activeKey = getIntent().getIntExtra("is_activeKey", 2);
+                    if (is_activeKey == 0) {
+                        //paid
+                        mContext.startActivity(new Intent(mContext, subscriptionActivity.class));
+                    } else if (is_activeKey == 1) {
+                        //free
+                        Webservice.create_content(mContext, token, categoryid, sub_cat_id, template_id, imageFile);
+                    } else if (is_activeKey == 2) {
+                        Webservice.create_content(mContext, token, categoryid, sub_cat_id, template_id, imageFile);
+                    }
 
-                    Webservice.create_content(mContext, token, categoryid, sub_cat_id, template_id, imageFile);
 
                 } else {
                     Constant.NetworkCheckDialogue(mContext);
@@ -278,24 +315,52 @@ public class downloadImageActivity extends AppCompatActivity {
                 Canvas canvas = new Canvas(bitmap);
                 binding.downloadImg.draw(canvas);
 
+
                 getImageUri(mContext, bitmap);
-                Uri selectedImageUri = Uri.parse(path);
+                Uri uri = getImageUri(mContext, bitmap);
 
-                String selectedImagePath = getRealPathFromURIForGallery(selectedImageUri);
-                imageFile = new File(selectedImagePath);
+                File f = new File(getCacheDir() + "/temp." + "jpeg");
+                try {
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    FileOutputStream fs = new FileOutputStream(f);
+                    int read = 0;
+                    int bufferSize = 1024;
+                    final byte[] buffers = new byte[bufferSize];
+                    while ((read = is.read(buffers)) != -1) {
+                        fs.write(buffers, 0, read);
+                    }
+                    is.close();
+                    fs.close();
 
-                Log.d("#imagefile", String.valueOf(imageFile));
+                    Log.d("imageFile111", f.getPath());
+                    imageFile = f;
 
-                Uri imgUri = Uri.parse(imageFile.getAbsolutePath());
+                } catch (Exception e) {
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+
+
                 Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
                 whatsappIntent.setType("text/plain");
-                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "AdPanda :");
-                whatsappIntent.putExtra(Intent.EXTRA_STREAM, imgUri);
+                whatsappIntent.putExtra(Intent.EXTRA_STREAM, uri);
                 whatsappIntent.setType("image/jpeg");
                 whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 try {
-                    startActivity(whatsappIntent);
+
+
+                    int is_activeKey = getIntent().getIntExtra("is_activeKey", 2);
+                    if (is_activeKey == 0) {
+                        //paid
+                        mContext.startActivity(new Intent(mContext, subscriptionActivity.class));
+                    } else if (is_activeKey == 1) {
+                        //free
+                        startActivity(whatsappIntent);
+                    } else if (is_activeKey == 2) {
+                        startActivity(whatsappIntent);
+                    }
+
                 } catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(getApplicationContext(), "Apps has not been installed.", Toast.LENGTH_SHORT).show();
                 }
@@ -329,5 +394,20 @@ public class downloadImageActivity extends AppCompatActivity {
         assert false;
         cursor.close();
         return uri.getPath();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        try {
+            if (BasicKey.equals("basicKey")) {
+                startActivity(new Intent(getApplicationContext(), basicEditsFirstActivity.class));
+            } else {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            }
+        } catch (Exception ex) {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
+
     }
 }

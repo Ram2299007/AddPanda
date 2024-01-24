@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/orangeverify" />
+
+        <TextView
+            android:id="@+id/catname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:layout_marginStart="13dp"
+            android:fontFamily="@font/poppins_medium"
+            android:lineHeight="22.5dp"
+            android:text="All Festival images &amp; videos"
+            android:textColor="@color/black"
+            android:textFontWeight="400"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

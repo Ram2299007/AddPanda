@@ -73,38 +73,36 @@ public class frameAdapter extends RecyclerView.Adapter<frameAdapter.myViewHolder
 
                 Constant.getSfFuncion(holder.itemView.getContext());
                 String originalImageKey = Constant.getSF.getString("originalImageKey","");
-         //      Toast.makeText(mContext, originalImageKey, Toast.LENGTH_SHORT).show();
 
-                Picasso.get().load(originalImageKey).into(img, new com.squareup.picasso.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        try {
-                            editFameActivity.mainLayout.setBackgroundDrawable(img.getDrawable());
-                        }catch (Exception ignored){}
+                if(!originalImageKey.equals("")){
+                   // Toast.makeText(mContext, originalImageKey, Toast.LENGTH_SHORT).show();
 
-                        try {
-                            Basic_editFrameActivity.mainLayout.setBackgroundDrawable(img.getDrawable());
-                        }catch (Exception ignored){}
-                    }
+                    Picasso.get().load(originalImageKey).into(img, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {
+                            try {
+                                editFameActivity.onlyFrameShow.setBackgroundDrawable(img.getDrawable());
+                            }catch (Exception ignored){}
 
-                    @Override
-                    public void onError(Exception e) {
+                            try {
+                                Basic_editFrameActivity.mainRelativeLayout.setBackgroundDrawable(img.getDrawable());
+                            }catch (Exception ignored){}
+                        }
 
-                    }
+                        @Override
+                        public void onError(Exception e) {
 
-                });
+                        }
 
-
-
-
-
+                    });
+                }
 
                 Picasso.get().load(model.getFrame()).into(img, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
 
                         try {
-                            editFameActivity.mainRelativeLayout.setBackgroundDrawable(img.getDrawable());
+                            editFameActivity.onlyFrameShow.setBackgroundDrawable(img.getDrawable());
                         }catch (Exception ignored){}
 
                         try {

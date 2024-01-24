@@ -1,6 +1,5 @@
 package com.Appzia.addpanda.Fragments;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,36 +16,36 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.Adapter.ViewPagerAdapter;
 import com.Appzia.addpanda.Adapter.categoryParentAdapter;
 import com.Appzia.addpanda.Adapter.mainCatBtnChildAdapter;
 import com.Appzia.addpanda.Classes.MainImageViewPager;
-import com.Appzia.addpanda.MainActivity;
+import com.Appzia.addpanda.Model.get_category_listChild1Model;
+import com.Appzia.addpanda.Screens.MainActivity;
 import com.Appzia.addpanda.Model.categoryChildModel;
 import com.Appzia.addpanda.Model.categoryParentModel;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Screens.NotificationActivity;
-import com.Appzia.addpanda.Screens.createVisingCardHorizontalScreens;
 import com.Appzia.addpanda.Screens.partner_with_usActivity;
 import com.Appzia.addpanda.Screens.referandearnscreen;
 import com.Appzia.addpanda.Screens.showProfileImageScreen;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
+import com.Appzia.addpanda.Webservice.WebserviceRetrofits.WebserviceRetrofit;
 import com.Appzia.addpanda.databinding.FragmentMainBinding;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -77,6 +76,7 @@ public class mainFragment extends Fragment {
     //declare array lists for categories
 
     public static ArrayList<categoryParentModel> parentModelArrayList;
+    public static ArrayList<get_category_listChild1Model> get_category_listChild1ModelList = new ArrayList<>();
     public static ArrayList<categoryChildModel> list1;
     public static ArrayList<categoryChildModel> list2;
     public static ArrayList<categoryChildModel> list3;
@@ -130,10 +130,10 @@ public class mainFragment extends Fragment {
     public static ArrayList<categoryChildModel> list50;
 
     public static String loadImgUrlProf;
-
-    Timer timer;
     int page = 0;
     private Handler handler;
+
+
     private int delay = 4000; //milliseconds
 
     Runnable runnable = new Runnable() {
@@ -155,11 +155,6 @@ public class mainFragment extends Fragment {
         parentModelArrayList.clear();
         list1.clear();
         handler.postDelayed(runnable, delay);
-
-
-        //  Toast.makeText(mContext,   Constant.getSF.getString(Constant.ACC_TYPE, ""), Toast.LENGTH_SHORT).show();
-
-
         username = (TextView) requireActivity().findViewById(R.id.username);
 
         CoLayout = (CoordinatorLayout) requireActivity().findViewById(R.id.CoLayout);
@@ -170,15 +165,34 @@ public class mainFragment extends Fragment {
         SharedPreferences sh = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
 
         token = sh.getString("TOKEN_SF", "");
+        Log.d("TAG", "onResume: " + token);
 
         Constant.NetworkCheck(mContext);
         if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
 
             Webservice.fetchDataProfile(mContext, token);
             Webservice.get_banner(mContext, token, mainFragment.this);
-            Webservice.get_category_list_All(mContext, token, mainFragment.this);
+            //     Webservice.get_category_list_All(mContext, token, mainFragment.this);
+
+            WebserviceRetrofit.get_category_list(mContext, token, mainFragment.this);
 
 
+            final String[] fcm_token = new String[1];
+            FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+                if (!TextUtils.isEmpty(token)) {
+                    Log.d("token", "retrieve token successful : " + token);
+
+
+                    Webservice.update_fcm_token(mContext, this.token, token);
+
+                } else {
+                    Log.w("token", "token should not be null...");
+                }
+            }).addOnFailureListener(e -> {
+                //handle e
+            }).addOnCanceledListener(() -> {
+                //handle cancel
+            }).addOnCompleteListener(task -> Log.v("token", "This is the token : " + task.getResult()));
 
 
         } else {
@@ -282,12 +296,14 @@ public class mainFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
-        }); binding.letterhead.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.letterhead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
-        }); binding.advertise.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.advertise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
@@ -322,7 +338,7 @@ public class mainFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String url = "https://wa.me/919145700012";
+                String url = "https://wa.me/919168700012";
 
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
@@ -391,12 +407,12 @@ public class mainFragment extends Fragment {
 
     private void filter(String text) {
         // creating a new array list to filter our data.
-        ArrayList<categoryParentModel> filteredlist = new ArrayList<categoryParentModel>();
+        ArrayList<get_category_listChild1Model> filteredlist = new ArrayList<get_category_listChild1Model>();
 
         // running a for loop to compare elements.
-        for (categoryParentModel item : parentModelArrayList) {
+        for (get_category_listChild1Model item : get_category_listChild1ModelList) {
             // checking if the entered string matched with any item of our recycler view.
-            if (item.getCatname().toLowerCase().contains(text.toLowerCase())) {
+            if (item.getCategory_name().toLowerCase().contains(text.toLowerCase())) {
                 // if the item is matched we are
                 // adding it to our filtered list.
                 filteredlist.add(item);
@@ -413,22 +429,25 @@ public class mainFragment extends Fragment {
     }
 
     public void setAdapter() {
-        categoryParentAdapter = new categoryParentAdapter(mContext, parentModelArrayList, Constant.mainKey);
-        binding.trendingRecyclerview.setAdapter(categoryParentAdapter);
-        binding.trendingRecyclerview.setHasFixedSize(true);
-        binding.trendingRecyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-        categoryParentAdapter.notifyDataSetChanged();
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,Constant.categoryNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, Constant.categoryNames);
         binding.searchEdts.setAdapter(adapter);
-
-
         mainCatBtnChildAdapter = new mainCatBtnChildAdapter(mContext, Constant.mainKey);
         binding.truebuttonRecyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         binding.truebuttonRecyclerview.setAdapter(mainCatBtnChildAdapter);
         mainCatBtnChildAdapter.notifyDataSetChanged();
 
+
+    }
+
+    public void setAapterCategory(ArrayList<get_category_listChild1Model> get_category_listChild1ModelList) {
+        this.get_category_listChild1ModelList = get_category_listChild1ModelList;
+        categoryParentAdapter = new categoryParentAdapter(mContext, this.get_category_listChild1ModelList, Constant.mainKey, binding.relativelayout);
+        binding.trendingRecyclerview.setAdapter(categoryParentAdapter);
+        binding.trendingRecyclerview.setHasFixedSize(true);
+        binding.trendingRecyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+        categoryParentAdapter.notifyDataSetChanged();
 
     }
 

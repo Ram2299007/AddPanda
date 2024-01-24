@@ -20,19 +20,18 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.ViewPagerAdapter;
 import com.Appzia.addpanda.Adapter.trenddingImageAdapter;
 import com.Appzia.addpanda.Adapter.trendingSubcateAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -52,8 +51,6 @@ import java.util.Objects;
 public class trendingActivity extends AppCompatActivity {
 
     ActivityTrendingBinding binding;
-
-
     public static trenddingImageAdapter adapter;
     SharedPreferences shNew;
     String s1;
@@ -66,12 +63,14 @@ public class trendingActivity extends AppCompatActivity {
     public static String token;
     String category_id = "1";
     public static RecyclerView.LayoutManager layoutManager;
+    public static TextView isactivedummy;
     public static ViewPagerAdapter viewPagerAdapter;
 
     public static ImageView viewPagerBackImage;
 
     public static LinearLayout CoLayout;
     public static ShimmerFrameLayout shimmerFrameLayout;
+    public static RelativeLayout relativelayout;
 
     //progress bar declaration
 
@@ -90,10 +89,15 @@ public class trendingActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
         try {
             BasicKey = getIntent().getStringExtra(Constant.BasicKeyMain);
-         //   Toast.makeText(mContext, BasicKey, Toast.LENGTH_SHORT).show();
+
+            if (BasicKey.equals("basicKey")) {
+                binding.edit.setVisibility(View.VISIBLE);
+            } else {
+                binding.edit.setVisibility(View.GONE);
+            }
+            // Toast.makeText(mContext, BasicKey, Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
 
         }
@@ -106,6 +110,7 @@ public class trendingActivity extends AppCompatActivity {
         shimmerFrameLayout = (ShimmerFrameLayout) findViewById(R.id.shimmerFrameLayout);
 
         subCatRecview = (RecyclerView) findViewById(R.id.subCatRecview);
+        relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         autoClick = (AppCompatButton) findViewById(R.id.autoClick);
@@ -127,10 +132,11 @@ public class trendingActivity extends AppCompatActivity {
             categoryidKey = getIntent().getStringExtra("categoryidKey");
 
 
-           try {
+            try {
                 imageKey = getIntent().getStringExtra("imageKey");
-               Picasso.get().load(imageKey).placeholder(R.color.white).into(binding.viewPagerBackImage);
-           }catch (Exception ignored){}
+                Picasso.get().load(imageKey).placeholder(R.color.white).into(binding.viewPagerBackImage);
+            } catch (Exception ignored) {
+            }
 
             try {
                 Constant.setSfFunction(mContext);
@@ -140,7 +146,6 @@ public class trendingActivity extends AppCompatActivity {
             }
 
 
-
             sub_cat_id = getIntent().getStringExtra("sub_cat_idKey");
 
             //   Picasso.get().load(imageKey).into(binding.viewPagerBackImage);
@@ -148,7 +153,7 @@ public class trendingActivity extends AppCompatActivity {
             // Toast.makeText(mContext, nameKey, Toast.LENGTH_SHORT).show();
             Constant.NetworkCheck(mContext);
             if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this,Lang);
+                Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this, "English");
 
             } else {
                 Constant.NetworkCheckDialogue(mContext);
@@ -168,7 +173,7 @@ public class trendingActivity extends AppCompatActivity {
             }
             Constant.NetworkCheck(mContext);
             if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                Webservice.get_frame_list(mContext, token, trendingActivity.this, "", "", "");
+                Webservice.fetch_all_frames_photo(mContext, token, trendingActivity.this);
 
             } else {
                 Constant.NetworkCheckDialogue(mContext);
@@ -236,6 +241,14 @@ public class trendingActivity extends AppCompatActivity {
         window.setStatusBarColor(this.getResources().getColor(R.color.appThemeColor));
         trendingActivity2 = this;
 
+        int is_activeKey = getIntent().getIntExtra("is_activeKey",2);
+
+        isactivedummy = findViewById(R.id.isactivedummy);
+
+
+        binding.isactivedummy.setText(String.valueOf(is_activeKey));
+        //Toast.makeText(mContext, is_activeKey, Toast.LENGTH_SHORT).show();
+        Log.d("TAG", "is_activeKey "+is_activeKey);
 
         binding.bottomNavigationView.setBackground(null);
         //Corner radius
@@ -345,18 +358,22 @@ public class trendingActivity extends AppCompatActivity {
                         i.putExtra("categoryidKey", categoryidKey);
                         i.putExtra("sub_cat_idKey", sub_cat_id);
                         i.putExtra("template_idKeyKey", template_idKey);
+                        i.putExtra("template_idKeyKey", template_idKey);
+                        i.putExtra("is_activeKey", Integer.parseInt(binding.isactivedummy.getText().toString()));
                         startActivity(i);
                     } else if (BasicKey.equals(Constant.basicKey)) {
                         Intent i = new Intent(getApplicationContext(), Basic_editFrameActivity.class);
                         i.putExtra("categoryidKey", categoryidKey);
                         i.putExtra("sub_cat_idKey", sub_cat_id);
                         i.putExtra("template_idKeyKey", template_idKey);
+                        i.putExtra("is_activeKey", Integer.parseInt(binding.isactivedummy.getText().toString()));
                         startActivity(i);
                     } else if (BasicKey.equals(Constant.scratchKey)) {
                         Intent i = new Intent(getApplicationContext(), Basic_editFrameActivity.class);
                         i.putExtra("categoryidKey", categoryidKey);
                         i.putExtra("sub_cat_idKey", sub_cat_id);
                         i.putExtra("template_idKeyKey", template_idKey);
+                        i.putExtra("is_activeKey", Integer.parseInt(binding.isactivedummy.getText().toString()));
                         startActivity(i);
                     }
 
@@ -378,38 +395,38 @@ public class trendingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Bitmap bitmap = Bitmap.createBitmap(binding.viepagerCroperId.getWidth(), binding.viepagerCroperId.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                binding.viepagerCroperId.draw(canvas);
-
-                getImageUri(mContext, bitmap);
-                Uri selectedImageUri = Uri.parse(path);
-
-                String selectedImagePath = getRealPathFromURIForGallery(selectedImageUri);
-                imageFile = new File(selectedImagePath);
-
-                Log.d("#imagefile", String.valueOf(imageFile));
-
-                Constant.NetworkCheck(mContext);
-                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                    Webservice.create_content(mContext, token, categoryidKey, sub_cat_id, template_idKey, imageFile);
-
-                } else {
-                    Constant.NetworkCheckDialogue(mContext);
-                    Constant.dialogForNetwork.show();
-
-                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
-
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Constant.dialogForNetwork.dismiss();
-
-                        }
-                    });
-
-
-                }
+//                Bitmap bitmap = Bitmap.createBitmap(binding.viepagerCroperId.getWidth(), binding.viepagerCroperId.getHeight(), Bitmap.Config.ARGB_8888);
+//                Canvas canvas = new Canvas(bitmap);
+//                binding.viepagerCroperId.draw(canvas);
+//
+//                getImageUri(mContext, bitmap);
+//                Uri selectedImageUri = Uri.parse(path);
+//
+//                String selectedImagePath = getRealPathFromURIForGallery(selectedImageUri);
+//                imageFile = new File(selectedImagePath);
+//
+//                Log.d("#imagefile", String.valueOf(imageFile));
+//
+//                Constant.NetworkCheck(mContext);
+//                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+//                    WebserviceRetrofit.create_content(mContext, token, categoryidKey, sub_cat_id, template_idKey, imageFile);
+//
+//                } else {
+//                    Constant.NetworkCheckDialogue(mContext);
+//                    Constant.dialogForNetwork.show();
+//
+//                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+//
+//                    btn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            Constant.dialogForNetwork.dismiss();
+//
+//                        }
+//                    });
+//
+//
+//                }
 
 
 //                FileOutputStream outStream = null;
@@ -440,6 +457,46 @@ public class trendingActivity extends AppCompatActivity {
 //                } finally {
 //
 //                }
+
+                try {
+
+                    Bitmap bitmap = Bitmap.createBitmap(binding.viepagerCroperId.getWidth(), binding.viepagerCroperId.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    binding.viepagerCroperId.draw(canvas);
+
+
+                    // for set background in relative layout
+
+                    //  Drawable dr = new BitmapDrawable(bitmap);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+
+                    String saveThis = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                    Log.d("byteArray", String.valueOf(saveThis));
+
+                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    myEdit.putString("imgData", saveThis);
+                    myEdit.apply();
+
+
+                    // getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
+                    Intent i = new Intent(getApplicationContext(), downloadImageActivity.class);
+
+                    try {
+                        if (!BasicKey.equals("")) {
+                            i.putExtra("BasicKey", BasicKey);
+                            i.putExtra("is_activeKey", Integer.parseInt(binding.isactivedummy.getText().toString()));
+                        }
+                    } catch (Exception ignored) {
+                    }
+                    startActivity(i);
+
+                } catch (Exception ex) {
+                    Log.d("Bitmap Error", ex.getMessage());
+                }
             }
         });
 
@@ -456,7 +513,7 @@ public class trendingActivity extends AppCompatActivity {
                 Picasso.get().load(s1).into(binding.viewPagerBackImage);
 
 
-                //  Webservice.get_frame_list(mContext, token, trendingActivity.this, category_idKey, sub_cat_idKey, template_idKey);
+                //  WebserviceRetrofit.get_frame_list(mContext, token, trendingActivity.this, category_idKey, sub_cat_idKey, template_idKey);
 
 
             }
@@ -482,7 +539,7 @@ public class trendingActivity extends AppCompatActivity {
                 Lang = "English";
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                    Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this,Lang);
+                    Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this, Lang);
 
                 } else {
                     Constant.NetworkCheckDialogue(mContext);
@@ -509,7 +566,7 @@ public class trendingActivity extends AppCompatActivity {
 
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                    Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this,Lang);
+                    Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this, Lang);
 
                 } else {
                     Constant.NetworkCheckDialogue(mContext);
@@ -535,7 +592,7 @@ public class trendingActivity extends AppCompatActivity {
                 Lang = "marathi";
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                    Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this,Lang);
+                    Webservice.get_Template_list(mContext, token, categoryidKey, sub_cat_id, trendingActivity.this, Lang);
 
                 } else {
                     Constant.NetworkCheckDialogue(mContext);
@@ -555,23 +612,27 @@ public class trendingActivity extends AppCompatActivity {
         });
 
 
-
     }
 
     public static void setAdapter() {
         // set a LinearLayoutManager with default horizontal orientation and false value for reverseLayout to show the items from start to end
         layoutManager = new GridLayoutManager(mContext, 3);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new trenddingImageAdapter(mContext, autoClick);
+        adapter = new trenddingImageAdapter(mContext, autoClick,relativelayout,isactivedummy);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+
+
+    }
+
+
+    public static void setSubAdapter(){
 
         trendingSubcateAdapter = new trendingSubcateAdapter(mContext, token, categoryidKey, trendingActivity2);
         subCatRecview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         subCatRecview.setAdapter(trendingSubcateAdapter);
         trendingSubcateAdapter.notifyDataSetChanged();
-
-
     }
 
 
@@ -582,8 +643,11 @@ public class trendingActivity extends AppCompatActivity {
             binding.viewPagerId.setAdapter(viewPagerAdapter);
 
             binding.dotsIndicator.setViewPager(binding.viewPagerId);
-            viewPagerAdapter.notifyDataSetChanged();
 
+            try {
+                viewPagerAdapter.notifyDataSetChanged();
+            } catch (Exception ignored) {
+            }
 
         } catch (Exception ignored) {
         }
@@ -594,7 +658,10 @@ public class trendingActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String title = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String title = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            title = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        }
         path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, title, null);
         return Uri.parse(path);
     }

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
-import com.Appzia.addpanda.Adapter.horiVisitingAdapter;
 import com.Appzia.addpanda.Adapter.verticalVisitingAdapter;
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;

@@ -2,21 +2,20 @@ package com.Appzia.addpanda.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.Appzia.addpanda.Fragments.mainFragment;
-import com.Appzia.addpanda.Model.categoryParentModel;
+import com.Appzia.addpanda.Model.get_category_listChild1Model;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Screens.viewAll;
-import com.Appzia.addpanda.Screens.viewAllBasic;
 import com.Appzia.addpanda.Util.Constant.Constant;
 
 import java.util.ArrayList;
@@ -25,19 +24,21 @@ import java.util.List;
 public class categoryParentAdapter extends RecyclerView.Adapter<categoryParentAdapter.myViewHolder> {
 
     Context mContext;
-    List<categoryParentModel> categoryParentModelsList;
+    List<get_category_listChild1Model> get_category_listChild1ModelList;
     categoryChildAdapter adapter;
     mainCatBtnChildAdapter mainCatBtnChildAdapter;
     String BasicKey;
+    RelativeLayout relativelayout;
 
-    public categoryParentAdapter(Context mContext, List<categoryParentModel> categoryParentModels, String BasicKey) {
+    public categoryParentAdapter(Context mContext, List<get_category_listChild1Model> get_category_listChild1ModelList, String BasicKey, RelativeLayout relativelayout) {
         this.mContext = mContext;
-        this.categoryParentModelsList = categoryParentModels;
+        this.get_category_listChild1ModelList = get_category_listChild1ModelList;
         this.BasicKey = BasicKey;
+        this.relativelayout = relativelayout;
     }
 
-    public void filterList(ArrayList<categoryParentModel> filterlist) {
-        this.categoryParentModelsList = filterlist;
+    public void filterList(ArrayList<get_category_listChild1Model> filterlist) {
+        this.get_category_listChild1ModelList = filterlist;
         notifyDataSetChanged();
     }
 
@@ -53,10 +54,15 @@ public class categoryParentAdapter extends RecyclerView.Adapter<categoryParentAd
 
     @Override
     public void onBindViewHolder(@NonNull categoryParentAdapter.myViewHolder holder, int position) {
-        final categoryParentModel model = categoryParentModelsList.get(position);
-        holder.catNameId.setText(model.getCatname());
+        final get_category_listChild1Model model = get_category_listChild1ModelList.get(position);
+        holder.catNameId.setText(model.getCategory_name());
 
-        adapter = new categoryChildAdapter(mContext, model.getCategoryChildModel(), BasicKey);
+
+
+      //  Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
+        Log.d("TAG", "onBindViewHolder: "+model.getSub_category_list());
+
+        adapter = new categoryChildAdapter(mContext, model.getSub_category_list(), BasicKey,model.getCategory_id(),relativelayout);
         holder.recyclerViewFinal.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         holder.recyclerViewFinal.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -68,19 +74,19 @@ public class categoryParentAdapter extends RecyclerView.Adapter<categoryParentAd
 
                 if (BasicKey.equals(Constant.mainKey)) {
                     Intent intent = new Intent(holder.itemView.getContext(), viewAll.class);
-                    intent.putExtra("catIdKey", model.getCatIdKey());
+                    intent.putExtra("catIdKey", model.getCategory_id());
                     intent.putExtra(Constant.BasicKeyMain, BasicKey);
                     holder.viewAll.getContext().startActivity(intent);
 
                 } else if (BasicKey.equals(Constant.basicKey)) {
                     Intent intent = new Intent(holder.itemView.getContext(), viewAll.class);
-                    intent.putExtra("catIdKey", model.getCatIdKey());
+                    intent.putExtra("catIdKey", model.getCategory_id());
                     intent.putExtra(Constant.BasicKeyMain, BasicKey);
                     holder.viewAll.getContext().startActivity(intent);
 
                 } else if (BasicKey.equals(Constant.scratchKey)) {
                     Intent intent = new Intent(holder.itemView.getContext(), viewAll.class);
-                    intent.putExtra("catIdKey", model.getCatIdKey());
+                    intent.putExtra("catIdKey", model.getCategory_id());
                     intent.putExtra(Constant.BasicKeyMain, BasicKey);
                     holder.viewAll.getContext().startActivity(intent);
                 }
@@ -93,7 +99,7 @@ public class categoryParentAdapter extends RecyclerView.Adapter<categoryParentAd
 
     @Override
     public int getItemCount() {
-        return categoryParentModelsList.size();
+        return get_category_listChild1ModelList.size();
     }
 
 
@@ -112,8 +118,8 @@ public class categoryParentAdapter extends RecyclerView.Adapter<categoryParentAd
     }
 
     public void clear() {
-        categoryParentModelsList.clear();
-        adapter.childModelList.clear();
+        get_category_listChild1ModelList.clear();
+        adapter.get_category_listChild2ModelList.clear();
         notifyDataSetChanged();
     }
 }

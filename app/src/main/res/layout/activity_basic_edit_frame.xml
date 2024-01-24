@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/appThemeColor">
 
-
     <FrameLayout
         android:id="@+id/editFrameActivityFrame"
         android:layout_width="match_parent"
@@ -129,9 +128,9 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/editRecyclerViewFrame"
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
 
 
                     </LinearLayout>
@@ -154,9 +153,10 @@
 
                         <RelativeLayout
                             android:id="@+id/mainLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="305dp"
+                            android:layout_width="350dp"
+                            android:layout_height="350dp"
                             android:background="@color/white"
+                            android:gravity="center"
 
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -235,23 +235,22 @@
                                 <RelativeLayout
 
                                     android:id="@+id/edttextFragRel1"
-
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-
                                     android:layout_alignParentStart="true"
-                                    android:layout_marginTop="2.5dp"
+                                    android:layout_marginTop="30dp"
                                     android:gravity="center"
                                     android:orientation="vertical"
                                     android:padding="1dp">
 
                                     <TextView
                                         android:id="@+id/editTextFrag"
-                                        android:layout_width="180dp"
+                                        android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginStart="20dp"
                                         android:fontFamily="@font/poppins_medium"
-                                        android:gravity="center"
 
+                                        android:gravity="start"
                                         android:lineHeight="16.5dp"
                                         android:maxLength="18"
                                         android:text=""
@@ -260,7 +259,7 @@
 
                                         android:textFontWeight="500"
                                         android:textSize="11sp"
-                                        android:visibility="invisible"
+                                        android:visibility="visible"
                                         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                                 </RelativeLayout>
@@ -272,17 +271,17 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
-                                    android:layout_marginTop="2.5dp"
+                                    android:layout_marginTop="80dp"
                                     android:gravity="center"
                                     android:orientation="vertical"
                                     android:padding="1dp">
 
 
                                     <LinearLayout
-                                        android:layout_width="180dp"
+                                        android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
-                                        android:gravity="center"
+                                        android:gravity="end"
                                         android:orientation="horizontal">
 
 
@@ -292,6 +291,7 @@
                                             android:layout_height="17dp"
                                             android:layout_gravity="center_vertical"
                                             android:layout_marginEnd="4.75dp"
+
                                             android:src="@drawable/location"
                                             android:visibility="invisible" />
 
@@ -299,6 +299,7 @@
                                             android:id="@+id/locationText"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
+                                            android:layout_marginEnd="20dp"
                                             android:fontFamily="@font/poppins_medium"
                                             android:gravity="center"
 
@@ -306,11 +307,9 @@
                                             android:maxLength="18"
                                             android:text=""
                                             android:textColor="@color/white"
-
-
                                             android:textFontWeight="500"
                                             android:textSize="11sp"
-                                            android:visibility="invisible"
+                                            android:visibility="visible"
                                             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                                     </LinearLayout>
@@ -333,11 +332,11 @@
 
 
                                     <LinearLayout
-                                        android:layout_width="210dp"
+                                        android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
-                                        android:layout_marginBottom="2.5dp"
-                                        android:gravity="center_horizontal"
+                                        android:layout_marginBottom="50dp"
+                                        android:gravity="start"
                                         android:orientation="horizontal">
 
 
@@ -346,9 +345,10 @@
                                             android:layout_width="17dp"
                                             android:layout_height="17dp"
                                             android:layout_gravity="center_vertical"
+                                            android:layout_marginStart="20dp"
                                             android:layout_marginEnd="4.75dp"
-
                                             android:src="@drawable/email"
+
                                             android:visibility="invisible" />
 
                                         <TextView
@@ -358,16 +358,13 @@
                                             android:fontFamily="@font/poppins_medium"
                                             android:gravity="center"
                                             android:lineHeight="16.5dp"
-
                                             android:maxLength="29"
                                             android:maxLines="1"
                                             android:text=""
                                             android:textColor="@color/white"
-
-
                                             android:textFontWeight="500"
                                             android:textSize="11sp"
-                                            android:visibility="invisible"
+                                            android:visibility="visible"
                                             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                                     </LinearLayout>
@@ -390,11 +387,12 @@
 
 
                                     <LinearLayout
-                                        android:layout_width="170dp"
+
+                                        android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
-                                        android:layout_marginBottom="2.5dp"
-                                        android:gravity="center_horizontal"
+                                        android:layout_marginBottom="80dp"
+                                        android:gravity="end"
                                         android:orientation="horizontal">
 
 
@@ -412,6 +410,7 @@
                                             android:id="@+id/phoneText"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
+                                            android:layout_marginEnd="20dp"
                                             android:fontFamily="@font/poppins_medium"
                                             android:gravity="center"
                                             android:lineHeight="16.5dp"
@@ -420,11 +419,9 @@
                                             android:maxLines="1"
                                             android:text=""
                                             android:textColor="@color/white"
-
-
                                             android:textFontWeight="500"
                                             android:textSize="11sp"
-                                            android:visibility="invisible"
+                                            android:visibility="visible"
                                             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                                     </LinearLayout>
@@ -441,7 +438,7 @@
                                     android:layout_alignParentStart="true"
                                     android:layout_alignParentTop="true"
                                     android:layout_marginStart="2dp"
-                                    android:layout_marginTop="30dp"
+                                    android:layout_marginTop="70dp"
 
                                     android:gravity="center"
                                     android:orientation="vertical">
@@ -557,11 +554,9 @@
 
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/editRecyclerViewFrame2"
-                                    android:orientation="horizontal"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content" />
-
-
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal" />
 
 
                             </LinearLayout>

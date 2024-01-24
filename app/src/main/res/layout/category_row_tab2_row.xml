@@ -43,14 +43,15 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                app:cardBackgroundColor="@color/black"
                 app:cardCornerRadius="10dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/dispImg"
                     android:layout_width="101.28dp"
+                    android:scaleType="centerCrop"
                     android:layout_height="95dp" />
 
             </androidx.cardview.widget.CardView>
@@ -60,8 +61,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="4dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginBottom="4dp"
                 android:fontFamily="@font/poppins"
                 android:gravity="center"
                 android:lineHeight="18dp"

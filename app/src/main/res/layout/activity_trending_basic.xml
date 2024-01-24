@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/relativelayout"
     android:background="@color/appThemeColor"
     tools:context=".Screens.trendingActivityBasic">
 
@@ -161,7 +162,7 @@
                         <ImageView
                             android:id="@+id/viewPagerBackImage"
                             android:layout_width="match_parent"
-                            android:layout_height="287dp"
+                            android:layout_height="350dp"
                             android:background="@drawable/round_drawable"
                             android:contentDescription="@string/app_name"
                             android:lineHeight="16.5dp"
@@ -172,7 +173,7 @@
                             android:id="@+id/viewPagerId"
                             android:layout_width="wrap_content"
 
-                            android:layout_height="287dp"
+                            android:layout_height="350dp"
                             android:contentDescription="@string/app_name" />
 
 
@@ -215,6 +216,12 @@
                             android:layout_marginBottom="70dp"
                             android:orientation="vertical" />
 
+                        <TextView
+                            android:id="@+id/isactivedummy"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:visibility="gone"/>
+
 
                     </LinearLayout>
 
@@ -228,12 +235,13 @@
 
     </ScrollView>
 
-    <ProgressBar
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:visibility="invisible" />
+        android:src="@drawable/loader"
+        android:visibility="gone" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

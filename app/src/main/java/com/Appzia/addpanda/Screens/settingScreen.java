@@ -3,23 +3,29 @@ package com.Appzia.addpanda.Screens;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.FileProvider;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Util.InAppReview;
 import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivitySettingScreenBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;
@@ -40,13 +46,11 @@ public class settingScreen extends AppCompatActivity {
     public static TextView subId;
 
     public static ImageView profileId;
-
-
+    AppCompatActivity activity;
+    private InAppReview inAppReview;
     @Override
     public void onStart() {
         super.onStart();
-        mContext = binding.getRoot().getContext();
-
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
         token = sh.getString("TOKEN_SF", "");
 
@@ -86,6 +90,8 @@ public class settingScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySettingScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        mContext = binding.getRoot().getContext();
+        activity = settingScreen.this;
 
 
         //By default on each activity android studio
@@ -116,7 +122,9 @@ public class settingScreen extends AppCompatActivity {
         binding.rateus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+                inAppReview = new InAppReview();
+                inAppReview.askUserForReview(mContext);
+
             }
         });
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -222,6 +230,25 @@ public class settingScreen extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), termAndConditionScreen.class));
             }
         });
+
+        binding.shareapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Hey Guys, I'd like to Refer you to Adpanda.in the perfect way to promote your brand and business to Impress your targeted audience by creating an Engaging and Creative Promotional Content.\n" +
+                        "\n" +
+                        "Click here https://play.google.com/store/apps/details?id=com.Appzia.addpanda&pcampaignid=web_share");
+
+                // Use Chooser to show a list of available sharing apps
+                Intent chooserIntent = Intent.createChooser(shareIntent, "Share URL with");
+                if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(chooserIntent);
+                }
+
+            }
+        });
     }
 
     @Override
@@ -230,4 +257,33 @@ public class settingScreen extends AppCompatActivity {
         intent.putExtra("editKey", "editProfile");
         startActivity(intent);
     }
+
+
+//    private void getReviewInfo() {
+//        reviewManager = ReviewManagerFactory.create(getApplicationContext());
+//        Task<ReviewInfo> manager = reviewManager.requestReviewFlow();
+//        manager.addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                reviewInfo = task.getResult();
+//                startReviewFlow();
+//            } else {
+//                Toast.makeText(getApplicationContext(), "In App ReviewFlow failed to start", Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
+//
+//    public void startReviewFlow() {
+//        if (reviewInfo != null) {
+//            Task<Void> flow = reviewManager.launchReviewFlow(this, reviewInfo);
+//            flow.addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(Task<Void> task) {
+//                    Toast.makeText(getApplicationContext(), "In App Rating completed", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//        }
+//        else {
+//            Toast.makeText(getApplicationContext(), "In App Rating failed", Toast.LENGTH_LONG).show();
+//        }
+//    }
 }

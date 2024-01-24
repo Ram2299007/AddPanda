@@ -10,8 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.databinding.ActivityAddCaptionScreenBinding;
@@ -19,7 +19,6 @@ import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
@@ -28,34 +27,8 @@ public class addCaptionScreen extends AppCompatActivity {
     ActivityAddCaptionScreenBinding binding;
     Context mContext;
 
-    String text, fbKey, instaKey, linkdnKey, addressKey, captionEdtKey;
+    String text, fbKey, instaKey, linkdnKey, addressKey, captionEdtKey, whatsappKey;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        try {
-
-            Constant.getSfFuncion(mContext);
-            text = Constant.getSF.getString("textKey", "");
-            fbKey = Constant.getSF.getString("fbKey", "");
-            instaKey = Constant.getSF.getString("instaKey", "");
-            linkdnKey = Constant.getSF.getString("linkdnKey", "");
-            addressKey = Constant.getSF.getString("addressKey", "");
-            captionEdtKey = Constant.getSF.getString("captionEdtKey", "");
-
-
-            binding.text.setText(text);
-            binding.fb.setText(fbKey);
-            binding.insta.setText(instaKey);
-            binding.linkdn.setText(linkdnKey);
-            binding.address.setText(addressKey);
-            binding.captionEdt.setText(captionEdtKey);
-
-
-        } catch (Exception ignored) {
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +92,29 @@ public class addCaptionScreen extends AppCompatActivity {
 
             }
         });
+
+        try {
+
+            Constant.getSfFuncion(mContext);
+            text = Constant.getSF.getString("textKey", "");
+            fbKey = Constant.getSF.getString("fbKey", "");
+            instaKey = Constant.getSF.getString("instaKey", "");
+            linkdnKey = Constant.getSF.getString("linkdnKey", "");
+            addressKey = Constant.getSF.getString("addressKey", "");
+            captionEdtKey = Constant.getSF.getString("captionEdtKey", "");
+            whatsappKey = Constant.getSF.getString("whatsappKey", "");
+
+
+            binding.text.setText(text);
+            binding.fb.setText(fbKey);
+            binding.insta.setText(instaKey);
+            binding.linkdn.setText(linkdnKey);
+            binding.address.setText(addressKey);
+            binding.captionEdt.setText(captionEdtKey);
+
+
+        } catch (Exception ignored) {
+        }
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,16 +135,9 @@ public class addCaptionScreen extends AppCompatActivity {
         binding.caption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( binding.fb.getText().toString().isEmpty()  || binding.linkdn.getText().toString().isEmpty() || binding.address.getText().toString().isEmpty() || binding.captionEdt.getText().toString().isEmpty()) {
-                    Snackbar.make(binding.getRoot(), "Missing Information ?", Snackbar.LENGTH_LONG)
-                            .setAction("CLOSE", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
 
-                                }
-                            })
-                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                            .show();
+                if (binding.text.getText().toString().equals("") || binding.caption.getText().toString().equals("")) {
+                    Toast.makeText(mContext, "Text and caption can't be empty ?", Toast.LENGTH_SHORT).show();
                 } else {
 
                     Constant.setSfFunction(mContext);
@@ -168,9 +157,8 @@ public class addCaptionScreen extends AppCompatActivity {
                     } else if (data.equals("HORI")) {
                         startActivity(new Intent(getApplicationContext(), edit_and_download_visitingcard.class));
                     }
-
-
                 }
+
             }
         });
     }

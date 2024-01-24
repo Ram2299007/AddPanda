@@ -2,6 +2,7 @@ package com.Appzia.addpanda.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,9 @@ public class trendingSubcateAdapter extends RecyclerView.Adapter<trendingSubcate
     @Override
     public void onBindViewHolder(@NonNull trendingSubcateAdapter.myViewHolder holder, int position) {
         final trendingSubModel model = Constant.trendingListForExtra.get(position);
+        Log.d("TAG", "onBindViewHolder: "+model.getSub_cat_name());
         holder.btnCat.setText(model.getSub_cat_name());
+
 
         holder.btnCat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +62,7 @@ public class trendingSubcateAdapter extends RecyclerView.Adapter<trendingSubcate
                 trendingActivity.sub_cat_id = model.getSub_cat_id();
                 Webservice.get_Template_list(mContext, token, categoryidKey, model.getSub_cat_id(), trendingActivity2,"English");
 
-              //  Webservice.get_frame_list(mContext, token, trendingActivity2, categoryidKey, model.getSub_cat_id(), model.getTemplate_id());
+              //  WebserviceRetrofit.get_frame_list(mContext, token, trendingActivity2, categoryidKey, model.getSub_cat_id(), model.getTemplate_id());
 
             }
         });

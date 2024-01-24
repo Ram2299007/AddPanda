@@ -23,4 +23,9 @@
     <string name="facebook_client_token">9ccd113da3bf9d1fdd66cac39a9fd5a8</string>
 
 
+    <string name="send_otp">Send OTP</string>
+    <string name="generate_otp">Generate OTP</string>
+    <string name="received_message">Received Message</string>
+    <string name="verify_otp">Verify OTP</string>
+
 </resources>

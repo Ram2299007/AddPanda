@@ -17,6 +17,8 @@ import com.Appzia.addpanda.Model.frameModel;
 import com.Appzia.addpanda.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 public class ViewPagerAdapter extends PagerAdapter {
     Context context;
 
@@ -50,6 +52,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     public Parcelable saveState() {
         return null;
     }
+
     @NonNull
     @Override
     public Object instantiateItem(View collection, int position) {
@@ -60,8 +63,14 @@ public class ViewPagerAdapter extends PagerAdapter {
         View view = inflater.inflate(R.layout.imagepager_layout, null);
         ((ViewPager) collection).addView(view);
         final ImageView img = (ImageView) view.findViewById(R.id.img);
-        Picasso.get().load(model.getFrame()).fit().centerCrop()
-                .into(img);
+
+        try {
+            Picasso.get().load(model.getFrame()).fit().centerCrop()
+                    .into(img);
+        } catch (Exception ignored) {
+        }
+
+       // img.setImageResource(R.drawable.transparent_vimp);
         return view;
     }
 }

@@ -17,7 +17,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +24,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.Model.Contact;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
@@ -36,12 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -81,7 +77,7 @@ public class ReferActivity extends AppCompatActivity {
         try {
             account_typeKey = getIntent().getStringExtra("account_typeKey");
 
-            Toast.makeText(mContext, account_typeKey, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(mContext, account_typeKey, Toast.LENGTH_SHORT).show();
 
 
 
@@ -128,6 +124,9 @@ public class ReferActivity extends AppCompatActivity {
         binding.skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("account_typeKey", account_typeKey);
                 intent.putExtra("mobileKey", mobileKey);
@@ -203,6 +202,7 @@ public class ReferActivity extends AppCompatActivity {
 
 
     private void getContactList() {
+        contactList.clear();
         ContentResolver cr = getContentResolver();
 
         Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
@@ -214,6 +214,8 @@ public class ReferActivity extends AppCompatActivity {
 
                 String name, number;
                 JSONArray arr = new JSONArray();
+
+
                 while (cursor.moveToNext()) {
                     name = cursor.getString(nameIndex);
                     number = cursor.getString(numberIndex);
@@ -221,8 +223,6 @@ public class ReferActivity extends AppCompatActivity {
                     if (!mobileNoSet.contains(number)) {
                         contactList.add(new Contact(name, number));
                         mobileNoSet.add(number);
-//                        Log.d("hvy", "onCreaterrView  Phone Number: name = " + name
-//                                + " No = " + number);
 
                         JSONObject obj2 = new JSONObject();
                         obj2.put("name", name.trim());
@@ -230,14 +230,16 @@ public class ReferActivity extends AppCompatActivity {
                         arr.put(obj2);
 
                     }
+
                 }
 
                 dataNew  = arr.toString();
+                Log.d("dataNewdataNew", dataNew);
 
               //  save();
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                    Webservice.upload_user_contact_list(mContext, token, "{ \"contact\":" + dataNew + "}", account_typeKey, mobileKey, emailKey, nameKey, BusinessCatKey, social_media_typeKey);
+                    Webservice.upload_user_contact_listRetrofit(mContext, token, "{ \"contact\":" + dataNew + "}", account_typeKey, mobileKey, emailKey, nameKey, BusinessCatKey, social_media_typeKey);
 
                 } else {
                     Constant.NetworkCheckDialogue(mContext);

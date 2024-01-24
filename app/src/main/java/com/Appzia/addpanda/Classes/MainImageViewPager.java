@@ -2,6 +2,7 @@ package com.Appzia.addpanda.Classes;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -55,7 +56,6 @@ public class MainImageViewPager extends PagerAdapter {
     @Override
     public Object instantiateItem(View collection, int position) {
 
-
         final viewPagerModel model = Constant.viewpager.get(position);
         LayoutInflater inflater = (LayoutInflater) collection.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.imagepager_layout, null);
@@ -63,6 +63,7 @@ public class MainImageViewPager extends PagerAdapter {
         final ImageView img = (ImageView) view.findViewById(R.id.img);
         Picasso.get().load(model.getImage()).fit().centerCrop()
                 .into(img);
+        Log.d("TAG", "instantiateItem: "+model.getImage());
         return view;
     }
 }

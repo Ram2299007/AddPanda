@@ -9,11 +9,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -34,7 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -55,11 +49,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Appzia.addpanda.Adapter.ViewPagerAdapter;
 import com.Appzia.addpanda.Adapter.font_adapter_new;
 import com.Appzia.addpanda.Adapter.frameAdapter;
 import com.Appzia.addpanda.Adapter.shapeAdapter;
 import com.Appzia.addpanda.Adapter.textColorAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.Model.fontModelNew;
 import com.Appzia.addpanda.Model.shapeModel;
 import com.Appzia.addpanda.Model.textColorModel;
@@ -94,6 +88,8 @@ public class editFameActivity extends AppCompatActivity {
     String sTExt;
     LinearLayout cameraLT, galleryLT;
     TextView cameratxt, gallerytxt;
+
+    ViewPagerAdapter viewPagerAdapter;
     ImageView cameraimg, galleryimg;
     LinearLayout cancelColor;
     RelativeLayout cancelIMg;
@@ -153,14 +149,13 @@ public class editFameActivity extends AppCompatActivity {
     public static frameAdapter frameadapter;
     String template_idKey;
 
-    public static RelativeLayout mainRelativeLayout, mainLayout;
+    public static RelativeLayout mainRelativeLayout, mainLayout, onlyFrameShow;
     String categoryid;
     String sub_cat_id;
     String template_id;
 
     String widthKey, heightKey;
     Animation goneAnime;
-
 
 
     @Override
@@ -178,10 +173,27 @@ public class editFameActivity extends AppCompatActivity {
                 params.height = Integer.parseInt(heightKey);
                 params.width = Integer.parseInt(widthKey);
                 binding.mainLayout.setLayoutParams(params);
-                binding.mainLayout.setBackgroundResource(R.drawable.bg_round_10);
+
+
+                ViewGroup.LayoutParams targetLayoutParams = binding.onlyFrameShow.getLayoutParams();
+                targetLayoutParams.height = Integer.parseInt(heightKey);
+                targetLayoutParams.width = Integer.parseInt(widthKey);
+                binding.mainLayout.setLayoutParams(params);
+                binding.onlyFrameShow.setLayoutParams(targetLayoutParams);
+
+                binding.mainLayout.setBackgroundResource(R.drawable.bg_round_two);
                 ColorStateList myColorStateList = ColorStateList.valueOf(getResources().getColor(R.color.white));
                 binding.mainLayout.setBackgroundTintList(myColorStateList);
 
+
+
+//                ViewGroup.LayoutParams sourceLayoutParams = mainLayout.getLayoutParams();
+//                int sourceWidth = sourceLayoutParams.width;
+//                int sourceHeight = sourceLayoutParams.height;
+//
+//                RelativeLayout.LayoutParams targetLayoutParams = new RelativeLayout.LayoutParams(sourceWidth, sourceHeight);
+//                targetLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+//                onlyFrameShow.setLayoutParams(targetLayoutParams);
 
 
 
@@ -189,6 +201,7 @@ public class editFameActivity extends AppCompatActivity {
             } else {
             }
         } catch (Exception ignored) {
+
         }
 
 
@@ -199,17 +212,21 @@ public class editFameActivity extends AppCompatActivity {
 
         mainRelativeLayout = (RelativeLayout) findViewById(R.id.mainRelativeLayout);
         mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
+        onlyFrameShow = (RelativeLayout) findViewById(R.id.onlyFrameShow);
+
+
+
+
+
 
         categoryid = getIntent().getStringExtra("categoryidKey");
-
         sub_cat_id = getIntent().getStringExtra("sub_cat_idKey");
         template_id = getIntent().getStringExtra("template_idKeyKey");
-//        Constant.frameList.clear();
-//        Constant.frameListTwo.clear();
+
 
         Constant.NetworkCheck(mContext);
         if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-            Webservice.get_frame_list_two(mContext, token, editFameActivity.this, "", "", "");
+            Webservice.fetch_all_frames_photo_Scratch(mContext, token, editFameActivity.this);
 
         } else {
             Constant.NetworkCheckDialogue(mContext);
@@ -237,8 +254,6 @@ public class editFameActivity extends AppCompatActivity {
     }
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -260,6 +275,7 @@ public class editFameActivity extends AppCompatActivity {
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
         bottomBarBackground.setShapeAppearanceModel(bottomBarBackground.getShapeAppearanceModel().toBuilder().setTopRightCorner(CornerFamily.ROUNDED, 10).setTopLeftCorner(CornerFamily.ROUNDED, 10).build());
+
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -535,9 +551,9 @@ public class editFameActivity extends AppCompatActivity {
                                 binding.right.performClick();
                                 try {
 
-                                    Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
+                                    Bitmap bitmap = Bitmap.createBitmap(binding.downloadRLyt.getWidth(), binding.downloadRLyt.getHeight(), Bitmap.Config.ARGB_8888);
                                     Canvas canvas = new Canvas(bitmap);
-                                    binding.mainLayout.draw(canvas);
+                                    binding.downloadRLyt.draw(canvas);
 
 
                                     // for set background in relative layout
@@ -557,11 +573,13 @@ public class editFameActivity extends AppCompatActivity {
                                     myEdit.apply();
 
 
+                                    int is_activeKey = getIntent().getIntExtra("is_activeKey", 2);
                                     // getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
                                     Intent i = new Intent(getApplicationContext(), downloadImageActivity.class);
                                     i.putExtra("sub_cat_idkey", sub_cat_id);
                                     i.putExtra("template_idkey", template_id);
                                     i.putExtra("cat_idkey", categoryid);
+                                    i.putExtra("is_activeKey", is_activeKey);
                                     i.putExtra("heightKey", String.valueOf(heightKey));
                                     i.putExtra("widthKey", String.valueOf(widthKey));
                                     startActivity(i);
@@ -6613,8 +6631,7 @@ public class editFameActivity extends AppCompatActivity {
     public void onBackPressed() {
 
 
-            Constant.viewVisibleAnimator(binding.coord);
-
+        Constant.viewVisibleAnimator(binding.coord);
 
 
         new CountDownTimer(2500, 1000) {
@@ -6665,6 +6682,21 @@ public class editFameActivity extends AppCompatActivity {
     public void onBackPressed2() {
 
         super.onBackPressed();
+
+    }
+
+    public void setFrameAdapter() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame.setLayoutManager(linearLayoutManager);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame.setHasFixedSize(true);
+        binding.editRecyclerViewFrame.setAdapter(frameadapter);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame2.setLayoutManager(linearLayoutManager2);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame2.setHasFixedSize(true);
+        binding.editRecyclerViewFrame2.setAdapter(frameadapter);
+
 
     }
 }

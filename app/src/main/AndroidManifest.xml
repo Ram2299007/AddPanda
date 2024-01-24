@@ -4,9 +4,13 @@
     package="com.Appzia.addpanda">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
@@ -15,13 +19,22 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!--    <uses-permission android:name="android.permission.RECEIVE_SMS" />-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!--    <uses-permission android:name="android.permission.READ_SMS" />-->
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="true" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
         android:required="false" />
 
     <queries>
@@ -34,20 +47,32 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/newlogo"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/newlogo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AddPanda"
-        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Screens.edit_vertical_visiting_card"
-            android:exported="true" >
+            android:name=".Screens.test3"
+            android:exported="true">
 
         </activity>
+        <activity
+            android:name=".Screens.testPaymentgateway"
+            android:exported="true"></activity>
+        <activity
+            android:name=".Screens.UploadEditedFrame"
+            android:exported="false" />
+        <activity
+            android:name=".Screens.EditFrameOwner"
+            android:exported="false" />
+        <activity
+            android:name=".Screens.edit_vertical_visiting_card"
+            android:exported="true" />
         <activity
             android:name=".Screens.helpAndSupportScreen"
             android:exported="false" />
@@ -73,8 +98,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Screens.subscriptionActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+
+        </activity>
+
         <activity
             android:name=".Screens.showDownloadActivity"
             android:exported="false"
@@ -89,8 +119,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Screens.PaymentActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+        </activity>
         <activity
             android:name=".Screens.payment_without_coupan_Activity"
             android:exported="false"
@@ -315,18 +347,30 @@
             android:name=".Screens.SplashScreen"
             android:exported="true"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
+
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="addpanda.page.link" />
+                <data android:scheme="https" />
+            </intent-filter>
         </activity>
         <activity
-            android:name="com.Appzia.addpanda.MainActivity"
+            android:name=".Screens.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
@@ -362,6 +406,19 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.phonepe.android.sdk.isUAT"
+            android:value="true" />
+        <meta-data
+            android:name="com.phonepe.android.sdk.isSimulator"
+            android:value="true" /> <!-- The value will be the MID -->
+        <meta-data
+            android:name="com.phonepe.android.sdk.MerchantId"
+            android:value="PGTESTPAYUAT" />
+        <meta-data
+            android:name="com.phonepe.android.sdk.AppId"
+            android:value="" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -371,6 +428,27 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver
+            android:name=".Util.OTPReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
+
+
     </application>
 
 </manifest>

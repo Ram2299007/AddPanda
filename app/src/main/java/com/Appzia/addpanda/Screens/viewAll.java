@@ -16,10 +16,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import com.Appzia.addpanda.Adapter.viewAllAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -31,6 +30,8 @@ import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.Objects;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class viewAll extends AppCompatActivity {
 
     ActivityViewAllBinding binding;
@@ -41,13 +42,15 @@ public class viewAll extends AppCompatActivity {
     public static viewAllAdapter adapter;
     public static String BasicKey;
     public static RecyclerView.LayoutManager layoutManager;
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
+    public static RelativeLayout relativelayout;
 
     @Override
     protected void onStart() {
         super.onStart();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (GifImageView) findViewById(R.id.progressbar);
+        relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
         token = sh.getString("TOKEN_SF", "");
 
@@ -197,7 +200,7 @@ public class viewAll extends AppCompatActivity {
 
         layoutManager = new GridLayoutManager(mContext, 3);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new viewAllAdapter(mContext,BasicKey);
+        adapter = new viewAllAdapter(mContext,BasicKey,relativelayout);
         recyclerView.setAdapter(adapter);
 
 

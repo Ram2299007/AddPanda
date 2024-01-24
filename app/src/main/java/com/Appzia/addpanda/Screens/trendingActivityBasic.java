@@ -23,10 +23,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.Appzia.addpanda.Adapter.ViewPagerAdapter;
 import com.Appzia.addpanda.Adapter.trenddingImageAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -48,8 +49,10 @@ public class trendingActivityBasic extends AppCompatActivity {
     public static ProgressBar progressBar;
 
     public static trenddingImageAdapter adapter;
+    public static RelativeLayout relativelayout;
     SharedPreferences shNew;
     String s1;
+    public static TextView isactivedummy;
     public static Context mContext;
     public static String template_idKey;
     public static AppCompatButton autoClick;
@@ -85,6 +88,7 @@ public class trendingActivityBasic extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         autoClick = (AppCompatButton) findViewById(R.id.autoClick);
+        relativelayout = (RelativeLayout) findViewById(R.id.relativelayout);
 
         viewPagerBackImage = (ImageView) findViewById(R.id.viewPagerBackImage);
 
@@ -150,7 +154,7 @@ public class trendingActivityBasic extends AppCompatActivity {
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
         bottomBarBackground.setShapeAppearanceModel(bottomBarBackground.getShapeAppearanceModel().toBuilder().setTopRightCorner(CornerFamily.ROUNDED, 10).setTopLeftCorner(CornerFamily.ROUNDED, 10).build());
-
+        isactivedummy = findViewById(R.id.isactivedummy);
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -318,7 +322,7 @@ public class trendingActivityBasic extends AppCompatActivity {
                 Picasso.get().load(s1).into(binding.viewPagerBackImage);
 
 
-                //  Webservice.get_frame_list(mContext, token, trendingActivity.this, category_idKey, sub_cat_idKey, template_idKey);
+                //  WebserviceRetrofit.get_frame_list(mContext, token, trendingActivity.this, category_idKey, sub_cat_idKey, template_idKey);
 
 
             }
@@ -330,7 +334,7 @@ public class trendingActivityBasic extends AppCompatActivity {
         // set a LinearLayoutManager with default horizontal orientation and false value for reverseLayout to show the items from start to end
         layoutManager = new GridLayoutManager(mContext, 3);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new trenddingImageAdapter(mContext, autoClick);
+        adapter = new trenddingImageAdapter(mContext, autoClick, relativelayout, isactivedummy);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 

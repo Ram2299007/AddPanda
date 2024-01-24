@@ -16,7 +16,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.Appzia.addpanda.Adapter.faqAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;

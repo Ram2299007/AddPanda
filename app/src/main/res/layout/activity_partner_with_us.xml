@@ -132,7 +132,7 @@
                     android:fontFamily="@font/poppins_medium"
                     android:gravity="center"
                     android:lineHeight="21dp"
-                    android:text="Join Us as Band Developer"
+                    android:text="Join Us as Brand Developer"
                     android:textColor="@color/white"
                     android:textFontWeight="500" />
 

@@ -2,45 +2,80 @@ package com.Appzia.addpanda.Screens;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.Interface.Backpressedlistener;
-import com.Appzia.addpanda.MainActivity;
+import com.Appzia.addpanda.Adapter.subscriptionAapter;
+import com.Appzia.addpanda.Model.get_subscription_listChildModel;
 import com.Appzia.addpanda.R;
+import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Webservice.WebserviceRetrofits.WebserviceRetrofit;
 import com.Appzia.addpanda.databinding.ActivitySubscriptionBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class subscriptionActivity extends AppCompatActivity {
 
     ActivitySubscriptionBinding binding;
-    public static Backpressedlistener backpressedlistener;
+    static Context mContext;
+    String TAG = "Adpanda";
+    subscriptionAapter adapter;
+    String token;
+    LinearLayoutManager layoutManager;
+    private int currentTopPosition = 0;
+    private int nextPosition = 1;
+    private int previousPosition = -1;
+    AppCompatActivity activity;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.progressbar.setVisibility(View.GONE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySubscriptionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
-        //By default on each activity android studio
+        activity = subscriptionActivity.this;
+        mContext = binding.getRoot().getContext();
         Objects.requireNonNull(getSupportActionBar()).hide();
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(this.getResources().getColor(R.color.appThemeColor));
+
+
+
+
+        Constant.getSfFuncion(mContext);
+        token = Constant.getSF.getString(Constant.TOKEN_SF, "");
+        WebserviceRetrofit.get_subscription_list(mContext, subscriptionActivity.this,token,binding.progressbar);
+
+        // for next row
+        PagerSnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(binding.recyclerview);
+
+
+
+
+
+
+
         binding.bottomNavigationView.setBackground(null);
         //Corner radius
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
@@ -101,15 +136,16 @@ public class subscriptionActivity extends AppCompatActivity {
             }
         });
 
-        binding.strike.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        //    binding.strike.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
 
 
         binding.backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                intent.putExtra("editKey","editProfile");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("editKey", "editProfile");
                 startActivity(intent);
+
             }
         });
 
@@ -121,12 +157,44 @@ public class subscriptionActivity extends AppCompatActivity {
         });
 
 
+//        binding.buyNow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                WebserviceRetrofit.phonepay_payment_init(mContext, "4", binding.amount.getText().toString(), binding.webview, binding.lyt, binding.btlyt, binding.progressbar);
+//            }
+//        });
+
+
     }
+
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        intent.putExtra("editKey","editProfile");
-        startActivity(intent);
+
+//        if (binding.webview.getVisibility() == View.VISIBLE) {
+////
+//
+//        } else if (binding.webview.getVisibility() == View.GONE) {
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            intent.putExtra("editKey", "editProfile");
+//            startActivity(intent);
+//        }
+
+        super.onBackPressed();
     }
+
+
+    public void setAdapter(ArrayList<get_subscription_listChildModel> get_subscription_list, int postion) {
+        adapter = new subscriptionAapter(mContext,binding.webview,binding.lyt,binding.btlyt,binding.progressbar,binding.recyclerview,activity,get_subscription_list,subscriptionActivity.this,postion);
+        layoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL,false);
+        binding.recyclerview.setLayoutManager(layoutManager);
+        binding.recyclerview.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+
+    }
+
+
+
+
 }

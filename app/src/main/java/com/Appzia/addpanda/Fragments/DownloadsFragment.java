@@ -3,6 +3,7 @@ package com.Appzia.addpanda.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.downloadAdapter;
+import com.Appzia.addpanda.Adapter.visitingAdapter;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Screens.NotificationActivity;
 import com.Appzia.addpanda.Util.Constant.Constant;
@@ -37,10 +39,12 @@ public class DownloadsFragment extends Fragment {
 
     //for recyclerview
     public static downloadAdapter adapter;
+    public static visitingAdapter visitingAdapter;
     public static GridLayoutManager layoutManager;
     public static CoordinatorLayout CoLayout;
     public static ShimmerFrameLayout shimmerFrameLayout;
     String token;
+
 
     @Override
     public void onResume() {
@@ -59,7 +63,7 @@ public class DownloadsFragment extends Fragment {
         if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
 
             Webservice.get_my_content_creator_list(mContext, token);
-            Webservice.get_my_creating_visiting_card_list(mContext, token);
+            //   WebserviceRetrofit.get_my_creating_visiting_card_list(mContext, token);
         } else {
             Constant.NetworkCheckDialogue(mContext);
             Constant.dialogForNetwork.show();
@@ -117,24 +121,95 @@ public class DownloadsFragment extends Fragment {
             }
         });
 
+        binding.visitingId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.tmpId.setBackgroundResource(R.drawable.button_home_bg);
+                binding.visitingId.setBackgroundResource(R.drawable.button_bg_hover_2);
+                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+
+                    Webservice.get_my_creating_visiting_card_list(mContext, token);
+                } else {
+                    Constant.NetworkCheckDialogue(mContext);
+                    Constant.dialogForNetwork.show();
+
+                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Constant.dialogForNetwork.dismiss();
+
+                        }
+                    });
+
+
+                }
+            }
+        });
+
+        binding.tmpId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.tmpId.setBackgroundResource(R.drawable.button_bg_hover_2);
+                binding.visitingId.setBackgroundResource(R.drawable.button_home_bg);
+                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+
+                    Webservice.get_my_content_creator_list(mContext, token);
+                    //  WebserviceRetrofit.get_my_creating_visiting_card_list(mContext, token);
+                } else {
+                    Constant.NetworkCheckDialogue(mContext);
+                    Constant.dialogForNetwork.show();
+
+                    AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Constant.dialogForNetwork.dismiss();
+
+                        }
+                    });
+
+
+                }
+            }
+
+        });
 
         return binding.getRoot();
     }
 
     public static void setAdapter() {
+
+        adapter = new downloadAdapter(mContext);
         layoutManager = new GridLayoutManager(mContext, 2);
         downloadRecyclerview.setLayoutManager(layoutManager);
-        adapter = new downloadAdapter(mContext);
+        downloadRecyclerview.setHasFixedSize(true);
         downloadRecyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        //    downloadRecyclerview.scrollToPosition(Constant.downloadList.size() - 1);
+
+    }
+
+    public static void visitingCardAdapter() {
+
+        visitingAdapter = new visitingAdapter(mContext);
+        layoutManager = new GridLayoutManager(mContext, 2);
+        downloadRecyclerview.setLayoutManager(layoutManager);
+        downloadRecyclerview.setHasFixedSize(true);
+        downloadRecyclerview.setAdapter(visitingAdapter);
+        visitingAdapter.notifyDataSetChanged();
+
     }
 
     public void RefreshAndFetchData() {
+        binding.tmpId.setBackgroundResource(R.drawable.button_bg_hover_2);
+        binding.visitingId.setBackgroundResource(R.drawable.button_home_bg);
 
         Constant.vibrator(mContext);
+
         try {
-            adapter.notifyDataSetChanged();
+            onResume();
         } catch (Exception ignored) {
         }
         binding.swipeContainer.setRefreshing(false);

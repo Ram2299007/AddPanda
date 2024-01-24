@@ -19,7 +19,6 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;

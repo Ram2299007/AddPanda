@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.Appzia.addpanda.Adapter.viewAllAdapterBasic;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;

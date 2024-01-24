@@ -11,7 +11,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.databinding.ActivityContactCreatorScreenBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;

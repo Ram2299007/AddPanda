@@ -3,6 +3,7 @@ package com.Appzia.addpanda.Screens;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -10,8 +11,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
+import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.databinding.ActivityManageAccountScreensBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,6 +24,18 @@ import java.util.Objects;
 public class manageAccountScreens extends AppCompatActivity {
 
     ActivityManageAccountScreensBinding binding;
+    Context mContext;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+
+        if (Constant.getSF.getString("ACC_DONE", "").equals("ACC_DONE")) {
+            startActivity(new Intent(mContext, manageAcount3Activity.class));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +43,8 @@ public class manageAccountScreens extends AppCompatActivity {
         binding = ActivityManageAccountScreensBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        mContext = binding.getRoot().getContext();
+        Constant.getSfFuncion(mContext);
         //By default on each activity android studio
         Objects.requireNonNull(getSupportActionBar()).hide();
         Window window = this.getWindow();

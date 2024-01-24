@@ -152,10 +152,12 @@ will be accepted"
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/img1"
                     android:layout_marginTop="14dp"
                     android:layout_marginLeft="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="163dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/aadhar"
                     android:layout_marginRight="25dp"/>
 
@@ -229,16 +231,18 @@ will be accepted"
 
                 </LinearLayout>
                 <ImageView
+                    android:id="@+id/img2"
                     android:layout_marginTop="14dp"
                     android:layout_marginLeft="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="163dp"
                     android:src="@drawable/aadhar"
+                    android:scaleType="centerCrop"
                     android:layout_marginRight="25dp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
 
-                    android:id="@+id/personal"
+                    android:id="@+id/submit"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginBottom="90dp"

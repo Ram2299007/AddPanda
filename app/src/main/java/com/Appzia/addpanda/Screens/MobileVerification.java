@@ -1,12 +1,18 @@
 package com.Appzia.addpanda.Screens;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,9 +20,16 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
+import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Util.OTPReceiver;
+import com.Appzia.addpanda.Util.SmsReceiver;
 import com.Appzia.addpanda.Webservice.Webservice;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.databinding.ActivityMobileVerificationBinding;
@@ -30,6 +43,8 @@ public class MobileVerification extends AppCompatActivity {
     String otp, token;
     Context mContext;
     private FirebaseAuth mfirebaseAuth;
+
+    ;
     public static String type = "2";    //for mobile type
 
     String mobileKey;
@@ -56,6 +71,8 @@ public class MobileVerification extends AppCompatActivity {
         binding = ActivityMobileVerificationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mfirebaseAuth = FirebaseAuth.getInstance();
+//        requestPermissions();
+//        new OTPReceiver().setEditText_otp(binding.one,binding.two,binding.three,binding.four);
 
         Objects.requireNonNull(getSupportActionBar()).hide();
         Window window = this.getWindow();
@@ -63,47 +80,103 @@ public class MobileVerification extends AppCompatActivity {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(this.getResources().getColor(R.color.appThemeColor));
 
+
+        new CountDownTimer(60000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                //    binding.countTimer.setTextColor(Color.parseColor("#9EA6B9"));
+                //    binding.sendAgain.setTextColor(Color.parseColor("#9EA6B9"));
+                binding.countTimer.setText(millisUntilFinished / 1000 + " sec.");
+                // logic to set the EditText could go here
+            }
+
+            public void onFinish() {
+                binding.countTimer.setVisibility(View.GONE);
+                // binding.sendAgain.setTextColor(getResources().getColor(R.color.blacktogray));
+                binding.sendAgain.setText("Send again");
+            }
+
+        }.start();
+
+
         mContext = this;
         otp = getIntent().getStringExtra("otpKey");
         token = getIntent().getStringExtra("tokenKey");
+        Log.d("data007", binding.Dmobile.getText().toString());
 
 
-        try {
-            Toast.makeText(this, otp, Toast.LENGTH_SHORT).show();
+//        try {
+//           // Toast.makeText(this, otp, Toast.LENGTH_SHORT).show();
+//
+//
+//            int number = Integer.parseInt(otp);
+//            // Toast.makeText(this, String.valueOf(number), Toast.LENGTH_SHORT).show();
+//
+//            int first = number / 1000; // Extract the first digit
+//            int second = (number / 100) % 10; // Extract the second digit
+//            int third = (number / 10) % 10; // Extract the third digit
+//            int four = (number) % 10; // Extract the fourth digit
+//
+//
+//            if (String.valueOf(number).length() == 3) {
+//                String data = "0" + String.valueOf(number);
+//
+//
+//                number = Integer.parseInt(data);
+//            }
+//
+//
+//            Log.d("Alldigitsnew", String.valueOf(number));
+//
+//            Log.d("firstNumber", String.valueOf(first));
+//            binding.one.setText(String.valueOf(first));
+//            Log.d("secondNumber", String.valueOf(second));
+//            binding.two.setText(String.valueOf(second));
+//            Log.d("thirdNumber", String.valueOf(third));
+//            binding.three.setText(String.valueOf(third));
+//
+//            Log.d("fourNumber", String.valueOf(four));
+//            binding.four.setText(String.valueOf(four));
+//
+//        } catch (Exception ignored) {
+//        }
+
+        binding.sendAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (binding.sendAgain.getText().toString().equals("Send again")) {
+                    // Toast.makeText(whatsTheCode.this, "clicked", Toast.LENGTH_SHORT).show();
+                    Constant.NetworkCheck(mContext);
+                    if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+
+                        Webservice.send_otp(mContext, type, binding.mobile.getText().toString().trim(), "");
+
+                        binding.one.setText("");
+                        binding.two.setText("");
+                        binding.three.setText("");
+                        binding.four.setText("");
 
 
-            int number = Integer.parseInt(otp);
-            // Toast.makeText(this, String.valueOf(number), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Constant.NetworkCheckDialogue(mContext);
+                        Constant.dialogForNetwork.show();
 
-            int first = number / 1000; // Extract the first digit
-            int second = (number / 100) % 10; // Extract the second digit
-            int third = (number / 10) % 10; // Extract the third digit
-            int four = (number) % 10; // Extract the fourth digit
+                        AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Constant.dialogForNetwork.dismiss();
+
+                            }
+                        });
+                    }
+                }
 
 
-            if(String.valueOf(number).length()==3){
-                String data = "0"+String.valueOf(number);
-
-
-                number = Integer.parseInt(data);
             }
-
-
-
-            Log.d("Alldigitsnew", String.valueOf(number));
-
-            Log.d("firstNumber", String.valueOf(first));
-            binding.one.setText( String.valueOf(first));
-            Log.d("secondNumber", String.valueOf(second));
-            binding.two.setText( String.valueOf(second));
-            Log.d("thirdNumber", String.valueOf(third));
-            binding.three.setText( String.valueOf(third));
-
-            Log.d("fourNumber", String.valueOf(four));
-            binding.four.setText( String.valueOf(four));
-
-        } catch (Exception ignored) {
-        }
+        });
 
         binding.one.addTextChangedListener(new TextWatcher() {
             @Override
@@ -236,7 +309,6 @@ public class MobileVerification extends AppCompatActivity {
                 if (progress == 100) {
 
 
-
                     if (binding.one.getText().toString().isEmpty() || binding.two.getText().toString().isEmpty() || binding.three.getText().toString().isEmpty() || binding.one.getText().toString().isEmpty()) {
 
                         Snackbar.make(binding.getRoot(), "INVALID OTP ?", Snackbar.LENGTH_LONG)
@@ -258,10 +330,10 @@ public class MobileVerification extends AppCompatActivity {
 
                             SharedPreferences sharedPreferences = mContext.getSharedPreferences("MySharedPref", MODE_PRIVATE);
                             SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                            myEdit.putString("MOBILE_VERIFIED_KEY",  binding.mobile.getText().toString());
+                            myEdit.putString("MOBILE_VERIFIED_KEY", binding.mobile.getText().toString());
                             myEdit.apply();
 
-                            Webservice.verify_otp(mContext, type, otp, token, binding.mobile.getText().toString());
+                            Webservice.verify_otp(mContext, type, binding.one.getText().toString()+binding.two.getText().toString()+binding.three.getText().toString()+binding.four.getText().toString(), token, binding.mobile.getText().toString(),binding.sb);
                         } catch (Exception ignored) {
                         }
 
@@ -277,7 +349,20 @@ public class MobileVerification extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-      Intent intent = new Intent(getApplicationContext(),SignInActivity.class);
-      startActivity(intent);
+        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+        startActivity(intent);
     }
+
+//    private void requestPermissions() {
+//        if (ContextCompat.checkSelfPermission(MobileVerification.this, android.Manifest.permission.RECEIVE_SMS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MobileVerification.this, new String[]{
+//                    android.Manifest.permission.RECEIVE_SMS
+//            }, 100);
+//        }
+//
+//
+//    }
+
+
 }

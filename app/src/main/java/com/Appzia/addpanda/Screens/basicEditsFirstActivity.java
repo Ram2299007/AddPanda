@@ -16,27 +16,27 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.categoryParentAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.Model.categoryChildModel;
 import com.Appzia.addpanda.Model.categoryParentModel;
+import com.Appzia.addpanda.Model.get_category_listChild1Model;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
-import com.Appzia.addpanda.Webservice.Webservice;
+import com.Appzia.addpanda.Webservice.WebserviceRetrofits.WebserviceRetrofit;
 import com.Appzia.addpanda.databinding.ActivityBasicEditsFirstBinding;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.ArrayList;
 import java.util.Objects;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class basicEditsFirstActivity extends AppCompatActivity {
 
@@ -46,7 +46,7 @@ public class basicEditsFirstActivity extends AppCompatActivity {
     String token;
     String flag = "1";
     public static ImageView mainImageview;
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
     public static CoordinatorLayout CoLayout;
     public static ShimmerFrameLayout shimmerFrameLayout;
 
@@ -61,6 +61,7 @@ public class basicEditsFirstActivity extends AppCompatActivity {
 
     public static ArrayList<categoryParentModel> parentModelArrayList;
     public static ArrayList<categoryChildModel> list1;
+    public static ArrayList<get_category_listChild1Model> get_category_listChild1ModelList = new ArrayList<>();
     public static ArrayList<categoryChildModel> list2;
     public static ArrayList<categoryChildModel> list3;
     public static ArrayList<categoryChildModel> list4;
@@ -120,7 +121,7 @@ public class basicEditsFirstActivity extends AppCompatActivity {
 
 
         username = (TextView) findViewById(R.id.username);
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (GifImageView) findViewById(R.id.progressbar);
 
         CoLayout = (CoordinatorLayout) findViewById(R.id.CoLayout);
 
@@ -134,7 +135,8 @@ public class basicEditsFirstActivity extends AppCompatActivity {
         Constant.NetworkCheck(mContext);
         if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
 
-            Webservice.get_category_list_All_BasicEdit(mContext, token, basicEditsFirstActivity.this, flag);
+            WebserviceRetrofit.get_category_listBasicEdit(mContext, token, basicEditsFirstActivity.this, flag);
+
         } else {
             Constant.NetworkCheckDialogue(mContext);
             Constant.dialogForNetwork.show();
@@ -319,18 +321,14 @@ public class basicEditsFirstActivity extends AppCompatActivity {
 
     }
 
-    public void setAdapter() {
-        categoryParentAdapter = new categoryParentAdapter(mContext, parentModelArrayList, Constant.basicKey);
+    public void setAapterCategory(ArrayList<get_category_listChild1Model> get_category_listChild1ModelList) {
+        this.get_category_listChild1ModelList = get_category_listChild1ModelList;
+        categoryParentAdapter = new categoryParentAdapter(mContext, this.get_category_listChild1ModelList, Constant.basicKey, binding.relativelayout);
         binding.trendingRecyclerview.setAdapter(categoryParentAdapter);
         binding.trendingRecyclerview.setHasFixedSize(true);
         binding.trendingRecyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         categoryParentAdapter.notifyDataSetChanged();
 
-
-//        mainCatBtnChildAdapter = new mainCatBtnChildAdapter(mContext, "mainKey");
-//        binding.truebuttonRecyclerview.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
-//        binding.truebuttonRecyclerview.setAdapter(mainCatBtnChildAdapter);
-//        mainCatBtnChildAdapter.notifyDataSetChanged();
 
 
     }

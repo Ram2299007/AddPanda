@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.Appzia.addpanda.Model.get_category_listChild1Model;
 import com.Appzia.addpanda.Model.mainCatBtnChildModel;
 import com.Appzia.addpanda.Screens.viewAll;
 import com.Appzia.addpanda.Util.Constant.Constant;
@@ -45,10 +46,10 @@ public class mainCatBtnChildAdapter extends RecyclerView.Adapter<mainCatBtnChild
 
     @Override
     public void onBindViewHolder(@NonNull mainCatBtnChildAdapter.myViewHolder holder, int position) {
-        final mainCatBtnChildModel model = Constant.mainCatBtnModelList.get(position);
+        final get_category_listChild1Model model =   Constant.get_category_listChild1ModelList.get(position);
 
 
-        holder.textName.setText(model.getTextName());
+        holder.textName.setText(model.getCategory_name());
 
         holder.textName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +57,7 @@ public class mainCatBtnChildAdapter extends RecyclerView.Adapter<mainCatBtnChild
 
 
                 Intent intent = new Intent(holder.itemView.getContext(), viewAll.class);
-                intent.putExtra("catIdKey", model.getCatId());
+                intent.putExtra("catIdKey", model.getCategory_id());
                 holder.textName.getContext().startActivity(intent);
 
             }
@@ -68,7 +69,7 @@ public class mainCatBtnChildAdapter extends RecyclerView.Adapter<mainCatBtnChild
 
     @Override
     public int getItemCount() {
-        return Constant.mainCatBtnModelList.size();
+        return   Constant.get_category_listChild1ModelList.size();
     }
 
     public static class myViewHolder extends RecyclerView.ViewHolder {

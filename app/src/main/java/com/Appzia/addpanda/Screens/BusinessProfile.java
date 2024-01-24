@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,13 +22,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.Fragments.DownloadsFragment;
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivityBusinessProfileBinding;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -86,33 +83,6 @@ public class BusinessProfile extends AppCompatActivity {
         } catch (Exception ignored) {
         }
 
-        if(checkOnActivityResukt.equals("")){
-
-            Constant.NetworkCheck(mContext);
-            if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-
-
-                Webservice.fetchDataProfile(mContext, token);
-            }
-            else {
-                Constant.NetworkCheckDialogue(mContext);
-                Constant.dialogForNetwork.show();
-
-                AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
-
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Constant.dialogForNetwork.dismiss();
-
-                    }
-                });
-
-
-            }
-        }else if(checkOnActivityResukt.equals("ok")){
-            binding.imageViewBusiness.setImageBitmap(bitmap2);
-        }
 
 
     }
@@ -141,13 +111,51 @@ public class BusinessProfile extends AppCompatActivity {
         mContext = this;
         imageViewBusiness = findViewById(R.id.imageViewBusiness);
 
+
+
+        if(checkOnActivityResukt.equals("")){
+
+            Constant.NetworkCheck(mContext);
+            if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
+
+
+                Webservice.fetchDataProfile(mContext, token);
+            }
+            else {
+                Constant.NetworkCheckDialogue(mContext);
+                Constant.dialogForNetwork.show();
+
+                AppCompatButton btn = Constant.dialogForNetwork.findViewById(R.id.retry);
+
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Constant.dialogForNetwork.dismiss();
+
+                    }
+                });
+
+
+            }
+        }else if(checkOnActivityResukt.equals("ok")){
+            binding.imageViewBusiness.setImageBitmap(bitmap2);
+        }
+
         binding.pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(Intent.createChooser(intent, "select image"),
-                        PICK_IMAGE);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("image/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                try {
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select a File to Upload"),
+                            PICK_IMAGE);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    // Potentially direct the user to the Market with a Dialog
+                    Toast.makeText(getApplicationContext(), "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -188,11 +196,29 @@ public class BusinessProfile extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode ==  PICK_IMAGE && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
-            String selectedImagePath = getRealPathFromURIForGallery(selectedImageUri);
-            imageFile = new File(selectedImagePath);
+            File f = new File(getCacheDir() + "/temp." + "jpeg");
+            try {
+                InputStream is = getContentResolver().openInputStream(selectedImageUri);
+                FileOutputStream fs = new FileOutputStream(f);
+                int read = 0;
+                int bufferSize = 1024;
+                final byte[] buffers = new byte[bufferSize];
+                while ((read = is.read(buffers)) != -1) {
+                    fs.write(buffers, 0, read);
+                }
+                is.close();
+                fs.close();
+
+                Log.d("imageFile111", f.getPath());
+                imageFile = f;
+
+            } catch (Exception e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
 
             binding.imageViewBusiness.setImageURI(selectedImageUri);
-            Log.d("imageFile", String.valueOf(imageFile));
+
 
             checkOnActivityResukt = "ok";
 

@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,11 +28,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.Interface.OnBackPressedListener;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.databinding.ActivityVisitingCardDownloadScreenBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;
@@ -52,8 +53,9 @@ public class MainContentDownloadScreen extends AppCompatActivity {
     File outFile, imageFile;
     String path;
     Context mContext;
-    LinearLayout webp,png,jpeg;
+    LinearLayout webp, png, jpeg;
 
+    public static long downloadId;
 
     @Override
     protected void onStart() {
@@ -172,8 +174,7 @@ public class MainContentDownloadScreen extends AppCompatActivity {
         jpeg = dialogLayoutColor.findViewById(R.id.jpeg);
         webp = dialogLayoutColor.findViewById(R.id.webp);
 
-
-
+        mContext.registerReceiver(new DownloadReceiver(), new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         binding.download.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,38 +188,33 @@ public class MainContentDownloadScreen extends AppCompatActivity {
                         Canvas canvas = new Canvas(bitmap);
                         binding.mainLayout.draw(canvas);
 
-                        //   Drawable dr = new BitmapDrawable(bitmap);
+                        img_url_key = getIntent().getStringExtra("img_url_key");
+                        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(img_url_key));
+
+                        request.setTitle("PNG Image");
+                        request.setDescription("Downloading");
 
 
-                        FileOutputStream outStream = null;
-
-                        // Write to SD Card
-                        try {
-                            File sdCard = Environment.getExternalStorageDirectory();
-                            File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
-                            dir.mkdirs();
-
-                            String fileName = String.format("%d.png", System.currentTimeMillis());
-                            outFile = new File(dir, fileName);
-
-                            outStream = new FileOutputStream(outFile);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-                            outStream.flush();
-                            outStream.close();
-
-                            Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
-                            Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
-
-                        } catch (FileNotFoundException e) {
-
-                            Log.d("FileNotFoundException", e.getMessage());
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            Log.d("IOException", e.getMessage());
-                        } finally {
+                        File customFolder;
+                        //android 10
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            customFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Adpanda/Media/Images");
+                            String exactPath = customFolder.getAbsolutePath();
+                            //    Log.d("TAG", "exactPath: " + exactPath + "/" + model.getFileName());
+                        } else {
+                            customFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Adpanda/Media/Images");
 
                         }
 
+                        if (!customFolder.exists()) {
+                            customFolder.mkdirs();
+                        }
+                        String fileName = String.format("%d.png", System.currentTimeMillis());
+                        File destinationFile = new File(customFolder, fileName);
+                        request.setDestinationUri(Uri.fromFile(destinationFile));
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        downloadId = downloadManager.enqueue(request);
                         dialogLayoutColor.dismiss();
 
                     }
@@ -226,87 +222,80 @@ public class MainContentDownloadScreen extends AppCompatActivity {
                 jpeg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
                         binding.mainLayout.draw(canvas);
 
-                        //   Drawable dr = new BitmapDrawable(bitmap);
+                        img_url_key = getIntent().getStringExtra("img_url_key");
+                        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(img_url_key));
+
+                        request.setTitle("JPEG Image");
+                        request.setDescription("Downloading");
 
 
-                        FileOutputStream outStream = null;
-
-                        // Write to SD Card
-                        try {
-                            File sdCard = Environment.getExternalStorageDirectory();
-                            File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
-                            dir.mkdirs();
-
-                            String fileName = String.format("%d.jpeg", System.currentTimeMillis());
-                            outFile = new File(dir, fileName);
-
-                            outStream = new FileOutputStream(outFile);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                            outStream.flush();
-                            outStream.close();
-
-                            Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
-                            Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
-
-                        } catch (FileNotFoundException e) {
-
-                            Log.d("FileNotFoundException", e.getMessage());
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            Log.d("IOException", e.getMessage());
-                        } finally {
+                        File customFolder;
+                        //android 10
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            customFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Adpanda/Media/Images");
+                            String exactPath = customFolder.getAbsolutePath();
+                            //    Log.d("TAG", "exactPath: " + exactPath + "/" + model.getFileName());
+                        } else {
+                            customFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Adpanda/Media/Images");
 
                         }
+
+                        if (!customFolder.exists()) {
+                            customFolder.mkdirs();
+                        }
+                        String fileName = String.format("%d.jpeg", System.currentTimeMillis());
+                        File destinationFile = new File(customFolder, fileName);
+                        request.setDestinationUri(Uri.fromFile(destinationFile));
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        downloadId = downloadManager.enqueue(request);
                         dialogLayoutColor.dismiss();
+
 
                     }
                 });
                 webp.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Bitmap bitmap = Bitmap.createBitmap(binding.mainLayout.getWidth(), binding.mainLayout.getHeight(), Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
                         binding.mainLayout.draw(canvas);
 
-                        //   Drawable dr = new BitmapDrawable(bitmap);
+                        img_url_key = getIntent().getStringExtra("img_url_key");
+                        DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(img_url_key));
+
+                        request.setTitle("WEBP Image");
+                        request.setDescription("Downloading");
 
 
-                        FileOutputStream outStream = null;
+                        File customFolder;
+                        //android 10
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            customFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Adpanda/Media/Images");
+                            String exactPath = customFolder.getAbsolutePath();
+                            //    Log.d("TAG", "exactPath: " + exactPath + "/" + model.getFileName());
+                        } else {
+                            customFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Adpanda/Media/Images");
 
-                        // Write to SD Card
-                        try {
-                            File sdCard = Environment.getExternalStorageDirectory();
-                            File dir = new File(sdCard.getAbsolutePath() + "/DCIM");
-                            dir.mkdirs();
-
-                            String fileName = String.format("%d.webp", System.currentTimeMillis());
-                            outFile = new File(dir, fileName);
-
-                            outStream = new FileOutputStream(outFile);
-                            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outStream);
-                            outStream.flush();
-                            outStream.close();
-
-                            Log.d("downloadImgLOg", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
-                            Toast.makeText(getApplicationContext(), "Download Successful : \n" + fileName, Toast.LENGTH_SHORT).show();
-
-                        } catch (FileNotFoundException e) {
-
-                            Log.d("FileNotFoundException", e.getMessage());
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            Log.d("IOException", e.getMessage());
                         }
+
+                        if (!customFolder.exists()) {
+                            customFolder.mkdirs();
+                        }
+                        String fileName = String.format("%d.webp", System.currentTimeMillis());
+                        File destinationFile = new File(customFolder, fileName);
+                        request.setDestinationUri(Uri.fromFile(destinationFile));
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        downloadId = downloadManager.enqueue(request);
                         dialogLayoutColor.dismiss();
+
                     }
                 });
-
 
 
                 dialogLayoutColor.show();
@@ -353,7 +342,6 @@ public class MainContentDownloadScreen extends AppCompatActivity {
                 Uri imgUri = Uri.parse(imageFile.getAbsolutePath());
                 Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
                 whatsappIntent.setType("text/plain");
-                whatsappIntent.putExtra(Intent.EXTRA_TEXT, "AdPanda :");
                 whatsappIntent.putExtra(Intent.EXTRA_STREAM, imgUri);
                 whatsappIntent.setType("image/jpeg");
                 whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -401,6 +389,18 @@ public class MainContentDownloadScreen extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.putExtra("editKey", "editDownload");
         startActivity(intent);
+    }
+
+    public static class DownloadReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(intent.getAction())) {
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (id == downloadId) {
+
+                }
+            }
+        }
     }
 }
 

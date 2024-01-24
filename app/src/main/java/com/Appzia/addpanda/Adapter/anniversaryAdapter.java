@@ -49,10 +49,10 @@ public class anniversaryAdapter extends RecyclerView.Adapter<anniversaryAdapter.
                 public void onClick(View v) {
 
 
-                  //  Toast.makeText(mContext, "test", Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(mContext, "test", Toast.LENGTH_SHORT).show();
 
 
-                    Intent intent =  new Intent(holder.dispText.getContext(), trendingActivity.class);
+                    Intent intent = new Intent(holder.dispText.getContext(), trendingActivity.class);
                     intent.putExtra("nameKey", String.valueOf(model.getName()));
                     intent.putExtra("categoryidKey", String.valueOf(model.getCategory_id()));
                     intent.putExtra("imageKey", String.valueOf(model.getImage()));
@@ -76,7 +76,7 @@ public class anniversaryAdapter extends RecyclerView.Adapter<anniversaryAdapter.
     public static class myViewHolder extends RecyclerView.ViewHolder {
 
         ImageView dispImg;
-        TextView dispText,category_image,category_id;
+        TextView dispText, category_image, category_id;
 
         public myViewHolder(@NonNull View itemView) {
             super(itemView);

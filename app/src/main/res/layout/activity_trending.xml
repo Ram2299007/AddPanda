@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/relativelayout"
     android:layout_height="match_parent"
-
     android:background="@color/appThemeColor"
     tools:context=".Screens.trendingActivity">
 
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -68,8 +68,8 @@
 
                             <ImageView
                                 android:id="@+id/gtranslate"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:layout_marginEnd="13.4dp"
                                 android:src="@drawable/gtranslate"
@@ -82,6 +82,7 @@
                                 android:layout_gravity="center"
                                 android:layout_marginEnd="13.4dp"
                                 android:src="@drawable/editsquare"
+                                android:visibility="gone"
                                 app:tint="@color/icon_tints" />
 
                             <ImageView
@@ -153,26 +154,25 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
                         android:id="@+id/CoLayout"
-                        android:visibility="gone"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
                         <RelativeLayout
                             android:id="@+id/viepagerCroperId"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:layout_marginTop="20dp"
-
+                            android:gravity="center"
                             android:orientation="vertical">
-
-
 
                             <ImageView
                                 android:id="@+id/viewPagerBackImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="287dp"
-
+                                android:layout_width="350dp"
+                                android:layout_height="350dp"
                                 android:contentDescription="@string/app_name"
                                 android:lineHeight="16.5dp"
                                 android:scaleType="centerCrop"
@@ -180,13 +180,13 @@
 
                             <androidx.viewpager.widget.ViewPager
                                 android:id="@+id/viewPagerId"
-                                android:layout_width="wrap_content"
-
-                                android:layout_height="287dp"
+                                android:layout_width="350dp"
+                                android:layout_height="350dp"
                                 android:contentDescription="@string/app_name" />
 
 
                         </RelativeLayout>
+
                         <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
                             android:id="@+id/dots_indicator"
                             android:layout_width="wrap_content"
@@ -200,15 +200,18 @@
                             app:dotsSize="5dp"
                             app:dotsWidthFactor="1"
                             app:selectedDotColor="@color/appOrangeTheme" />
+
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/autoClick"
                             android:layout_width="1dp"
                             android:layout_height="1dp"
                             android:visibility="gone" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="14dp"
+
 
                             android:layout_marginRight="14dp"
                             android:orientation="vertical">
@@ -217,6 +220,7 @@
                                 android:id="@+id/subCatRecview"
                                 android:layout_width="match_parent"
 
+
                                 android:layout_height="match_parent"
                                 android:orientation="vertical" />
 
@@ -224,30 +228,36 @@
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/recyclerview"
                                 android:layout_width="match_parent"
+                                android:layout_marginTop="10dp"
                                 android:layout_height="match_parent"
                                 android:layout_marginBottom="70dp"
                                 android:orientation="vertical" />
 
+                            <TextView
+                                android:id="@+id/isactivedummy"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:visibility="gone"/>
+
 
                         </LinearLayout>
                     </LinearLayout>
+
                     <com.facebook.shimmer.ShimmerFrameLayout
-                        android:layout_width="match_parent"
                         android:id="@+id/shimmerFrameLayout"
-                        android:layout_height="wrap_content"
-                        >
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                          <include layout="@layout/trending_activity_shimmer"/>
+                            <include layout="@layout/trending_activity_shimmer" />
 
 
                         </LinearLayout>
                     </com.facebook.shimmer.ShimmerFrameLayout>
-
 
 
                 </LinearLayout>
@@ -257,7 +267,7 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -310,7 +320,7 @@
             app:tint="@android:color/white" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -348,16 +358,17 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="English"
-                        android:textColor = "?android:textColorPrimary"
+                        android:textColor="?android:textColorPrimary"
                         android:textSize="14sp" />
 
 
                 </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="10dp"
-                    android:background="#C3BDBD"/>
+                    android:background="#C3BDBD" />
 
                 <LinearLayout
                     android:id="@+id/marathi"
@@ -373,7 +384,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="Marathi"
-                        android:textColor = "?android:textColorPrimary"
+                        android:textColor="?android:textColorPrimary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -381,7 +392,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="10dp"
-                    android:background="#C3BDBD"/>
+                    android:background="#C3BDBD" />
 
                 <LinearLayout
                     android:id="@+id/hindi"
@@ -397,15 +408,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor = "?android:textColorPrimary"
                         android:text="Hindi"
+                        android:textColor="?android:textColorPrimary"
 
                         android:textSize="14sp" />
 
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
 
@@ -413,7 +424,7 @@
 
 
         </androidx.cardview.widget.CardView>
-        
-        
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

@@ -19,7 +19,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -46,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.frameAdapter;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -105,6 +103,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
 
         token = sh.getString("TOKEN_SF", "");
@@ -123,9 +122,8 @@ public class Basic_editFrameActivity extends AppCompatActivity {
         Constant.NetworkCheck(mContext);
         if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
 
-            Webservice.get_frame_list_twoBasic(mContext, token, Basic_editFrameActivity.this, categoryid, sub_cat_id, template_idKey);
-        }
-        else {
+            Webservice.fetch_all_frames_photo_basic(mContext, token, Basic_editFrameActivity.this);
+        } else {
             Constant.NetworkCheckDialogue(mContext);
             Constant.dialogForNetwork.show();
 
@@ -324,25 +322,123 @@ public class Basic_editFrameActivity extends AppCompatActivity {
         binding.backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onBackPressed();
 
-                //     getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new trendingFragment()).commit();
+            }
+        });
 
-                new AlertDialog.Builder(Basic_editFrameActivity.this).setTitle("Warning").setMessage("If you leave this page , you loss all your work.\nAre you sure want to exit?")
+        binding.edttextFragRel1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.editTextFrag.getVisibility() == View.VISIBLE) {
+                    binding.editTextFrag.setVisibility(View.INVISIBLE);
+                } else if (binding.editTextFrag.getVisibility() == View.INVISIBLE) {
+                    binding.editTextFrag.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        binding.edttextFragRel1.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout view = (RelativeLayout) v;
+                view.bringToFront();
+                viewTransformation(view, event);
 
 
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+                return true;
+            }
 
-                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                i.putExtra("editKey", "editBack");
-                                startActivity(i);
+        });
+        binding.locationFragRel.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout view = (RelativeLayout) v;
+                view.bringToFront();
+                viewTransformation(view, event);
 
-                            }
-                        })
 
-                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
+                return true;
+            }
+
+        });
+        binding.emailFragRel2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout view = (RelativeLayout) v;
+                view.bringToFront();
+                viewTransformation(view, event);
 
 
+                return true;
+            }
+
+        });
+        binding.phoneFragRel2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout view = (RelativeLayout) v;
+                view.bringToFront();
+                viewTransformation(view, event);
+
+
+                return true;
+            }
+
+        });
+
+        binding.locationFragRel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.locationText.getVisibility() == View.VISIBLE) {
+                    binding.locationText.setVisibility(View.INVISIBLE);
+                    binding.locationImg.setVisibility(View.INVISIBLE);
+
+                } else if (binding.locationText.getVisibility() == View.INVISIBLE) {
+                    binding.locationText.setVisibility(View.VISIBLE);
+                    binding.locationImg.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+        binding.emailFragRel2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.emailText.getVisibility() == View.VISIBLE) {
+                    binding.emailText.setVisibility(View.INVISIBLE);
+                    binding.emailImg.setVisibility(View.INVISIBLE);
+
+                } else if (binding.emailText.getVisibility() == View.INVISIBLE) {
+                    binding.emailText.setVisibility(View.VISIBLE);
+                    binding.emailImg.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        binding.phoneFragRel2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.phoneText.getVisibility() == View.VISIBLE) {
+                    binding.phoneText.setVisibility(View.INVISIBLE);
+                    binding.phoneImg.setVisibility(View.INVISIBLE);
+
+                } else if (binding.phoneText.getVisibility() == View.INVISIBLE) {
+                    binding.phoneText.setVisibility(View.VISIBLE);
+                    binding.phoneImg.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        binding.imageGallaryRel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.img.getVisibility() == View.VISIBLE) {
+                    binding.img.setVisibility(View.INVISIBLE);
+
+
+                } else if (binding.img.getVisibility() == View.INVISIBLE) {
+                    binding.img.setVisibility(View.VISIBLE);
+                    binding.phoneImg.setVisibility(View.VISIBLE);
+                }
             }
         });
         // Inflate the layout for this fragment
@@ -382,11 +478,13 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                                     myEdit.apply();
 
 
+                                    int is_activeKey = getIntent().getIntExtra("is_activeKey",2);
                                     // getSupportFragmentManager().beginTransaction().replace(R.id.mainActivityFrame, new downloadimageFragment()).commit();
                                     Intent i = new Intent(getApplicationContext(), downloadImageActivity.class);
                                     i.putExtra("sub_cat_idkey", sub_cat_id);
                                     i.putExtra("template_idkey", template_id);
                                     i.putExtra("cat_idkey", categoryid);
+                                    i.putExtra("is_activeKey", is_activeKey);
 
                                     startActivity(i);
 
@@ -438,9 +536,8 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                 enterText.setText(binding.editTextFrag.getText().toString());
                 enterText.setSelection(enterText.length());
                 enterText.setInputType(InputType.TYPE_CLASS_TEXT);
-                InputFilter[] filterArray = new InputFilter[1];
-                filterArray[0] = new InputFilter.LengthFilter(20);
-                enterText.setFilters(filterArray);
+
+
 
                 enterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -497,9 +594,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                 enterText.setText(binding.locationText.getText().toString());
                 enterText.setSelection(enterText.length());
                 enterText.setInputType(InputType.TYPE_CLASS_TEXT);
-                InputFilter[] filterArray = new InputFilter[1];
-                filterArray[0] = new InputFilter.LengthFilter(25);
-                enterText.setFilters(filterArray);
+
 
                 enterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -555,9 +650,7 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                 enterText.setText(binding.emailText.getText().toString());
                 enterText.setSelection(enterText.length());
                 enterText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                InputFilter[] filterArray = new InputFilter[1];
-                filterArray[0] = new InputFilter.LengthFilter(29);
-                enterText.setFilters(filterArray);
+
 
                 enterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -613,9 +706,9 @@ public class Basic_editFrameActivity extends AppCompatActivity {
                 enterText.setText(binding.phoneText.getText().toString());
                 enterText.setSelection(enterText.length());
                 enterText.setInputType(InputType.TYPE_CLASS_PHONE | InputType.TYPE_CLASS_TEXT);
-                InputFilter[] filterArray = new InputFilter[1];
-                filterArray[0] = new InputFilter.LengthFilter(10);
-                enterText.setFilters(filterArray);
+//                InputFilter[] filterArray = new InputFilter[1];
+//                filterArray[0] = new InputFilter.LengthFilter(10);
+//                enterText.setFilters(filterArray);
 
 
                 enterButton.setOnClickListener(new View.OnClickListener() {
@@ -735,6 +828,26 @@ public class Basic_editFrameActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(Basic_editFrameActivity.this).setTitle("Warning").setMessage("If you leave this page , you loss all your work.\nAre you sure want to exit?")
+
+
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Intent i = new Intent(getApplicationContext(), basicEditsFirstActivity.class);
+                        i.putExtra("editKey", "editBack");
+                        startActivity(i);
+
+                    }
+                })
+
+                .setNegativeButton(android.R.string.no, null).setIcon(null).show();
+
+
     }
 
     private boolean checkAndRequestPermissions() {
@@ -942,11 +1055,27 @@ public class Basic_editFrameActivity extends AppCompatActivity {
         frameadapter = new frameAdapter(mContext);
         binding.editRecyclerViewFrame.setHasFixedSize(true);
         binding.editRecyclerViewFrame.setAdapter(frameadapter);
+
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         binding.editRecyclerViewFrame2.setLayoutManager(linearLayoutManager2);
         frameadapter = new frameAdapter(mContext);
         binding.editRecyclerViewFrame2.setHasFixedSize(true);
         binding.editRecyclerViewFrame2.setAdapter(frameadapter);
+    }
+
+    public void setFrameAdapter() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame.setLayoutManager(linearLayoutManager);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame.setHasFixedSize(true);
+        binding.editRecyclerViewFrame.setAdapter(frameadapter);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+        binding.editRecyclerViewFrame2.setLayoutManager(linearLayoutManager2);
+        frameadapter = new frameAdapter(mContext);
+        binding.editRecyclerViewFrame2.setHasFixedSize(true);
+        binding.editRecyclerViewFrame2.setAdapter(frameadapter);
+
+
     }
 
 

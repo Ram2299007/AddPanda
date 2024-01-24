@@ -8,10 +8,10 @@
     tools:context=".Fragments.DownloadsFragment">
 
     <com.facebook.shimmer.ShimmerFrameLayout
-
+        android:id="@+id/shimmerFrameLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/shimmerFrameLayout2">
+        android:visibility="visible">
 
 
         <LinearLayout
@@ -19,27 +19,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/download_shimmer"/>
+            <include layout="@layout/download_shimmer" />
 
         </LinearLayout>
 
     </com.facebook.shimmer.ShimmerFrameLayout>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/CoLayout2"
-        android:visibility="invisible"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"
+        android:visibility="gone">
 
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
 
@@ -56,6 +57,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:visibility="gone"
                         android:src="@drawable/ic_baseline_arrow_back_24"
                         app:tint="@color/icon_tints" />
 
@@ -93,25 +95,11 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="400"
-                    android:fontFamily="@font/poppins_medium"
-                    android:gravity="center"
-                    android:text="Recent"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:layout_marginLeft="9dp"
                     android:layout_marginTop="32dp"
-                    android:layout_marginRight="9dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -141,7 +129,7 @@
                         android:layout_width="91dp"
                         android:layout_height="32dp"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="18dp"
+
                         android:background="@drawable/button_rounded2_hover_for_all"
                         android:drawableStart="@drawable/videologo"
                         android:fontFamily="@font/poppins"
@@ -160,31 +148,71 @@
 
                 </LinearLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginRight="14dp"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginLeft="9dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="9dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
 
-                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                        android:id="@+id/swipeContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="17dp">
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/tmpId"
+                        android:layout_width="150dp"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="10dp"
+
+                        android:background="@drawable/button_bg_hover_2"
+
+                        android:fontFamily="@font/poppins"
+
+                        android:lineHeight="15dp"
 
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/downloadRecyclerview"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical" />
-                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                        android:text="Template Content"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="10sp"
+                        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/visitingId"
+                        android:layout_width="150dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/button_home_bg"
+                        android:fontFamily="@font/poppins"
+
+                        android:lineHeight="15dp"
+
+                        android:text="Visiting card"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textFontWeight="500"
+                        android:textSize="10sp"
+                        tools:ignore="TouchTargetSizeCheck" />
 
 
                 </LinearLayout>
+
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="17dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/downloadRecyclerview"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
             </LinearLayout>

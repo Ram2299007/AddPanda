@@ -33,6 +33,8 @@ import com.Appzia.addpanda.Model.categoryParentModel;
 import com.Appzia.addpanda.Model.downloadModel;
 import com.Appzia.addpanda.Model.faqModel;
 import com.Appzia.addpanda.Model.frameModel;
+import com.Appzia.addpanda.Model.get_category_listChild1Model;
+import com.Appzia.addpanda.Model.get_subscription_listChildModel;
 import com.Appzia.addpanda.Model.horiVisitingModel;
 import com.Appzia.addpanda.Model.mainCatBtnChildModel;
 import com.Appzia.addpanda.Model.notiModel;
@@ -52,8 +54,9 @@ public class Constant {
     public static SharedPreferences getSF;
     public static NetworkInfo wifiInfo, mobileInfo;
 
-    public static  AppCompatButton btn;
+    public static AppCompatButton btn;
     public static Dialog dialogForNetwork;
+    public static Dialog DialogueGlobal;
     public static ConnectivityManager connectivityManager;
 
     public static ArrayList<String> categoryNames = new ArrayList<>();
@@ -69,8 +72,11 @@ public class Constant {
     public static ArrayList<scratcheditAniversaryModel> scratcheditAniversaryModelSubList = new ArrayList<>();
     public static ArrayList<frameModel> frameList = new ArrayList<>();
     public static ArrayList<frameModel> frameListTwo = new ArrayList<>();
+    public static ArrayList<get_subscription_listChildModel> get_subscription_list = new ArrayList<>();
+    public static ArrayList<get_category_listChild1Model> get_category_listChild1ModelList = new ArrayList<>();
 
     public static ArrayList<downloadModel> downloadList = new ArrayList<>();
+    public static ArrayList<downloadModel> visitingCardAdapterList = new ArrayList<>();
     public static ArrayList<downloadModel> VisitingdownloadList = new ArrayList<>();
     public static ArrayList<downloadModel> visitingcardList = new ArrayList<>();
     public static ArrayList<mainCatBtnChildModel> mainCatBtnModelList = new ArrayList<>();
@@ -79,18 +85,17 @@ public class Constant {
     public static ArrayList<categoryChildModel> categoryChildModelList = new ArrayList<>();
     public static ArrayList<categoryChildModel> categoryChildModelList2 = new ArrayList<>();
     public static ArrayList<categoryParentModel> ccategoryParentModelList = new ArrayList<>();
-
     public static ArrayList<viewPagerModel> viewpager = new ArrayList<>();
-
-    public static  ObjectAnimator alphaAnimator;
-    public static  ObjectAnimator translationYAnimator;
-    public static   AnimatorSet animatorSet;
+    public static ObjectAnimator alphaAnimator;
+    public static ObjectAnimator translationYAnimator;
+    public static AnimatorSet animatorSet;
 
     public static String mainKey = "mainKey";
     public static String basicKey = "basicKey";
     public static String scratchKey = "scratchKey";
     public static String BasicKeyMain = "BasicKey";
     public static String ACC_TYPE = "ACC_TYPE_KEY";
+    public static String TOKEN_SF = "TOKEN_SF";
     public static ArrayList<categoryModel> categoryModelList = new ArrayList<>();
 
 
@@ -135,6 +140,23 @@ public class Constant {
     }
 
 
+    public static void DialogueGlobal(Context mContext, int layout) {
+
+        DialogueGlobal = new Dialog(mContext);
+        DialogueGlobal.setContentView(layout);
+        DialogueGlobal.setCanceledOnTouchOutside(true);
+        DialogueGlobal.setCancelable(true);
+        DialogueGlobal.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
+
+        DialogueGlobal.getWindow().setGravity(Gravity.CENTER);
+        DialogueGlobal.getWindow().setBackgroundDrawable(null);
+
+        Window window = DialogueGlobal.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+    }
+
+
     public static void viewGoneAnimator(final View view) {
 
         view.animate()
@@ -162,7 +184,6 @@ public class Constant {
                 });
 
     }
-
 
 
 }

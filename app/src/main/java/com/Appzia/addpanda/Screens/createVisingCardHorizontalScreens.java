@@ -16,8 +16,6 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.Appzia.addpanda.Adapter.horiVisitingAdapter;
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -29,17 +27,19 @@ import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.Objects;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class createVisingCardHorizontalScreens extends AppCompatActivity {
 
     ActivityCreateVisingCardHorizontalScreensBinding binding;
     Context mContext;
     horiVisitingAdapter adapter;
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
 
     @Override
     public void onStart() {
         super.onStart();
-        progressBar = (ProgressBar)findViewById(R.id.progressbar);
+        progressBar = (GifImageView)findViewById(R.id.progressbar);
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
 
         String token = sh.getString("TOKEN_SF", "");

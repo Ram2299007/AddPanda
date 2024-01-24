@@ -2,23 +2,14 @@ package com.Appzia.addpanda.Screens;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,25 +18,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivityPersonalProfileBinding;
-import com.google.android.material.bottomappbar.BottomAppBar;
-import com.google.android.material.shape.CornerFamily;
-import com.google.android.material.shape.MaterialShapeDrawable;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class PersonalProfile extends AppCompatActivity {
 
@@ -74,7 +58,7 @@ public class PersonalProfile extends AppCompatActivity {
     String encodedImage;
 
     String checkOnActivityResukt="";
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
     public static final String FILE_NAME_NEW = "imgNew.txt";
@@ -85,7 +69,7 @@ public class PersonalProfile extends AppCompatActivity {
 
         try {
             //progress bar declaration
-            progressBar = (ProgressBar) findViewById(R.id.progressbar);
+            progressBar = (GifImageView) findViewById(R.id.progressbar);
             name = getIntent().getStringExtra("name");
             email_id = getIntent().getStringExtra("email_id");
             mobile_number = getIntent().getStringExtra("mobile_number");
@@ -148,10 +132,18 @@ public class PersonalProfile extends AppCompatActivity {
         binding.pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(Intent.createChooser(intent, "select image"),
-                        PICK_IMAGE);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("image/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                try {
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select a File to Upload"),
+                            PICK_IMAGE);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    // Potentially direct the user to the Market with a Dialog
+                    Toast.makeText(getApplicationContext(), "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -206,8 +198,28 @@ public class PersonalProfile extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             binding.imageView.setImageURI(selectedImageUri);
 
-            String selectedImagePath = getRealPathFromURIForGallery(selectedImageUri);
-            imageFile = new File(selectedImagePath);
+
+            File f = new File(getCacheDir() + "/temp." + "jpeg");
+            try {
+                InputStream is = getContentResolver().openInputStream(selectedImageUri);
+                FileOutputStream fs = new FileOutputStream(f);
+                int read = 0;
+                int bufferSize = 1024;
+                final byte[] buffers = new byte[bufferSize];
+                while ((read = is.read(buffers)) != -1) {
+                    fs.write(buffers, 0, read);
+                }
+                is.close();
+                fs.close();
+
+                Log.d("imageFile111", f.getPath());
+                imageFile = f;
+
+            } catch (Exception e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+
 
             checkOnActivityResukt = "ok";
 

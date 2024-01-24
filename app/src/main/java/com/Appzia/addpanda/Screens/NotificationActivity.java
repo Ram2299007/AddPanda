@@ -1,14 +1,12 @@
 package com.Appzia.addpanda.Screens;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,8 +17,6 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.Appzia.addpanda.Adapter.notiAdapter;
-import com.Appzia.addpanda.Fragments.mainFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -32,6 +28,8 @@ import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.Objects;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class NotificationActivity extends AppCompatActivity {
 
@@ -45,7 +43,7 @@ public class NotificationActivity extends AppCompatActivity {
 
     public static RecyclerView notiRecyclerview;
     public  static ShimmerFrameLayout shimmerFrameLayout;
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
     String token;
 
     @Override
@@ -58,7 +56,7 @@ public class NotificationActivity extends AppCompatActivity {
         notiRecyclerview = (RecyclerView) findViewById(R.id.notiRecyclerview);
         shimmerFrameLayout = (ShimmerFrameLayout) findViewById(R.id.shimmerFrameLayout);
         //progress bar declaration
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (GifImageView) findViewById(R.id.progressbar);
 
         Constant.NetworkCheck(mContext);
         if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {

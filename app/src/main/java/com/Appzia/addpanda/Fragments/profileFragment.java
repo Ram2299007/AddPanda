@@ -2,13 +2,10 @@ package com.Appzia.addpanda.Fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,10 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Screens.NotificationActivity;
-import com.Appzia.addpanda.Screens.PersonalProfile;
 import com.Appzia.addpanda.Screens.SignInActivity;
 import com.Appzia.addpanda.Screens.createVisingCardHorizontalScreens;
 import com.Appzia.addpanda.Screens.manageAccountScreens;
@@ -35,21 +30,12 @@ import com.Appzia.addpanda.Screens.partner_with_usActivity;
 import com.Appzia.addpanda.Screens.referandearnscreen;
 import com.Appzia.addpanda.Screens.settingScreen;
 import com.Appzia.addpanda.Screens.subscriptionActivity;
+import com.Appzia.addpanda.Screens.EditFrameOwner;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.FragmentProfileBinding;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
-
-import java.util.Objects;
 
 
 public class profileFragment extends Fragment {
@@ -143,10 +129,12 @@ public class profileFragment extends Fragment {
                 Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
             }
         });
-        binding.editframe.setOnClickListener(new View.OnClickListener() {
+        binding.editFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(mContext, "Coming soon....", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), EditFrameOwner.class));
+
             }
         });
         binding.personalsocia.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +171,11 @@ public class profileFragment extends Fragment {
         binding.subscribe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), subscriptionActivity.class));
+                Intent intent = new Intent(getActivity(), subscriptionActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
             }
         });
         binding.referearn.setOnClickListener(new View.OnClickListener() {
@@ -193,13 +185,13 @@ public class profileFragment extends Fragment {
                 startActivity(new Intent(getActivity(), referandearnscreen.class));
             }
         });
-        binding.visitingCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                assert getFragmentManager() != null;
-
-            }
-        });
+//        binding.visitingCard.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                assert getFragmentManager() != null;
+//
+//            }
+//        });
 
         binding.createdigitalcard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,16 +205,30 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
-                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString("user_id", "");
-                myEdit.putString("TOKEN_SF", "");
-                myEdit.putString("social_media_type", "");
-                myEdit.putString("VERIFIED_KEY", "");
-                myEdit.putString("VERIFIED_SOCIAL_MEDIA_KEY", "");
-                myEdit.apply();
-                mfirebaseAuth.signOut();
-                startActivity(new Intent(getActivity(), SignInActivity.class));
+                new AlertDialog.Builder(mContext).setTitle("Warning").setMessage("Are you sure want to exit?")
+
+
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                myEdit.putString("user_id", "");
+                                myEdit.putString("TOKEN_SF", "");
+                                myEdit.putString("social_media_type", "");
+                                myEdit.putString("VERIFIED_KEY", "");
+                                myEdit.putString("VERIFIED_SOCIAL_MEDIA_KEY", "");
+                                myEdit.apply();
+                                mfirebaseAuth.signOut();
+                                startActivity(new Intent(getActivity(), SignInActivity.class));
+
+                            }
+
+                        })
+
+                        .setNegativeButton(android.R.string.no, null).setIcon(null).show();
+
+
             }
         });
 

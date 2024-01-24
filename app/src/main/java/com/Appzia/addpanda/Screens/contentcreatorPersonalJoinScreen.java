@@ -1,28 +1,15 @@
 package com.Appzia.addpanda.Screens;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.loader.content.CursorLoader;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.ParcelFileDescriptor;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,10 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
-import com.Appzia.addpanda.Util.FileUtils;
 import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivityContentcreatorPersonalJoinScreenBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;
@@ -45,20 +30,10 @@ import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
-
-import cz.msebera.android.httpclient.entity.mime.MIME;
 
 public class contentcreatorPersonalJoinScreen extends AppCompatActivity {
 
@@ -244,7 +219,7 @@ public class contentcreatorPersonalJoinScreen extends AppCompatActivity {
                     if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
                         Webservice.add_partner_with_us_data(mContext, token, binding.name.getText().toString(), binding.mobile.getText().toString(), binding.email.getText().toString(), binding.exp.getText().toString(), imageFile, partner_is, binding.special.getText().toString());
 
-                      //  Webservice.add_partner_with_us_data_IS(mContext, token, binding.name.getText().toString(), binding.mobile.getText().toString(), binding.email.getText().toString(), binding.exp.getText().toString(), InputFile, partner_is, binding.special.getText().toString());
+                      //  WebserviceRetrofit.add_partner_with_us_data_IS(mContext, token, binding.name.getText().toString(), binding.mobile.getText().toString(), binding.email.getText().toString(), binding.exp.getText().toString(), InputFile, partner_is, binding.special.getText().toString());
 
                     } else {
                         Constant.NetworkCheckDialogue(mContext);

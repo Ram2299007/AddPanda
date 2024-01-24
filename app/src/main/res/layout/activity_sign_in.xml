@@ -40,7 +40,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:lineHeight="18.15dp"
-                    android:text="Design Social Graphics,Ads,Templates \nVideos and Many More"
+                    android:text="Design Social Graphics , Ads , Templates \nVideos and Many More"
                     android:textColor="@color/white"
                     android:textFontWeight="600"
                     android:textSize="15sp"

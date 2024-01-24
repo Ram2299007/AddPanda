@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/rl"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/expiry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="17dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginEnd="17dp"
+                    android:layout_marginBottom="23dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:lineHeight="22.5dp"
+                    android:text="Existing Plan : Expires on 29 Nov,2022"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="15sp"
+                    android:visibility="invisible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="230dp"
+                    android:layout_below="@+id/expiry"
+                    android:layout_marginStart="27dp"
+                    android:layout_marginEnd="27dp"
+
+                    android:background="@drawable/triangle_bg"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="28dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center"
+                        android:lineHeight="42dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:singleLine="true"
+                        android:text="GENERAL PLAN"
+                        android:textColor="@color/white"
+                        android:textFontWeight="600"
+                        android:textSize="28sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="45dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginBottom="2dp"
+                            android:src="@drawable/bx_rupee" />
+
+                        <TextView
+                            android:id="@+id/originalPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5.25dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:lineHeight="30dp"
+                            android:text="4000"
+                            android:textColor="@color/black"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5.25dp"
+                            android:fontFamily="@font/poppins"
+                            android:lineHeight="30dp"
+                            android:text="/"
+                            android:textColor="@color/black"
+                            android:textSize="20dp" />
+
+                        <TextView
+                            android:id="@+id/strike"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:fontFamily="@font/poppins"
+
+                            android:lineHeight="30dp"
+                            android:text="5000"
+                            android:textColor="@color/black"
+                            android:textSize="20dp" />
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="28dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+
+
+                        <TextView
+                            android:id="@+id/validity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:fontFamily="@font/poppins"
+
+                            android:lineHeight="30dp"
+                            android:textFontWeight="600"
+                            android:text="5000"
+                            android:textColor="@color/white"
+                            android:textSize="22sp" />
+
+
+                    </LinearLayout>
+
+
+
+
+
+                </LinearLayout>
+
+
+
+
+            </RelativeLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl"
+                android:layout_centerInParent="true"
+                android:layout_marginHorizontal="42dp"
+                android:background="@color/white"
+                android:minHeight="220dp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buyNow"
+                android:layout_width="143dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/recView"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+
+
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button"
+                android:lineHeight="36dp"
+                android:text="BUY NOW"
+                android:textColor="@color/white"
+                android:textFontWeight="600"
+                android:textSize="22dp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+
+
+</RelativeLayout>

@@ -2,30 +2,39 @@ package com.Appzia.addpanda.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
+import android.os.CountDownTimer;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.Appzia.addpanda.Screens.subscriptionActivity;
 import com.Appzia.addpanda.Screens.trendingActivity;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Model.trendingSubModel;
 import com.Appzia.addpanda.R;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 public class viewAllAdapter extends RecyclerView.Adapter<viewAllAdapter.myViewHolder> {
 
     Context mContext;
     String BasicKey;
+    RelativeLayout relativelayout;
 
-
-    public viewAllAdapter(Context mContext, String basicKey) {
+    public viewAllAdapter(Context mContext, String basicKey, RelativeLayout relativelayout) {
         this.mContext = mContext;
-        this.BasicKey =basicKey;
+        this.BasicKey = basicKey;
+        this.relativelayout = relativelayout;
 
 
     }
@@ -43,63 +52,96 @@ public class viewAllAdapter extends RecyclerView.Adapter<viewAllAdapter.myViewHo
     @Override
     public void onBindViewHolder(@NonNull myViewHolder holder, int position) {
 
-        try {
-            final trendingSubModel model = Constant.viewAllList.get(position);
 
-            Picasso.get().load(model.getImage()).into(holder.img1);
+            final trendingSubModel model = Constant.viewAllList.get(position);
+            try {
+                Picasso.get().load(model.getImage()).into(holder.img1);
+            }catch (Exception ingored){}
             holder.sub_cat_id.setText(model.getSub_cat_id());
             holder.category_id.setText(model.getCategory_id());
             holder.template_id.setText(model.getTemplate_id());
+         //  Toast.makeText(mContext, model.getSub_cat_name(), Toast.LENGTH_SHORT).show();
+
             holder.subcatname.setText(model.getSub_cat_name());
 
+            if (model.getIs_active() == 0) {
 
+
+                int widthInDp = 15;
+                int heightInDp = 15;
+
+                int widthInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widthInDp, mContext.getResources().getDisplayMetrics());
+                int heightInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heightInDp, mContext.getResources().getDisplayMetrics());
+
+                ViewGroup.LayoutParams layoutParams = holder.premium.getLayoutParams();
+                layoutParams.width = widthInPixels;
+                layoutParams.height = heightInPixels;
+                holder.premium.setLayoutParams(layoutParams);
+
+
+                holder.premium.setVisibility(View.VISIBLE);
+
+                holder.premium.setImageResource(R.drawable.diamond);
+
+            } else {
+                int widthInDp = 27;
+                int heightInDp = 10;
+
+                int widthInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widthInDp, mContext.getResources().getDisplayMetrics());
+                int heightInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heightInDp, mContext.getResources().getDisplayMetrics());
+
+                ViewGroup.LayoutParams layoutParams = holder.premium.getLayoutParams();
+                layoutParams.width = widthInPixels;
+                layoutParams.height = heightInPixels;
+                holder.premium.setLayoutParams(layoutParams);
+
+                holder.premium.setVisibility(View.VISIBLE);
+                holder.premium.setImageResource(R.drawable.free_svg);
+
+            }
+
+
+
+            final Snackbar[] snackbar = new Snackbar[1];
             holder.img1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    if (model.getIs_active() == 0) {
+//
+//
+//                        snackbar[0] = Snackbar
+//                                .make(relativelayout, "You need to purchase subscription", snackbar[0].LENGTH_LONG);
+//
+//                        snackbar[0].show();
+//                        new CountDownTimer(2000, 1000) {
+//                            @Override
+//                            public void onTick(long millisUntilFinished) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onFinish() {
+//                                mContext.startActivity(new Intent(mContext, subscriptionActivity.class));
+//                            }
+//                        }.start();
+//                        //
+//                    } else {
+//
+//
+//                    }
+//
 
-
-                        Intent intent = new Intent(holder.img1.getContext(), trendingActivity.class);
-                        intent.putExtra("categoryidKey", String.valueOf(model.getCategory_id()));
-                        intent.putExtra("imageKey", String.valueOf(model.getImage()));
-                        intent.putExtra("sub_cat_idKey", String.valueOf(model.getSub_cat_id()));
-                        intent.putExtra(Constant.BasicKeyMain, BasicKey);
-                        holder.img1.getContext().startActivity(intent);
-
-
+                    Intent intent = new Intent(holder.img1.getContext(), trendingActivity.class);
+                    intent.putExtra("categoryidKey", String.valueOf(model.getCategory_id()));
+                    intent.putExtra("imageKey", String.valueOf(model.getImage()));
+                    intent.putExtra("sub_cat_idKey", String.valueOf(model.getSub_cat_id()));
+                    intent.putExtra("is_activeKey", model.getIs_active());
+                    intent.putExtra(Constant.BasicKeyMain, BasicKey);
+                    holder.img1.getContext().startActivity(intent);
 
                 }
             });
 
-        } catch (Exception ignored) {
-        }
-
-
-//        holder.img1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-////                Intent intent = new Intent(holder.img1.getContext(), editFameActivity.class);
-////                holder.img1.getContext().startActivity(intent);
-//                Constant.setSfFunction(holder.img1.getContext());
-//                Constant.setSF.putString("originalImageKey",String.valueOf(model.getImage()));
-//                Constant.setSF.apply();
-//
-//                Log.d("##test", String.valueOf(model.getImage()));
-//
-//                SharedPreferences sharedPreferences = holder.img1.getContext().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
-//
-//                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-//
-//                myEdit.putString("imagekey", String.valueOf(model.getImage()));
-//                myEdit.putString("sub_cat_idKey", String.valueOf(model.getSub_cat_id()));
-//                myEdit.putString("category_idKey", String.valueOf(model.getCategory_id()));
-//                myEdit.putString("template_idKey", String.valueOf(model.getTemplate_id()));
-//                myEdit.apply();
-//
-//
-//
-//            }
-//        });
 
 
     }
@@ -115,7 +157,7 @@ public class viewAllAdapter extends RecyclerView.Adapter<viewAllAdapter.myViewHo
 
 
     public static class myViewHolder extends RecyclerView.ViewHolder {
-        ImageView img1;
+        ImageView img1, premium;
         TextView category_id, sub_cat_id, template_id, subcatname;
 
         public myViewHolder(@NonNull View itemView) {
@@ -125,6 +167,7 @@ public class viewAllAdapter extends RecyclerView.Adapter<viewAllAdapter.myViewHo
             this.sub_cat_id = (TextView) itemView.findViewById(R.id.sub_cat_idtrendingfrag);
             this.template_id = (TextView) itemView.findViewById(R.id.template_idtrendingfrag);
             this.subcatname = (TextView) itemView.findViewById(R.id.subcatname);
+            this.premium = (ImageView) itemView.findViewById(R.id.premium);
 
 
         }

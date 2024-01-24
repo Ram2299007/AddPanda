@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.databinding.ActivityPartnerWithUsBinding;
 import com.google.android.material.bottomappbar.BottomAppBar;

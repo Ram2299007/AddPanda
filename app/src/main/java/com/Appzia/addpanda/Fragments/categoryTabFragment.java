@@ -20,12 +20,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.Appzia.addpanda.Adapter.categoryAdapter;
-import com.Appzia.addpanda.MainActivity;
+import com.Appzia.addpanda.Screens.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.FragmentCategoryTabBinding;
 import com.facebook.shimmer.ShimmerFrameLayout;
+
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class categoryTabFragment extends Fragment {
@@ -40,7 +42,7 @@ public class categoryTabFragment extends Fragment {
     String token;
     categoryAdapter adapter;
 
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
 
 
     @Override
@@ -51,7 +53,7 @@ public class categoryTabFragment extends Fragment {
         CoLayout = (CoordinatorLayout) requireActivity().findViewById(R.id.CoLayout);
 
         shimmerFrameLayout = (ShimmerFrameLayout) requireActivity().findViewById(R.id.shimmerFrameLayout);
-        progressBar = (ProgressBar) requireActivity().findViewById(R.id.progressbar);
+        progressBar = (GifImageView) requireActivity().findViewById(R.id.progressbar);
         SharedPreferences sh = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
 
         token = sh.getString("TOKEN_SF", "");
@@ -108,7 +110,7 @@ public class categoryTabFragment extends Fragment {
 //                if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
 //
 //
-//                    Webservice.get_category_list_display(mContext, token, categoryTabFragment.this, "business");
+//                    WebserviceRetrofit.get_category_list_display(mContext, token, categoryTabFragment.this, "business");
 //                } else {
 //                    Constant.NetworkCheckDialogue(mContext);
 //                    Constant.dialogForNetwork.show();

@@ -29,8 +29,10 @@ public class coupanScreen extends AppCompatActivity {
         binding.check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), PaymentActivity.class));
+               // startActivity(new Intent(getApplicationContext(), PaymentActivity.class));
             }
         });
     }
+
+
 }

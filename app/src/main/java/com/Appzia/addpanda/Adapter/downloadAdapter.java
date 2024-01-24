@@ -16,6 +16,9 @@ import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public class downloadAdapter extends RecyclerView.Adapter<downloadAdapter.myViewholder> {
     Context mContext;
 
@@ -33,6 +36,8 @@ public class downloadAdapter extends RecyclerView.Adapter<downloadAdapter.myView
 
     @Override
     public void onBindViewHolder(@NonNull downloadAdapter.myViewholder holder, int position) {
+
+        Collections.reverse(Constant.downloadList);
         final downloadModel model = Constant.downloadList.get(position);
 
 

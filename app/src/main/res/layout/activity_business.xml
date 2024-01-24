@@ -27,14 +27,30 @@
                 android:layout_marginEnd="20dp"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="83dp"
-                    android:layout_height="83dp"
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_marginTop="50dp"
                     android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/img"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center"
+                        android:padding="5dp"
+                        android:src="@drawable/logo_svg_new" />
 
-                    android:layout_marginTop="54dp"
-                    android:layout_marginBottom="17dp"
-                    android:src="@drawable/groupbisines"/>
+                    <ImageView
+                        android:id="@+id/getImgCrd"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="50dp"
+                        android:layout_alignParentBottom="true"
+                        android:src="@drawable/logoadd_svg_new" />
+
+                </RelativeLayout>
 
                 <EditText
                     android:id="@+id/name"

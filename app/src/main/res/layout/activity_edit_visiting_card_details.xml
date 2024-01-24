@@ -13,8 +13,6 @@
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-
-
             android:layout_height="wrap_content">
 
 
@@ -65,7 +63,8 @@
                             android:layout_gravity="center"
                             android:layout_marginEnd="30dp"
                             android:gravity="end"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:visibility="visible">
 
 
                             <ImageView
@@ -80,13 +79,37 @@
 
                     </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="83dp"
-                        android:layout_height="83dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="31dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/editvisitingcardlogo" />
+
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:gravity="center"
+             android:layout_marginTop="20dp"
+             android:layout_gravity="center"
+             android:layout_height="wrap_content">
+             <de.hdodenhof.circleimageview.CircleImageView
+                 android:id="@+id/img"
+                 android:layout_width="80dp"
+                 android:layout_height="80dp"
+                 android:scaleType="centerCrop"
+                 android:layout_gravity="center"
+                 android:padding="5dp"
+                 android:src="@drawable/logo_svg_new" />
+
+             <ImageView
+                 android:id="@+id/getImgCrd"
+                 android:layout_width="30dp"
+                 android:layout_height="30dp"
+                 android:layout_marginStart="50dp"
+                 android:layout_alignParentBottom="true"
+                 android:src="@drawable/logoadd_svg_new" />
+
+         </RelativeLayout>
+
+
+
+
+
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -115,12 +138,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
-
                             android:background="@drawable/button_color_hover_for_all"
                             android:fontFamily="@font/poppins"
                             android:gravity="center"
                             android:hint="Your Name"
-                            android:inputType="textPersonName"
+
                             android:lineHeight="21dp"
                             android:textColor="@color/white"
                             android:textColorHint="@color/text_hint_color"
@@ -226,12 +248,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
-
                             android:background="@drawable/button_color_hover_for_all"
                             android:fontFamily="@font/poppins"
                             android:gravity="center"
                             android:hint="Whatsapp Number "
-                            android:inputType="phone"
+
                             android:lineHeight="21dp"
                             android:maxLength="10"
                             android:textColor="@color/white"
@@ -270,6 +291,7 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </ScrollView>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

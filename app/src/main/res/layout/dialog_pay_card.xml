@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:elevation="20dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="20dp">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:text="Enter Card Details"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+
+        android:layout_width="match_parent"
+        android:layout_margin="8dp"
+
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_card_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:hint="Card Number"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_margin="8dp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_card_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Card Holder Name"
+            android:fontFamily="@font/poppins"
+            android:maxLength="40" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <TableRow
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_card_month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Expiry Month"
+                android:fontFamily="@font/poppins"
+                android:maxLength="2"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/et_card_year"
+                android:maxLength="4"
+                android:fontFamily="@font/poppins"
+                android:inputType="number"
+                android:hint="Expiry Year"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </TableRow>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="70dp"
+        android:layout_margin="8dp"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_card_cvv"
+            android:fontFamily="@font/poppins"
+            android:maxLength="3"
+            android:inputType="number"
+            android:ems="3"
+            android:hint="CVV"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:id="@+id/bt_procced"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false"
+        android:fontFamily="@font/poppins"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/button_color_hover_for_all"
+        android:gravity="center"
+
+        android:text="Proceed"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+</LinearLayout>
+
+</androidx.cardview.widget.CardView>

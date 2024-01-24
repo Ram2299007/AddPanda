@@ -107,6 +107,7 @@ will be accepted"
                         android:fontFamily="@font/poppins_medium"
                         android:lineHeight="21dp"
                         android:text="1"
+                        android:layout_marginEnd="2dp"
                         android:textColor="#EB4A8E"
                         android:textFontWeight="400"
                         android:layout_marginStart="5dp"
@@ -119,6 +120,8 @@ will be accepted"
                         android:fontFamily="@font/poppins_medium"
                         android:lineHeight="21dp"
                         android:text="/"
+
+                        android:visibility="gone"
                         android:textColor="@color/white"
                         android:textFontWeight="400"
                         android:layout_marginStart="2dp"
@@ -131,6 +134,7 @@ will be accepted"
                         android:fontFamily="@font/poppins_medium"
                         android:lineHeight="21dp"
                         android:text="2"
+                        android:visibility="gone"
                         android:textColor="@color/white"
                         android:textFontWeight="400"
                         android:layout_marginStart="2dp"
@@ -152,10 +156,12 @@ will be accepted"
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/img1"
                     android:layout_marginTop="14dp"
                     android:layout_marginLeft="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="163dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/panlogo"
                     android:layout_marginRight="25dp"/>
 
@@ -163,6 +169,7 @@ will be accepted"
                     android:layout_marginStart="25dp"
                     android:layout_width="match_parent"
                     android:layout_marginTop="15dp"
+                    android:visibility="invisible"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
@@ -233,12 +240,13 @@ will be accepted"
                     android:layout_marginLeft="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="163dp"
+                    android:visibility="invisible"
                     android:src="@drawable/panlogo"
                     android:layout_marginRight="25dp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
 
-                    android:id="@+id/personal"
+                    android:id="@+id/submit"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginBottom="90dp"

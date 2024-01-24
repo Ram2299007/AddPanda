@@ -42,7 +42,7 @@ public class notiAdapter extends RecyclerView.Adapter<notiAdapter.myViewholder> 
 
 
         try {
-            Picasso.get().load(model.getNotiImg()).placeholder(R.drawable.notiicon).into(holder.notiImg);
+         //   Picasso.get().load(model.getNotiImg()).placeholder(R.drawable.notiicon).into(holder.notiImg);
         }catch (Exception ignored){}
         holder.notiText.setText(model.getNotiText());
         holder.notiTime.setText(model.getNotiTime());

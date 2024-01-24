@@ -77,6 +77,19 @@
                 android:textColor="@color/white"
                 android:textFontWeight="600"
                 android:textSize="16dp" />
+            <TextView
+                android:id="@+id/Dmobile"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/poppins_medium"
+                android:visibility="gone"
+                android:gravity="center"
+                android:lineHeight="24dp"
+                android:text="9988998899"
+                android:textColor="@color/white"
+                android:textFontWeight="600"
+                android:textSize="16dp" />
 
             <ImageView
                 android:id="@+id/editPhoneID"
@@ -158,19 +171,21 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/sendAgain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins"
                 android:lineHeight="21dp"
                 android:text="Resend OTP in"
-                android:textColor="@color/white"
+                android:textColor="@color/white_text_color"
                 android:textFontWeight="400"
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/countTimer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="7dp"
+                android:layout_marginStart="7dp"
 
                 android:fontFamily="@font/poppins"
                 android:lineHeight="21dp"

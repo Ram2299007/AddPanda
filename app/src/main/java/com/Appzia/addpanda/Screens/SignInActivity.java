@@ -1,6 +1,7 @@
 package com.Appzia.addpanda.Screens;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Webservice.Webservice;
@@ -45,7 +46,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.ArrayList;
@@ -65,14 +65,16 @@ public class SignInActivity extends AppCompatActivity {
     public static String type = "2";    //for mobile type
     Context mContext;
     String social_media_type;
-    String token, VERIFIED_KEY,VERIFIED_SOCIAL_MEDIA_KEY;
+    String token, VERIFIED_KEY, VERIFIED_SOCIAL_MEDIA_KEY;
     public static String social_media_typeKey;
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        checkAndRequestPermissions();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkAndRequestPermissions();
+        }
 
         SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
         String user_id = sh.getString("user_id", "");
@@ -98,7 +100,7 @@ public class SignInActivity extends AppCompatActivity {
 
                 Constant.NetworkCheck(mContext);
                 if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                  //  Webservice.verify_otp(mContext, type, otp, token, binding.mobileNo.getText().toString());
+                    //  WebserviceRetrofit.verify_otp(mContext, type, otp, token, binding.mobileNo.getText().toString());
                     Webservice.social_media_login_FOR_CHECK(mContext, "1", FirebaseAuth.getInstance().getUid(), token);
                 } else {
                     Constant.NetworkCheckDialogue(mContext);
@@ -499,15 +501,12 @@ public class SignInActivity extends AppCompatActivity {
                     Log.d("signInWithCredential", "signInWithCredential:success" + task);
 
 
-
-
                     social_media_type = "1";
                     // Storing data into SharedPreferences
                     SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                     SharedPreferences.Editor myEdit = sharedPreferences.edit();
                     myEdit.putString("social_media_type", social_media_type);
                     myEdit.apply();
-
 
 
                     SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
@@ -589,9 +588,6 @@ public class SignInActivity extends AppCompatActivity {
 //                    startActivity(new Intent(getApplicationContext(), choosePersonalBusiness.class));
 
 
-
-
-
                     progressDialog.dismiss();
 
 
@@ -601,7 +597,6 @@ public class SignInActivity extends AppCompatActivity {
                     SharedPreferences.Editor myEdit = sharedPreferences.edit();
                     myEdit.putString("social_media_type", social_media_type);
                     myEdit.apply();
-
 
 
                     SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
@@ -633,8 +628,6 @@ public class SignInActivity extends AppCompatActivity {
                     }
 
 
-
-
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("TAG", "signInWithCredential:failure", task.getException());
@@ -646,6 +639,7 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private boolean checkAndRequestPermissions() {
 
         try {
@@ -654,6 +648,14 @@ public class SignInActivity extends AppCompatActivity {
             int contact = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS);
             int loc = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION);
             int loc2 = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
+            int calling = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE);
+            int receiveSms = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.RECEIVE_SMS);
+            int phonestate = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_PHONE_STATE);
+            int readSms = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_SMS);
+            int readPhonenumber = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_PHONE_NUMBERS);
+            int POST_NOTIFICATIONS = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS);
+
+
             List<String> listPermissionsNeeded = new ArrayList<>();
 
             if (camera != PackageManager.PERMISSION_GRANTED) {
@@ -665,6 +667,30 @@ public class SignInActivity extends AppCompatActivity {
             }
             if (contact != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(android.Manifest.permission.READ_CONTACTS);
+
+            }
+            if (calling != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.CALL_PHONE);
+
+            }
+            if (receiveSms != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
+
+            }
+            if (phonestate != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
+
+            }
+            if (readSms != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_SMS);
+
+            }
+            if (readPhonenumber != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_PHONE_NUMBERS);
+
+            }
+            if (POST_NOTIFICATIONS != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS);
 
             }
             if (!listPermissionsNeeded.isEmpty()) {
@@ -680,7 +706,7 @@ public class SignInActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-      finish();
-      finishAffinity();
+        finish();
+        finishAffinity();
     }
 }

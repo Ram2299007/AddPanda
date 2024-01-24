@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,9 +21,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.Util.Constant.Constant;
@@ -30,6 +34,9 @@ import com.Appzia.addpanda.databinding.ActivityBusinessBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -46,6 +53,8 @@ public class Business extends AppCompatActivity {
     public static EditText email;
     public static EditText mobilePersonal;
     String MOBILE_VERIFIED_KEY;
+    File imageFile;
+    private static final int FILE_SELECT_CODE = 0;
 
     @Override
     protected void onStart() {
@@ -219,10 +228,16 @@ public class Business extends AppCompatActivity {
 
                                     Constant.NetworkCheck(mContext);
                                     if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                                        Webservice.social_media_login_business(mContext, social_media_type, input_parameter, reffral_code, account_type, binding.name.getText().toString(), binding.email.getText().toString(), binding.mobilePersonal.getText().toString(), binding.address.getText().toString(), binding.web.getText().toString(), binding.category.getText().toString(), binding.dateofincorp.getText().toString(), binding.businessd.getText().toString());
+                                        if (imageFile != null) {
 
-                                    }
-                                    else {
+                                            Webservice.social_media_login_business(mContext, social_media_type, input_parameter, reffral_code, account_type, binding.name.getText().toString(), binding.email.getText().toString(), binding.mobilePersonal.getText().toString(), binding.address.getText().toString(), binding.web.getText().toString(), binding.category.getText().toString(), binding.dateofincorp.getText().toString(), binding.businessd.getText().toString(), imageFile);
+
+                                        } else {
+                                            Toast.makeText(mContext, "Please select profile", Toast.LENGTH_SHORT).show();
+
+                                        }
+
+                                    } else {
                                         Constant.NetworkCheckDialogue(mContext);
                                         Constant.dialogForNetwork.show();
 
@@ -246,10 +261,9 @@ public class Business extends AppCompatActivity {
                                     //this is for facebook
                                     Constant.NetworkCheck(mContext);
                                     if ((Constant.wifiInfo != null && Constant.wifiInfo.isConnected()) || (Constant.mobileInfo != null && Constant.mobileInfo.isConnected())) {
-                                        Webservice.social_media_login_business(mContext, social_media_type, input_parameter, reffral_code, account_type, binding.name.getText().toString(), binding.email.getText().toString(), binding.mobilePersonal.getText().toString(), binding.address.getText().toString(), binding.web.getText().toString(), binding.category.getText().toString(), binding.dateofincorp.getText().toString(), binding.businessd.getText().toString());
+                                        Webservice.social_media_login_business(mContext, social_media_type, input_parameter, reffral_code, account_type, binding.name.getText().toString(), binding.email.getText().toString(), binding.mobilePersonal.getText().toString(), binding.address.getText().toString(), binding.web.getText().toString(), binding.category.getText().toString(), binding.dateofincorp.getText().toString(), binding.businessd.getText().toString(), imageFile);
 
-                                    }
-                                    else {
+                                    } else {
                                         Constant.NetworkCheckDialogue(mContext);
                                         Constant.dialogForNetwork.show();
 
@@ -267,7 +281,6 @@ public class Business extends AppCompatActivity {
                                     }
 
                                     Log.d("check_business_value", social_media_type + input_parameter + reffral_code + account_type + binding.name.getText().toString() + binding.email.getText().toString() + binding.mobilePersonal.getText().toString() + binding.address.getText().toString() + binding.web.getText().toString() + binding.category.getText().toString() + binding.dateofincorp.getText().toString() + binding.businessd.getText().toString());
-
 
 
                                 } else if (social_media_type.equals("0")) {
@@ -404,6 +417,80 @@ public class Business extends AppCompatActivity {
 
             }
         });
+
+        binding.getImgCrd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("image/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                try {
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select a File to Upload"),
+                            FILE_SELECT_CODE);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    // Potentially direct the user to the Market with a Dialog
+                    Toast.makeText(getApplicationContext(), "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+
+            //very important for uplopading multiple data
+
+            case FILE_SELECT_CODE:
+                if (resultCode == RESULT_OK) {
+                    // Get the Uri of the selected file
+                    Uri uri = data.getData();
+
+                    Log.d("ImageFile000", uri.getAuthority());
+                    Log.d("ImageFile000", uri.getScheme());
+
+                    String extension;
+                    File f;
+                    if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+                        final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+                        extension = mimeTypeMap.getExtensionFromMimeType(getContentResolver().getType(uri));
+
+                    } else {
+                        extension = MimeTypeMap.getFileExtensionFromUrl(String.valueOf(Uri.fromFile(new File(uri.getPath()))));
+
+                    }
+                    Log.d("extension", extension);
+                    f = new File(getCacheDir() + "/temp." + "jpg");
+                    try {
+                        InputStream is = getContentResolver().openInputStream(uri);
+                        FileOutputStream fs = new FileOutputStream(f);
+                        int read = 0;
+                        int bufferSize = 1024;
+                        final byte[] buffers = new byte[bufferSize];
+                        while ((read = is.read(buffers)) != -1) {
+                            fs.write(buffers, 0, read);
+                        }
+                        is.close();
+                        fs.close();
+
+                        Log.d("imageFile111", f.getPath());
+                        imageFile = f;
+                        binding.img.setImageURI(uri);
+
+                    } catch (Exception e) {
+                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 

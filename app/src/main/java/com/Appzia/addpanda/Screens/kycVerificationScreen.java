@@ -1,34 +1,42 @@
 package com.Appzia.addpanda.Screens;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
+import com.Appzia.addpanda.Util.Constant.Constant;
+import com.Appzia.addpanda.Webservice.Webservice;
 import com.Appzia.addpanda.databinding.ActivityKycVerificationScreeBinding;
-import com.google.android.material.bottomappbar.BottomAppBar;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.shape.CornerFamily;
-import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.Objects;
 
 public class kycVerificationScreen extends AppCompatActivity {
 
     ActivityKycVerificationScreeBinding binding;
+    Context mContext;
+    String token;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        token = Constant.getSF.getString(Constant.TOKEN_SF, "");
+        Webservice.get_identity_verification(mContext, binding.adhar, binding.pan, binding.check,token);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityKycVerificationScreeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        mContext = binding.getRoot().getContext();
+        Constant.getSfFuncion(mContext);
 
         //By default on each activity android studio
         Objects.requireNonNull(getSupportActionBar()).hide();
@@ -41,24 +49,26 @@ public class kycVerificationScreen extends AppCompatActivity {
         binding.backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              onBackPressed();
+                onBackPressed();
             }
         });
 
         binding.pan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),panVerificationActivity.class));
+                startActivity(new Intent(getApplicationContext(), panVerificationActivity.class));
             }
-        });      binding.check.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),checkVerificationScreen.class));
+                startActivity(new Intent(getApplicationContext(), checkVerificationScreen.class));
             }
-        });  binding.adhar.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.adhar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),addVerificationScreem.class));
+                startActivity(new Intent(getApplicationContext(), addVerificationScreem.class));
             }
         });
     }

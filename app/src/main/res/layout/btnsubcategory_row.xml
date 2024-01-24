@@ -11,24 +11,17 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCat"
-
-        android:layout_width="wrap_content"
-
+        android:layout_width="100dp"
         android:layout_height="32dp"
-
-
-        android:background="@drawable/btn_new_sub_hover_all"
-
+        android:layout_gravity="center"
+        android:background="@drawable/roundedbutoon_orangeborder_for_all"
         android:fontFamily="@font/poppins"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-
+        android:gravity="center"
         android:lineHeight="15dp"
-
         android:text="test"
         android:textAllCaps="false"
         android:textColor="@color/white_text_color"
-        android:textFontWeight="300"
+        android:textFontWeight="500"
         android:textSize="11sp" />
 
 </RelativeLayout>

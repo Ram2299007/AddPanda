@@ -2,24 +2,34 @@ package com.Appzia.addpanda.Model;
 
 public class trendingSubModel {
 
-    String image,category_id,sub_cat_id,template_id,sub_cat_name;
+    String image, category_id, sub_cat_id, template_id, sub_cat_name;
+    int is_active;
 
-    public trendingSubModel(String image, String category_id, String sub_cat_id, String template_id) {
+    public trendingSubModel(String image, String category_id, String sub_cat_id, String template_id, int is_active) {
         this.image = image;
         this.category_id = category_id;
         this.sub_cat_id = sub_cat_id;
         this.template_id = template_id;
+        this.is_active = is_active;
     }
 
-    public trendingSubModel(String image, String category_id, String sub_cat_id,String sub_cat_name,String test) {
+    public trendingSubModel(String image, String category_id, String sub_cat_id, String sub_cat_name, String test, int is_active) {
         this.image = image;
         this.category_id = category_id;
         this.sub_cat_id = sub_cat_id;
         this.sub_cat_name = sub_cat_name;
+        this.is_active = is_active;
 
 
     }
 
+    public int getIs_active() {
+        return is_active;
+    }
+
+    public void setIs_active(int is_active) {
+        this.is_active = is_active;
+    }
 
     public String getImage() {
         return image;

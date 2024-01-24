@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/relativelayout"
     android:background="@color/appThemeColor"
     tools:context=".Fragments.mainFragment">
 
@@ -80,15 +81,15 @@
                                 <AutoCompleteTextView
                                     android:id="@+id/searchEdts"
                                     android:layout_width="match_parent"
-                                    android:paddingStart="10dp"
-                                    android:paddingEnd="10dp"
                                     android:layout_height="wrap_content"
-                                    android:hint="Search category here"
-                                    android:textColorHint="@color/shimmer_coloe"
                                     android:layout_weight="0.5"
                                     android:background="@android:color/transparent"
                                     android:fontFamily="@font/poppins_medium"
+                                    android:hint="Search category here"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="10dp"
                                     android:textColor="@color/white"
+                                    android:textColorHint="@color/shimmer_coloe"
                                     android:textSize="13sp"
                                     android:visibility="gone" />
 
@@ -360,12 +361,14 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="90dp"
+            android:background="#40C351"
             android:backgroundTint="#40C351"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/wp"
-            android:visibility="invisible"
+            android:src="@drawable/whatsapp_business"
+            android:visibility="visible"
             app:fabCustomSize="50dp"
             app:maxImageSize="29dp"
+            app:backgroundTint="#40C351"
             app:tint="@android:color/white" />
 
     </RelativeLayout>

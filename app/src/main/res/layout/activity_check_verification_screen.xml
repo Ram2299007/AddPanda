@@ -109,33 +109,11 @@ will be accepted"
                         android:text="1"
                         android:textColor="#EB4A8E"
                         android:textFontWeight="400"
+                        android:layout_marginEnd="2dp"
                         android:layout_marginStart="5dp"
                         android:textSize="14sp"
                         />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
 
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="21dp"
-                        android:text="/"
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:layout_marginStart="2dp"
-                        android:textSize="14sp"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:fontFamily="@font/poppins_medium"
-                        android:lineHeight="21dp"
-                        android:text="2"
-                        android:textColor="@color/white"
-                        android:textFontWeight="400"
-                        android:layout_marginStart="2dp"
-                        android:textSize="14sp"
-                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -152,10 +130,12 @@ will be accepted"
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/img1"
                     android:layout_marginTop="14dp"
                     android:layout_marginLeft="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="163dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/checklogo"
                     android:layout_marginRight="25dp"/>
 
@@ -163,6 +143,7 @@ will be accepted"
                     android:layout_marginStart="25dp"
                     android:layout_width="match_parent"
                     android:layout_marginTop="15dp"
+                    android:visibility="invisible"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
@@ -231,6 +212,7 @@ will be accepted"
                 <ImageView
                     android:layout_marginTop="14dp"
                     android:layout_marginLeft="25dp"
+                    android:visibility="invisible"
                     android:layout_width="match_parent"
                     android:layout_height="163dp"
                     android:src="@drawable/checklogo"
@@ -238,7 +220,7 @@ will be accepted"
 
                 <androidx.appcompat.widget.AppCompatButton
 
-                    android:id="@+id/personal"
+                    android:id="@+id/submit"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginBottom="90dp"

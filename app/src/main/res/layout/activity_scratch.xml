@@ -116,12 +116,11 @@
                                 android:layout_gravity="center"
                                 android:layout_marginStart="6.5dp"
                                 android:layout_weight="4"
-                                android:background="@color/white"
-
+                                android:background="@android:color/transparent"
                                 android:entries="@array/spinnerData"
                                 android:gravity="center"
                                 android:spinnerMode="dropdown"
-                                android:textColor="@color/white"
+                                style="@style/SpinnerItemStyle"
                                 android:textSize="12sp"
                                 tools:ignore="TouchTargetSizeCheck" />
 
@@ -150,7 +149,7 @@
                             <LinearLayout
                                 android:id="@+id/viewPagerBackImage"
                                 android:layout_width="match_parent"
-                                android:background="@drawable/bg_round_10"
+                                android:background="@drawable/bg_round_two"
                                 android:backgroundTint="@color/white"
                                 android:layout_gravity="center"
                                 android:gravity="center"
@@ -210,12 +209,13 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
-    <ProgressBar
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:visibility="invisible" />
+        android:src="@drawable/loader"
+        android:visibility="gone" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

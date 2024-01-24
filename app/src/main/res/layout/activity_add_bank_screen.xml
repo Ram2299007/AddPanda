@@ -91,46 +91,56 @@
                             android:gravity="center"
                             android:hint="Account Holder Name"
                             android:inputType="textPersonName"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
                             android:lineHeight="21dp"
                             android:textColor="@color/white"
                             android:textColorHint="@color/text_hint_color"
                             android:textSize="14dp" />
 
                         <EditText
+                            android:id="@+id/number"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
 
                             android:background="@drawable/button_color_hover_for_all"
                             android:fontFamily="@font/poppins"
                             android:gravity="center"
                             android:hint="Account Number"
-                            android:inputType="text"
+                            android:inputType="number"
                             android:lineHeight="21dp"
                             android:textColor="@color/white"
                             android:textColorHint="@color/text_hint_color"
                             android:textSize="14dp" />
 
                         <EditText
+                            android:id="@+id/cnumber"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
-
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
                             android:background="@drawable/button_color_hover_for_all"
                             android:fontFamily="@font/poppins"
                             android:gravity="center"
                             android:hint="Confirm Account Number"
-                            android:inputType="text"
+
                             android:lineHeight="21dp"
+                            android:inputType="number"
                             android:textColor="@color/white"
                             android:textColorHint="@color/text_hint_color"
                             android:textSize="14dp" />
 
                         <EditText
+                            android:id="@+id/ifsc"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginTop="14dp"
-
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
                             android:background="@drawable/button_color_hover_for_all"
                             android:fontFamily="@font/poppins"
                             android:gravity="center"
@@ -144,7 +154,7 @@
                         <androidx.appcompat.widget.AppCompatButton
 
                             android:id="@+id/completekyc"
-                            android:layout_width="328dp"
+                            android:layout_width="match_parent"
 
                             android:layout_height="50dp"
 
@@ -166,21 +176,19 @@
 
                         <androidx.appcompat.widget.AppCompatButton
 
-                            android:id="@+id/caption"
-
+                            android:id="@+id/submit"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:layout_marginTop="250dp"
-
-
+                            android:layout_marginTop="30dp"
                             android:layout_marginBottom="90dp"
                             android:background="@drawable/orangebuttonhovereffect_for_all"
-
+                            android:backgroundTint="#434547"
+                            android:enabled="false"
                             android:fontFamily="@font/poppins_medium"
                             android:gravity="center"
                             android:inputType="phone"
                             android:lineHeight="24dp"
-                            android:text="Add Caption on next page"
+                            android:text="Submit"
                             android:textColor="@color/white"
                             android:textFontWeight="500"
                             android:textSize="16sp" />
@@ -197,6 +205,7 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </ScrollView>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

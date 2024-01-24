@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.Appzia.addpanda.MainActivity;
 import com.Appzia.addpanda.R;
 import com.Appzia.addpanda.databinding.ActivityScratchBinding;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -29,6 +28,8 @@ import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.Objects;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class scratchActivity extends AppCompatActivity {
 
     ActivityScratchBinding binding;
@@ -37,7 +38,7 @@ public class scratchActivity extends AppCompatActivity {
     String token;
     String flag = "2";
     public static ImageView mainImageview;
-    public static ProgressBar progressBar;
+    public static GifImageView progressBar;
     public static CoordinatorLayout CoLayout;
     public static ShimmerFrameLayout shimmerFrameLayout;
 
@@ -60,7 +61,7 @@ public class scratchActivity extends AppCompatActivity {
 
 
         username = (TextView) findViewById(R.id.username);
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (GifImageView) findViewById(R.id.progressbar);
         CoLayout = (CoordinatorLayout) findViewById(R.id.CoLayout);
 
         shimmerFrameLayout = (ShimmerFrameLayout) findViewById(R.id.shimmerFrameLayout);

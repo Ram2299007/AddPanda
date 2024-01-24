@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-
+    android:layout_marginBottom="13dp"
+    android:gravity="center"
     android:background="@android:color/transparent"
-    android:gravity="center">
+  >
 
     <LinearLayout
 
@@ -44,15 +44,17 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
-                android:layout_marginBottom="13dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 app:cardCornerRadius="10dp">
 
                 <ImageView
                     android:id="@+id/downloadImg"
                     android:layout_width="156dp"
                     android:layout_height="97dp"
-                    android:layout_marginBottom="5dp"
+
                     android:scaleType="centerCrop" />
 
             </androidx.cardview.widget.CardView>

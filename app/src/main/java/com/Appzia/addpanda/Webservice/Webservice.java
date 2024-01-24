@@ -13,7 +13,14 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.Appzia.addpanda.Fragments.DownloadsFragment;
 import com.Appzia.addpanda.Fragments.categoryTabFragment;
@@ -22,11 +29,13 @@ import com.Appzia.addpanda.Model.categoryModel;
 import com.Appzia.addpanda.Model.categoryParentModel;
 import com.Appzia.addpanda.Model.downloadModel;
 import com.Appzia.addpanda.Model.faqModel;
+import com.Appzia.addpanda.Model.globalModel;
 import com.Appzia.addpanda.Model.horiVisitingModel;
 import com.Appzia.addpanda.Model.mainCatBtnChildModel;
 import com.Appzia.addpanda.Model.notiModel;
 import com.Appzia.addpanda.Model.viewPagerModel;
 import com.Appzia.addpanda.Screens.Basic_editFrameActivity;
+import com.Appzia.addpanda.Screens.EditFrameOwner;
 import com.Appzia.addpanda.Screens.NotificationActivity;
 import com.Appzia.addpanda.Screens.aboutUsScreen;
 import com.Appzia.addpanda.Screens.basicEditsFirstActivity;
@@ -38,8 +47,9 @@ import com.Appzia.addpanda.Screens.downloadImageActivity;
 import com.Appzia.addpanda.Screens.editFameActivity;
 import com.Appzia.addpanda.Screens.faqsScreen;
 import com.Appzia.addpanda.Screens.helpAndSupportScreen;
+import com.Appzia.addpanda.Screens.kycVerificationScreen;
+import com.Appzia.addpanda.Screens.manageAcount3Activity;
 import com.Appzia.addpanda.Screens.privacyPolicyScreen;
-import com.Appzia.addpanda.Screens.scratchActivity;
 import com.Appzia.addpanda.Screens.settingScreen;
 import com.Appzia.addpanda.Screens.termAndConditionScreen;
 import com.Appzia.addpanda.Screens.trendingActivityBasic;
@@ -48,7 +58,7 @@ import com.Appzia.addpanda.Screens.viewAllBasic;
 import com.Appzia.addpanda.Util.Constant.Constant;
 import com.Appzia.addpanda.Fragments.mainFragment;
 import com.Appzia.addpanda.Fragments.profileFragment;
-import com.Appzia.addpanda.MainActivity;
+import com.Appzia.addpanda.Screens.MainActivity;
 import com.Appzia.addpanda.Model.frameModel;
 import com.Appzia.addpanda.Model.trendingSubModel;
 import com.Appzia.addpanda.R;
@@ -60,6 +70,8 @@ import com.Appzia.addpanda.Screens.PersonalProfile;
 import com.Appzia.addpanda.Screens.ReferActivity;
 import com.Appzia.addpanda.Screens.choosePersonalBusiness;
 import com.Appzia.addpanda.Screens.trendingActivity;
+import com.Appzia.addpanda.Webservice.WebserviceRetrofits.API;
+import com.Appzia.addpanda.Webservice.WebserviceRetrofits.APIClient;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.MySSLSocketFactory;
@@ -74,12 +86,19 @@ import java.io.File;
 import java.io.InputStream;
 
 import cz.msebera.android.httpclient.Header;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 public class Webservice {
-    public static final String TAG = "Webservice";
-    // public static final String BASE_URL = "http://192.168.0.165/add_panda/";
-    public static final String BASE_URL = "https://www.adpanda.in/api/";
+    public static final String TAG = "WebserviceRetrofit";
+    // public static final String BASE_URL = "http://192.168.0.145/add_panda/";
+    //  public static final String BASE_URL = "https://www.adpanda.in/api/";
+    public static final String BASE_URL = "https://api.adpanda.in/";
     public static final String UPDATE_USER_PROFILE_DATA = BASE_URL + "update_user_profile_data";
     public static final String SEND_OTP = BASE_URL + "send_otp";
     public static final String VERIFY_OTP = BASE_URL + "verify_otp";
@@ -95,6 +114,14 @@ public class Webservice {
     public static final String get_category_list_All = BASE_URL + "get_category_list";
     public static final String get_category_list_All_BASIC_EDITS = BASE_URL + "get_category_list_using_filter";
     public static final String GET_FRAME_LIST = BASE_URL + "get_frame_list";
+    public static final String ADD_FRAME_PHOTO = BASE_URL + "add_frame_photo";
+    public static final String FETCH_ALL_FRAME_PHOTO = BASE_URL + "fetch_all_frames_photo";
+    public static final String UPDATE_FCM_TOKEN = BASE_URL + "update_fcm_token";
+    public static final String SAVE_BANK_DETAILS = BASE_URL + "save_bank_details";
+    public static final String GET_BANK_DETAILS = BASE_URL + "get_bank_details";
+    public static final String GET_IDENTITY_VERIFICATION = BASE_URL + "get_identity_verification";
+    public static final String IDENTITY_VERIFICATION = BASE_URL + "identity_verification";
+
     public static final String GET_TEMPLATE = BASE_URL + "get_template_list";
     public static final String CREATE_CONTENT = BASE_URL + "create_content";
     public static final String GET_MY_CONTENT_CREATOR_LIST = BASE_URL + "get_my_content_creator_list";
@@ -109,7 +136,7 @@ public class Webservice {
     public static final String GET_BANNER = BASE_URL + "get_banner";
 
 
-    public static void update_user_profile_data_personal(final Context mContext, String account_type, String name, String email, String mobile, String address, String dob, String poilitical_interest, String token) {
+    public static void update_user_profile_data_personal(final Context mContext, String account_type, String name, String email, String mobile, String address, String dob, String poilitical_interest, String token, File imageFile) {
         try {
 
             final AsyncHttpClient client = new AsyncHttpClient();
@@ -123,6 +150,10 @@ public class Webservice {
             request_param.put("address", address);
             request_param.put("dob", dob);
             request_param.put("poilitical_interest", poilitical_interest);
+
+            if (imageFile != null) {
+                request_param.put("image", imageFile);
+            }
 
 
             Log.d(TAG, "@@@update_user_profile_data_personal :" + UPDATE_USER_PROFILE_DATA + "?" + request_param.toString());
@@ -178,7 +209,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -187,14 +218,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -203,8 +232,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -212,8 +239,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -291,7 +316,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -300,14 +325,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -316,8 +339,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -325,8 +346,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -360,7 +379,7 @@ public class Webservice {
 
 
                                     String message = response.getString("message");
-                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
 
                                     Log.d("resopnse", String.valueOf(response.getJSONObject("data")));
 
@@ -373,8 +392,9 @@ public class Webservice {
                                     // for getting only object from database
                                     JSONObject obj = response.getJSONObject("data");
                                     String otp = obj.getString("otp");
+                                    //   Toast.makeText(mContext, otp, Toast.LENGTH_SHORT).show();
                                     String token = obj.getString("token");
-                                    Log.d("array", otp);
+                                    Log.d("otp_new", otp);
 
                                     try {
 
@@ -419,14 +439,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -434,8 +452,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -445,14 +461,12 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
 
             e.printStackTrace();
         }
     }
 
-    public static void verify_otp(final Context mContext, String type, String otp, String token, String mobileKey) {
+    public static void verify_otp(final Context mContext, String type, String otp, String token, String mobileKey, AppCompatSeekBar sb) {
         try {
 
             final AsyncHttpClient client = new AsyncHttpClient();
@@ -533,7 +547,7 @@ public class Webservice {
 
 
                                         if (mContext != null) {
-                                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(mContext, choosePersonalBusiness.class);
                                             intent.putExtra("otpKey", otp);
                                             intent.putExtra("mobileKey", mobileKey);
@@ -549,7 +563,9 @@ public class Webservice {
 
                                 } else {
                                     String message = response.getString("message");
-                                    //  Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    sb.setProgress(0);
+
                                 }
                             } catch (JSONException e) {
 
@@ -563,14 +579,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -579,8 +593,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -588,8 +600,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -670,14 +680,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -686,8 +694,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -695,8 +701,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -776,14 +780,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -792,8 +794,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -801,8 +801,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -843,7 +841,7 @@ public class Webservice {
 
 
                                     String message = response.getString("message");
-                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
 
                                     Log.d("resopnse", String.valueOf(response.getJSONObject("data")));
 
@@ -907,14 +905,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -922,8 +918,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -933,15 +927,13 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
 
             e.printStackTrace();
         }
     }
 
 
-    public static void social_media_login_business(final Context mContext, String social_media_type, String input_parameter, String reffral_code, String account_type, String business_name, String email, String mobile, String address, String website, String business_category, String doi, String business_detaills) {
+    public static void social_media_login_business(final Context mContext, String social_media_type, String input_parameter, String reffral_code, String account_type, String business_name, String email, String mobile, String address, String website, String business_category, String doi, String business_detaills, File imageFile) {
         try {
 
             final AsyncHttpClient client = new AsyncHttpClient();
@@ -961,6 +953,10 @@ public class Webservice {
             request_param.put("doi", doi);
             request_param.put("business_detaills", business_detaills);
 
+            if (imageFile != null) {
+                request_param.put("image", imageFile);
+            }
+
 
             Log.d(TAG, "@@@social_media_login_business :" + SOCIAL_MEDIA_LOGIN_BUSINESS + "?" + request_param.toString());
             ((Activity) mContext).runOnUiThread(new Runnable() {
@@ -977,7 +973,7 @@ public class Webservice {
 
 
                                     String message = response.getString("message");
-                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    //   Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
 
                                     Log.d("resopnse", String.valueOf(response.getJSONObject("data")));
                                     JSONObject obj = response.getJSONObject("data");
@@ -1037,14 +1033,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1052,8 +1046,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1063,8 +1055,6 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
 
             e.printStackTrace();
         }
@@ -1072,23 +1062,18 @@ public class Webservice {
 
     public static void upload_user_contact_list(final Context mContext, String token, String user_contacts, String account_typeKey, String mobile, String emailKey, String name, String BusinessCatKey, String social_media_typeKey) {
         try {
-
-
             final AsyncHttpClient client = new AsyncHttpClient();
+            client.setConnectTimeout(30000); // 30 seconds
+            client.setResponseTimeout(30000);
             client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
             final RequestParams request_param = new RequestParams();
-
-
             request_param.put("user_contacts", user_contacts);
-
+            Log.d("test&&", user_contacts);
 
             Log.d(TAG, "@@@upload_user_contact_list :" + UPLOAD_USER_CONTACT_LIST + "?" + request_param.toString());
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 public void run() {
 
-                    client.setTimeout(20 * 1000);
-                    client.setResponseTimeout(20 * 1000);
-                    client.setConnectTimeout(20 * 1000);
                     client.addHeader("token", token);
                     client.post(UPLOAD_USER_CONTACT_LIST, request_param, new JsonHttpResponseHandler() {
                         @Override
@@ -1105,6 +1090,8 @@ public class Webservice {
 
 
                                     if (mContext != null) {
+
+
                                         Intent intent = new Intent(mContext, MainActivity.class);
                                         intent.putExtra("account_typeKey", account_typeKey);
                                         intent.putExtra("mobileKey", mobile);
@@ -1139,8 +1126,8 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
-                            Log.w("responseString", responseString);
+                            //
+                            // Log.w("responseString", responseString);
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
@@ -1148,10 +1135,10 @@ public class Webservice {
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                             try {
-                                Toast.makeText(mContext, errorResponse.toString(), Toast.LENGTH_SHORT).show();
-                                Log.w("responseString", errorResponse.toString());
+                                //   Toast.makeText(mContext, errorResponse.toString(), Toast.LENGTH_SHORT).show();
+                                // Log.w("responseString", errorResponse.toString());
                             } catch (Exception ex) {
-                                Log.d("JSONObject.toString()'", errorResponse.toString());
+                                // Log.d("JSONObject.toString()'", errorResponse.toString());
                             }
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1160,8 +1147,8 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-                            Log.w("responseString", errorResponse.toString());
+
+                            //   Log.w("responseString", errorResponse.toString());
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -1170,7 +1157,7 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            //
 
 
             e.printStackTrace();
@@ -1282,14 +1269,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1298,8 +1283,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -1307,8 +1290,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -1413,14 +1394,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1429,8 +1408,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -1438,8 +1415,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -1480,19 +1455,14 @@ public class Webservice {
 
                                     //for business
                                     String name = obj.getString("name");
+                                    String address = obj.getString("address");
                                     String profile_pic = obj.getString("profile_pic");
-                                    String Imgurl = "https://www.adpanda.in/api/" + profile_pic;
+                                    Log.d(TAG, "onSuccess: " + " " + profile_pic);
+
                                     String email_id = obj.getString("email_id");
                                     String mobile_number = obj.getString("mobile_number");
                                     String dob = obj.getString("dob");
                                     String political_interest = obj.getString("political_interest");
-
-                                    //tbis is for business account details
-                                    String bussiness_name = obj.getString("bussiness_name");
-                                    String website = obj.getString("website");
-                                    String business_category = obj.getString("business_category");
-                                    String date_of_incorporation = obj.getString("date_of_incorporation");
-                                    String business_details = obj.getString("business_details");
 
 
                                     if (account_type.equals("1")) {
@@ -1501,7 +1471,7 @@ public class Webservice {
                                         try {
                                             profileFragment.userNameId.setText(name);
                                             profileFragment.subId.setText(mobile_number);
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.eclips).into(profileFragment.imageViewProfile);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.eclips).into(profileFragment.imageViewProfile);
 
                                         } catch (Exception ignored) {
                                         }
@@ -1510,7 +1480,25 @@ public class Webservice {
                                         try {
                                             settingScreen.userNameId.setText(name);
                                             settingScreen.subId.setText(mobile_number);
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.eclips).into(settingScreen.profileId);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.eclips).into(settingScreen.profileId);
+                                        } catch (Exception ignored) {
+                                        }
+
+                                        try {
+                                            EditFrameOwner.profileBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.emailBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.addressBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.nameBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.phoneBasic.setVisibility(View.VISIBLE);
+
+                                            EditFrameOwner.nameText.setText(name);
+                                            EditFrameOwner.PhoneText.setText(mobile_number);
+                                            EditFrameOwner.addressText.setText(address);
+                                            EditFrameOwner.emailText.setText(email_id);
+                                            //    EditFrameOwner.webText.setText(website);
+                                            EditFrameOwner.webLyt.setVisibility(View.GONE);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.eclips).into(EditFrameOwner.profileImg);
+
                                         } catch (Exception ignored) {
                                         }
 
@@ -1518,13 +1506,19 @@ public class Webservice {
                                     } else if (account_type.equals("2")) {
 
                                         // This is a business
+                                        //tbis is for business account details
+                                        String bussiness_name = obj.getString("bussiness_name");
+                                        String website = obj.getString("website");
+                                        String business_category = obj.getString("business_category");
+                                        String date_of_incorporation = obj.getString("date_of_incorporation");
+                                        String business_details = obj.getString("business_details");
 
 
                                         try {
                                             profileFragment.userNameId.setText(bussiness_name);
                                             profileFragment.subId.setText(business_category);
 
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.eclips).into(profileFragment.imageViewProfile);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.eclips).into(profileFragment.imageViewProfile);
 
                                         } catch (Exception ignored) {
                                         }
@@ -1533,7 +1527,24 @@ public class Webservice {
                                         try {
                                             settingScreen.userNameId.setText(bussiness_name);
                                             settingScreen.subId.setText(business_category);
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.eclips).into(settingScreen.profileId);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.eclips).into(settingScreen.profileId);
+                                        } catch (Exception ignored) {
+                                        }
+
+                                        try {
+                                            EditFrameOwner.webLyt.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.profileBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.emailBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.addressBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.nameBasic.setVisibility(View.VISIBLE);
+                                            EditFrameOwner.phoneBasic.setVisibility(View.VISIBLE);
+
+                                            EditFrameOwner.nameText.setText(bussiness_name);
+                                            EditFrameOwner.PhoneText.setText(mobile_number);
+                                            EditFrameOwner.addressText.setText(address);
+                                            EditFrameOwner.emailText.setText(email_id);
+                                            EditFrameOwner.webText.setText(website);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.eclips).into(EditFrameOwner.profileImg);
                                         } catch (Exception ignored) {
                                         }
 
@@ -1560,14 +1571,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1575,8 +1584,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1586,7 +1593,7 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            //   Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            //
 
 
             e.printStackTrace();
@@ -1658,7 +1665,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -1667,14 +1674,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1683,8 +1688,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -1692,8 +1695,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -1753,21 +1754,6 @@ public class Webservice {
                                     } catch (Exception ignored) {
                                     }
 
-//                                    if (mContext != null) {
-//                                        Intent i = new Intent(mContext, ReferActivity.class);
-//                                        // String token =obj.getString("token");
-//                                        i.putExtra("tokenKey", token);
-//                                        i.putExtra("mobileKey", mobile);
-//                                        i.putExtra("account_typeKey", account_type);
-//                                        i.putExtra("nameKey", business_name);
-//                                        i.putExtra("BusinessCatKey", business_category);
-////                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-////                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                        mContext.startActivity(i);
-//
-//                                        ((Activity) mContext).finish();
-//                                    }
-
 
                                 } else {
                                     String message = response.getString("message");
@@ -1776,7 +1762,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -1785,14 +1771,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1801,8 +1785,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -1810,8 +1792,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -1858,9 +1838,9 @@ public class Webservice {
                                     //for business
                                     String name = obj.getString("name");
                                     String profile_pic = obj.getString("profile_pic");
-                                    String Imgurl = "https://www.adpanda.in/api/" + profile_pic;
+
                                     try {
-                                        mainFragment.getImgUrl(Imgurl);
+                                        mainFragment.getImgUrl(profile_pic);
                                     } catch (Exception ex) {
                                     }
 
@@ -1889,15 +1869,15 @@ public class Webservice {
                                         }
 
 
-                                        //   Picasso.get().load(Imgurl).placeholder(R.drawable.group2).into(PersonalProfile.imageView);
+                                        //   Picasso.get().load(profile_pic).placeholder(R.drawable.group2).into(PersonalProfile.imageView);
                                         try {
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.profilelogo).into(mainFragment.mainImageview);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.profilelogo).into(mainFragment.mainImageview);
 
                                         } catch (Exception ex) {
                                         }
                                         try {
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.group2).into(PersonalProfile.imageView);
-                                            //   mainFragment.loadImgUrlProf.setText(Imgurl);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.group2).into(PersonalProfile.imageView);
+                                            //   mainFragment.loadImgUrlProf.setText(profile_pic);
                                         } catch (Exception ex) {
                                         }
 
@@ -1914,11 +1894,11 @@ public class Webservice {
 
 
                                         try {
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.profilelogo).into(mainFragment.mainImageview);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.profilelogo).into(mainFragment.mainImageview);
                                         } catch (Exception ex) {
                                         }
                                         try {
-                                            Picasso.get().load(Imgurl).placeholder(R.drawable.groupbisines).into(BusinessProfile.imageViewBusiness);
+                                            Picasso.get().load(profile_pic).placeholder(R.drawable.groupbisines).into(BusinessProfile.imageViewBusiness);
                                         } catch (Exception ex) {
                                         }
 
@@ -1944,14 +1924,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -1960,8 +1938,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -1969,8 +1945,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -1991,6 +1965,8 @@ public class Webservice {
             Log.d(TAG, "@@@GET_CATEGORY_LIST :" + get_category_list_All + "?" + request_param.toString());
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 public void run() {
+
+                    String fcm_token;
                     com.Appzia.addpanda.Fragments.mainFragment.parentModelArrayList.clear();
                     com.Appzia.addpanda.Fragments.mainFragment.list1.clear();
                     Constant.mainCatBtnModelList.clear();
@@ -2045,6 +2021,7 @@ public class Webservice {
                                         String accountType = Constant.getSF.getString(Constant.ACC_TYPE, "");
 
 
+                                        //parent
                                         Constant.categoryNames.add(category_name);
 
 
@@ -3427,14 +3404,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -3442,8 +3417,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -3453,8 +3426,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -3495,16 +3466,30 @@ public class Webservice {
                                     JSONObject obj2 = null;
                                     for (int i = 0; i < arr.length(); i++) {
                                         obj2 = arr.getJSONObject(i);
-                                        String image = obj2.getString("image");
+                                        //    String image = obj2.getString("image");
                                         String template_id = obj2.getString("template_id");
                                         String template_lang = obj2.getString("template_lang");
-
-                                        Log.d("@@@image", image);
+                                        String template_edit_type_flag = obj2.getString("template_edit_type_flag");
+                                        int is_active = obj2.getInt("is_active");
+                                        //    Toast.makeText(mContext, template_edit_type_flag, Toast.LENGTH_SHORT).show();
 
 
                                         if (template_lang.equals(tempLang)) {
 
-                                            Constant.trendingSubList.add(new trendingSubModel(image, category_id, sub_cat_id, template_id));
+
+//                                            if (template_edit_type_flag.equals("1")) {
+
+                                            JSONArray imgArray = obj2.getJSONArray("image");
+                                            for (int k = 0; k < imgArray.length(); k++) {
+
+                                                JSONObject object = imgArray.getJSONObject(k);
+                                                String image = object.getString("t_img");
+                                                //     Toast.makeText(mContext, image, Toast.LENGTH_SHORT).show();
+                                                Constant.trendingSubList.add(new trendingSubModel(image, category_id, sub_cat_id, template_id, "", is_active));
+                                            }
+//
+
+
                                         }
 
 
@@ -3528,7 +3513,7 @@ public class Webservice {
 
                                 } else {
                                     String message = response.getString("message");
-                                    // Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
 
@@ -3542,14 +3527,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -3558,8 +3541,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -3567,8 +3548,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -3611,10 +3590,11 @@ public class Webservice {
                                         JSONObject obj2 = arr.getJSONObject(i);
                                         String image = obj2.getString("image");
                                         String template_id = obj2.getString("template_id");
+                                        int is_active = obj2.getInt("is_active");
 
                                         Log.d("@@@image", image);
 
-                                        Constant.trendingSubList.add(new trendingSubModel(image, category_id, sub_cat_id, template_id));
+                                        Constant.trendingSubList.add(new trendingSubModel(image, category_id, sub_cat_id, template_id, is_active));
 //                                        Constant.pd.d();
 
                                     }
@@ -3645,14 +3625,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -3661,8 +3639,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -3670,8 +3646,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5088,7 +5062,7 @@ public class Webservice {
                                     }
 
 
-                                    fragment.setAdapter();
+                                    ///  fragment.setAdapter();
 
 
                                 } else {
@@ -5107,14 +5081,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5123,8 +5095,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5132,8 +5102,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5248,14 +5216,14 @@ public class Webservice {
 //                        @Override
 //                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 //
-//                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+//
 //                            super.onFailure(statusCode, headers, responseString, throwable);
 //                        }
 //
 //                        @Override
 //                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 //
-//                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
+//
 //
 //
 //                            super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5264,7 +5232,7 @@ public class Webservice {
 //                        @Override
 //                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 //
-//                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
+//
 //
 //
 //                            super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5274,7 +5242,7 @@ public class Webservice {
 //            });
 //        } catch (Exception e) {
 //
-//            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//
 //
 //
 //            e.printStackTrace();
@@ -5359,14 +5327,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5375,8 +5341,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5384,8 +5348,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5435,7 +5397,6 @@ public class Webservice {
 
                                         if (category_id.equals(category_idnew)) {
                                             //   Toast.makeText(mContext, "SUccess", Toast.LENGTH_SHORT).show();
-                                            Log.d("@@@category_get_frame_listone", category_name);
 
 
                                             Constant.frameList.add(new frameModel(image));
@@ -5476,14 +5437,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5492,8 +5451,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5501,8 +5458,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5574,14 +5529,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5590,8 +5543,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5599,8 +5550,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5614,9 +5563,9 @@ public class Webservice {
             final AsyncHttpClient client = new AsyncHttpClient();
             client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
             final RequestParams request_param = new RequestParams();
-            request_param.put("category_id", category_id);
-            request_param.put("sub_cat_id", sub_cat_id);
-            request_param.put("template_id", template_id);
+//            request_param.put("category_id", category_id);
+//            request_param.put("sub_cat_id", sub_cat_id);
+//            request_param.put("template_id", template_id);
 
 
             Log.d(TAG, "@@@get_frame_list :" + GET_FRAME_LIST + "?" + request_param.toString());
@@ -5651,7 +5600,7 @@ public class Webservice {
 
                                         if (category_id.equals("1")) {
                                             //   Toast.makeText(mContext, "SUccess", Toast.LENGTH_SHORT).show();
-                                            Log.d("@@@category_get_frame_listone", category_name);
+
 
                                             Constant.frameListTwo.add(new frameModel(image));
 
@@ -5661,7 +5610,7 @@ public class Webservice {
 
                                         if (category_id.equals("2")) {
                                             //    Toast.makeText(mContext, "SUccess", Toast.LENGTH_SHORT).show();
-                                            Log.d("@@@category_get_frame_listtwo", category_name);
+
                                             Constant.frameListTwo.add(new frameModel(image));
 
 
@@ -5688,14 +5637,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5704,8 +5651,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5713,8 +5658,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5761,13 +5704,14 @@ public class Webservice {
                                         String category_id = obj2.getString("category_id");
                                         String image = obj2.getString("image");
                                         String sub_cat_id = obj2.getString("sub_cat_id");
+                                        int is_active = obj2.getInt("is_active");
 
 
                                         if (category_id.equals(category_idnew)) {
                                             //   Toast.makeText(mContext, "SUccess", Toast.LENGTH_SHORT).show();
                                             Log.d("@@@sub_cat_name", sub_cat_name);
 
-                                            Constant.viewAllList.add(new trendingSubModel(image, category_id, sub_cat_id, sub_cat_name, ""));
+                                            Constant.viewAllList.add(new trendingSubModel(image, category_id, sub_cat_id, sub_cat_name, "", is_active));
                                             viewall.setAdapter();
 
                                         }
@@ -5794,14 +5738,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5810,8 +5752,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5819,8 +5759,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5866,13 +5804,14 @@ public class Webservice {
                                         String category_id = obj2.getString("category_id");
                                         String image = obj2.getString("image");
                                         String sub_cat_id = obj2.getString("sub_cat_id");
+                                        int is_active = obj2.getInt("is_active");
 
 
                                         if (category_id.equals(category_idnew)) {
                                             //   Toast.makeText(mContext, "SUccess", Toast.LENGTH_SHORT).show();
                                             Log.d("@@@sub_cat_name", sub_cat_name);
 
-                                            Constant.viewAllList.add(new trendingSubModel(image, category_id, sub_cat_id, sub_cat_name, ""));
+                                            Constant.viewAllList.add(new trendingSubModel(image, category_id, sub_cat_id, sub_cat_name, "", is_active));
                                             viewall.setAdapter();
 
                                         }
@@ -5899,14 +5838,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -5915,8 +5852,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -5924,8 +5859,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -5989,7 +5922,7 @@ public class Webservice {
                                 int status = response.getInt("error_code");
                                 if (status == 200) {
 
-                                    Toast.makeText(mContext, "Image downloaded successfully !", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mContext, "Image added to download list !", Toast.LENGTH_SHORT).show();
                                     Log.d("#CreateContent", response.toString());
 
                                     try {
@@ -6011,7 +5944,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -6020,14 +5953,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6036,8 +5967,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6045,8 +5974,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6064,11 +5991,12 @@ public class Webservice {
             Log.d(TAG, "@@@CREATE_CONTENT :" + GET_MY_CONTENT_CREATOR_LIST + "?" + request_param.toString());
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 public void run() {
-                    Constant.downloadList.clear();
+
 
                     DownloadsFragment.shimmerFrameLayout.startShimmer();
 
                     client.addHeader("token", token);
+                    Log.d(TAG, "Token :" + token);
                     client.post(GET_MY_CONTENT_CREATOR_LIST, request_param, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -6085,9 +6013,10 @@ public class Webservice {
 
                                     JSONArray arr = response.getJSONArray("data");
 
-
+                                    Constant.downloadList.clear();
                                     for (int i = 0; i < arr.length(); i++) {
                                         JSONObject obj2 = arr.getJSONObject(i);
+                                        Log.d(TAG, "Token: " + String.valueOf(arr.length()));
 
                                         String created_file = obj2.getString("created_file");
 
@@ -6108,7 +6037,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -6117,14 +6046,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6133,8 +6060,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6142,8 +6067,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6184,6 +6107,7 @@ public class Webservice {
 
                                     JSONArray arr = response.getJSONArray("data");
 
+                                    //  Toast.makeText(mContext, "success", Toast.LENGTH_SHORT).show();
 
                                     for (int i = 0; i < arr.length(); i++) {
                                         JSONObject obj2 = arr.getJSONObject(i);
@@ -6216,7 +6140,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -6225,14 +6149,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6241,8 +6163,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6250,8 +6170,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6303,10 +6221,12 @@ public class Webservice {
                                         assert portfolio != null;
                                         portfolio.delete();
                                         contentcreatorPersonalJoinScreen.totalexp.setText("");
+                                        mContext.startActivity(new Intent(mContext, MainActivity.class));
                                     } else if (partner.equals("2")) {
                                         assert portfolio != null;
                                         portfolio.delete();
                                         contentcreatorBusinessJoinScreen.totalexp.setText("");
+                                        mContext.startActivity(new Intent(mContext, MainActivity.class));
                                     }
                                     Toast.makeText(mContext, "Upload successfully !", Toast.LENGTH_SHORT).show();
 
@@ -6322,7 +6242,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -6331,14 +6251,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6346,8 +6264,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6357,7 +6273,7 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-//            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//
 
 
             e.printStackTrace();
@@ -6440,7 +6356,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                //      Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                //
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -6449,7 +6365,7 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            //      Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+                            //
                             Log.d(TAG, "onFailure: " + responseString);
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
@@ -6457,7 +6373,7 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                            //  Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
+                            //
 
                             Log.d(TAG, "onFailure: " + errorResponse);
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6466,7 +6382,7 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
+
                             Log.d(TAG, "onFailure: " + errorResponse.toString());
 
 
@@ -6477,7 +6393,7 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-//            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//
 
 
             e.printStackTrace();
@@ -6519,7 +6435,6 @@ public class Webservice {
                                     //for business
                                     String name = obj.getString("name");
                                     String profile_pic = obj.getString("profile_pic");
-                                    String Imgurl = "https://www.adpanda.in/api/" + profile_pic;
 
 
                                     Log.d("profile_pic_new", "https://www.adpanda.in/api/" + profile_pic);
@@ -6568,14 +6483,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6584,8 +6497,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6593,8 +6504,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6653,14 +6562,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6669,8 +6576,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6678,8 +6583,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6738,14 +6641,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6754,8 +6655,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6763,8 +6662,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6823,14 +6720,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6839,8 +6734,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6848,8 +6741,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6908,14 +6799,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -6924,8 +6813,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -6933,8 +6820,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -6996,14 +6881,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7012,8 +6895,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -7021,8 +6902,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -7090,14 +6969,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7106,8 +6983,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -7115,8 +6990,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -7186,14 +7059,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7202,8 +7073,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -7211,8 +7080,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -7281,14 +7148,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7297,8 +7162,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -7306,8 +7169,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -7375,14 +7236,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7391,8 +7250,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -7400,8 +7257,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -7419,7 +7274,7 @@ public class Webservice {
             Log.d(TAG, "@@@get_my_creating_visiting_card_list :" + GET_MY_CREATING_VISITING_CARD_LIST + "?" + request_param.toString());
             ((Activity) mContext).runOnUiThread(new Runnable() {
                 public void run() {
-                    Constant.downloadList.clear();
+                    Constant.visitingCardAdapterList.clear();
                     try {
                         //   DownloadsFragment.shimmerFrameLayout.startShimmer();
                     } catch (Exception ignored) {
@@ -7446,14 +7301,14 @@ public class Webservice {
                                         JSONObject obj2 = arr.getJSONObject(i);
                                         String image = obj2.getString("image");
 
-                                        Constant.downloadList.add(new downloadModel(image, "2"));
+                                        Constant.visitingCardAdapterList.add(new downloadModel(image, "2"));
 
                                     }
                                     DownloadsFragment.shimmerFrameLayout.stopShimmer();
                                     DownloadsFragment.CoLayout.setVisibility(View.VISIBLE);
                                     DownloadsFragment.shimmerFrameLayout.setVisibility(View.INVISIBLE);
 
-                                    DownloadsFragment.setAdapter();
+                                    DownloadsFragment.visitingCardAdapter();
 
 
                                 } else {
@@ -7463,7 +7318,7 @@ public class Webservice {
                             } catch (JSONException e) {
 
                                 e.printStackTrace();
-                                Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
                                 Log.d("@@@ notSuccess: ", e.getMessage());
                             }
                             super.onSuccess(statusCode, headers, response);
@@ -7472,14 +7327,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7487,8 +7340,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7498,8 +7349,6 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
 
             e.printStackTrace();
         }
@@ -7507,10 +7356,7 @@ public class Webservice {
 
 
     public static void get_category_list_display(final Context mContext, String token, categoryTabFragment categoryTabFragment, String type) {
-
         try {
-
-
             final AsyncHttpClient client = new AsyncHttpClient();
             client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
             final RequestParams request_param = new RequestParams();
@@ -7531,8 +7377,6 @@ public class Webservice {
 
                             try {
                                 int status = response.getInt("error_code");
-
-
                                 if (status == 200) {
 
 
@@ -7556,7 +7400,8 @@ public class Webservice {
                                         if (accountType.equals("1") && category_type_flag.equals("1") && type.equals("personal")) {
 
                                             Constant.categoryModelList.add(new categoryModel(category_image, category_name, category_id));
-                                        } else if (accountType.equals("2") && category_type_flag.equals("2") && type.equals("business")) {
+                                        } else if (accountType.equals("2") && category_type_flag.equals("2")) {
+                                            Toast.makeText(mContext, "business", Toast.LENGTH_SHORT).show();
                                             Constant.categoryModelList.add(new categoryModel(category_image, category_name, category_id));
                                         }
                                     }
@@ -7583,14 +7428,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7599,8 +7442,6 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
-
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
                         }
@@ -7608,8 +7449,6 @@ public class Webservice {
                 }
             });
         } catch (Exception e) {
-
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
 
             e.printStackTrace();
@@ -7632,7 +7471,6 @@ public class Webservice {
                 public void run() {
                     com.Appzia.addpanda.Screens.trendingActivity.shimmerFrameLayout.startShimmer();
 
-                    Constant.trendingListForExtra.clear();
 
                     client.addHeader("token", token);
                     client.post(GET_SUBCAT_ID, request_param, new JsonHttpResponseHandler() {
@@ -7646,24 +7484,24 @@ public class Webservice {
 
                                     JSONArray arr = response.getJSONArray("data");
 
-
+                                    Constant.trendingListForExtra.clear();
                                     for (int i = 0; i < arr.length(); i++) {
                                         JSONObject obj2 = arr.getJSONObject(i);
                                         String category_name = obj2.getString("category_name");
                                         String sub_cat_name = obj2.getString("sub_cat_name");
-
-
+                                        Log.d(TAG, "category_idnew: " + sub_cat_name);
                                         String category_id = obj2.getString("category_id");
                                         String image = obj2.getString("image");
                                         String sub_cat_id = obj2.getString("sub_cat_id");
+                                        int is_active = obj2.getInt("is_active");
 
 
                                         if (category_id.equals(category_idnew)) {
                                             //   Toast.makeText(mContext, "SUccess", Toast.LENGTH_SHORT).show();
-                                            Log.d("@@@sub_cat_name", sub_cat_name);
+                                            Log.d("@@@category_idnew", category_idnew);
 
-                                            Constant.trendingListForExtra.add(new trendingSubModel(image, category_id, sub_cat_id, sub_cat_name, ""));
-                                            trendingActivity.setAdapter();
+                                            Constant.trendingListForExtra.add(new trendingSubModel(image, category_id, sub_cat_id, sub_cat_name, "", is_active));
+                                            trendingActivity.setSubAdapter();
 
                                         }
 
@@ -7691,14 +7529,12 @@ public class Webservice {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
-                            Toast.makeText(mContext, responseString, Toast.LENGTH_SHORT).show();
+
                             super.onFailure(statusCode, headers, responseString, throwable);
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                            // Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7706,8 +7542,6 @@ public class Webservice {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                            Toast.makeText(((Activity) mContext).getApplication(), errorResponse.toString(), Toast.LENGTH_SHORT).show();
 
 
                             super.onFailure(statusCode, headers, throwable, errorResponse);
@@ -7717,12 +7551,1478 @@ public class Webservice {
             });
         } catch (Exception e) {
 
-            Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void get_frame_list_testing(final Context mContext, String token, EditFrameOwner EditFrameOwner, String category_id, String sub_cat_id, String template_id) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+
+            Log.d(TAG, "@@@get_frame_list :" + GET_FRAME_LIST + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+
+                    Constant.frameList.clear();
+                    Constant.frameListTwo.clear();
+                    client.addHeader("token", token);
+                    client.post(GET_FRAME_LIST, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@get_frame_list_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+
+                                if (status == 200) {
+
+
+                                    JSONArray arr = response.getJSONArray("data");
+
+
+                                    for (int i = 0; i < arr.length(); i++) {
+                                        JSONObject obj2 = arr.getJSONObject(i);
+                                        String category_name = obj2.getString("category_name");
+
+
+                                        String category_id = obj2.getString("category_id");
+                                        String image = obj2.getString("image");
+
+                                        Constant.frameListTwo.add(new frameModel(image));
+
+
+                                    }
+
+                                    EditFrameOwner.setAdapter();
+
+
+                                } else {
+                                    String message = response.getString("message");
+                                    // Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
 
 
             e.printStackTrace();
         }
     }
+
+    public static void add_frame_photo(final Context mContext, String token, File imgFile) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+
+            if (imgFile != null) {
+                request_param.put("file", imgFile);
+            }
+
+
+            Log.d(TAG, "@@@add_frame_photo :" + ADD_FRAME_PHOTO + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(ADD_FRAME_PHOTO, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@add_frame_photo_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                    imgFile.delete();
+                                    mContext.startActivity(new Intent(mContext, MainActivity.class));
+
+                                } else {
+                                    String message = response.getString("message");
+                                    // Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void fetch_all_frames_photo(Context mContext, String token, trendingActivity trendingActivity) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            Log.d(TAG, "@@@fetch_all_frames_photo :" + FETCH_ALL_FRAME_PHOTO + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+
+
+                    client.addHeader("token", token);
+                    client.post(FETCH_ALL_FRAME_PHOTO, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@fetch_all_frames_photo_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+
+
+                                    String message = response.getString("message");
+                                    Constant.frameList.clear();
+                                    JSONArray arr = response.getJSONArray("data");
+                                    for (int i = 0; i < arr.length(); i++) {
+                                        JSONObject obj = arr.getJSONObject(i);
+                                        String images = obj.getString("images");
+                                        Constant.frameList.add(new frameModel(images));
+                                    }
+
+                                    trendingActivity.setFrameAdapter();
+                                    //   Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    //  Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void fetch_all_frames_photo_basic(Context mContext, String token, Basic_editFrameActivity trendingActivity) {
+
+        try {
+            Constant.frameListTwo.clear();
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            Log.d(TAG, "@@@fetch_all_frames_photo :" + FETCH_ALL_FRAME_PHOTO + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+
+
+                    client.addHeader("token", token);
+                    client.post(FETCH_ALL_FRAME_PHOTO, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@fetch_all_frames_photo_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+
+
+                                    String message = response.getString("message");
+
+                                    JSONArray arr = response.getJSONArray("data");
+                                    for (int i = 0; i < arr.length(); i++) {
+                                        JSONObject obj = arr.getJSONObject(i);
+                                        String images = obj.getString("images");
+                                        Constant.frameListTwo.add(new frameModel(images));
+                                    }
+
+                                    trendingActivity.setFrameAdapter();
+                                    //   Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    //  Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void fetch_all_frames_photo_Scratch(Context mContext, String token, editFameActivity trendingActivity) {
+
+        try {
+            Constant.frameListTwo.clear();
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            Log.d(TAG, "@@@fetch_all_frames_photo :" + FETCH_ALL_FRAME_PHOTO + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(FETCH_ALL_FRAME_PHOTO, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@fetch_all_frames_photo_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+
+
+                                    String message = response.getString("message");
+
+                                    JSONArray arr = response.getJSONArray("data");
+                                    for (int i = 0; i < arr.length(); i++) {
+                                        JSONObject obj = arr.getJSONObject(i);
+                                        String images = obj.getString("images");
+                                        Constant.frameListTwo.add(new frameModel(images));
+                                    }
+
+                                    trendingActivity.setFrameAdapter();
+                                    //   Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+            //Toast.makeText(((Activity) mContext).getApplication(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void update_fcm_token(Context mContext, String token, String fcm_token) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            request_param.put("token", token);
+            request_param.put("fcm_token", fcm_token);
+
+
+            Log.d(TAG, "@@@update_fcm_token :" + UPDATE_FCM_TOKEN + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(UPDATE_FCM_TOKEN, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@update_fcm_token_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+                                    //  Toast.makeText(mContext, " fcm uploaded", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public static void save_bank_details(Context mContext, String account_holder_name, String account_number, String ifsc_code, String token) {
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            request_param.put("account_holder_name", account_holder_name);
+            request_param.put("account_number", account_number);
+            request_param.put("ifsc_code", ifsc_code);
+
+            client.addHeader("token", token);
+            Log.d(TAG, "@@@save_bank_details :" + SAVE_BANK_DETAILS + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(SAVE_BANK_DETAILS, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@save_bank_details_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+                                    // Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                    Constant.setSfFunction(mContext);
+                                    Constant.setSF.putString("ACC_DONE", "ACC_DONE");
+                                    Constant.setSF.apply();
+                                    mContext.startActivity(new Intent(mContext, manageAcount3Activity.class));
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void get_bank_details(Context mContext, TextView name, TextView account, TextView ifsc, String token) {
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            client.addHeader("token", token);
+            Log.d(TAG, "@@@get_bank_details :" + GET_BANK_DETAILS + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(GET_BANK_DETAILS, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@get_bank_details_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+
+                                    JSONObject obj = response.getJSONObject("data");
+                                    String account_holder_name = obj.getString("account_holder_name");
+                                    String account_number = obj.getString("account_number");
+                                    String ifsc_code = obj.getString("ifsc_code");
+
+                                    name.setText(account_holder_name);
+                                    account.setText(account_number);
+                                    ifsc.setText(ifsc_code);
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void get_identity_verification(Context mContext, AppCompatButton adharBtn, AppCompatButton panBtn, AppCompatButton checkBtn, String token) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            client.addHeader("token", token);
+            Log.d(TAG, "@@@get_identity_verification :" + GET_IDENTITY_VERIFICATION + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(GET_IDENTITY_VERIFICATION, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@get_identity_verification_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+
+                                    //      Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                    JSONObject obj = response.getJSONObject("data");
+
+
+                                    JSONObject adhaar_data = obj.getJSONObject("adhaar_data");
+                                    String adhar_status = adhaar_data.getString("adhar_status");
+
+                                    if (adhar_status.equals("0")) {
+                                        //0 = not uploaded
+                                        adharBtn.setError(null);
+                                        adharBtn.setEnabled(true);
+                                    } else if (adhar_status.equals("1")) {
+                                        //1= pending
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.yellowwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        adharBtn.setError("Pending", customErrorDrawable);
+                                        adharBtn.setEnabled(true);
+
+                                    } else if (adhar_status.equals("2")) {
+                                        //2= verified
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.greenwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        adharBtn.setError("Verified", customErrorDrawable);
+                                        adharBtn.setEnabled(false);
+
+                                    } else if (adhar_status.equals("3")) {
+                                        //3= rejected
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.redwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        adharBtn.setError("Rejected", customErrorDrawable);
+                                        adharBtn.setEnabled(true);
+
+                                    }
+
+
+                                    JSONObject pan_data = obj.getJSONObject("pan_data");
+                                    String pan_status = pan_data.getString("pan_status");
+
+                                    if (pan_status.equals("0")) {
+                                        //0 = not uploaded
+                                        panBtn.setError(null);
+                                        panBtn.setEnabled(true);
+                                    } else if (pan_status.equals("1")) {
+                                        //1= pending
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.yellowwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        panBtn.setError("Pending", customErrorDrawable);
+                                        panBtn.setEnabled(true);
+                                    } else if (pan_status.equals("2")) {
+                                        //2= verified
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.greenwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        panBtn.setError("Verified", customErrorDrawable);
+                                        panBtn.setEnabled(false);
+                                    } else if (pan_status.equals("3")) {
+                                        //3= rejected
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.redwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        panBtn.setError("Rejected", customErrorDrawable);
+                                        panBtn.setEnabled(true);
+                                    }
+
+                                    JSONObject cancel_check_data = obj.getJSONObject("cancel_check_data");
+                                    String cancel_check_status = cancel_check_data.getString("cancel_check_status");
+
+                                    if (cancel_check_status.equals("0")) {
+                                        //0 = not uploaded
+                                        checkBtn.setError(null);
+                                        checkBtn.setEnabled(true);
+                                    } else if (cancel_check_status.equals("1")) {
+                                        //1= pending
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.yellowwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        checkBtn.setError("Pending", customErrorDrawable);
+                                        checkBtn.setEnabled(true);
+                                    } else if (cancel_check_status.equals("2")) {
+                                        //2= verified
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.greenwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        checkBtn.setError("Verified", customErrorDrawable);
+                                        checkBtn.setEnabled(false);
+                                    } else if (cancel_check_status.equals("3")) {
+                                        //3= rejected
+
+                                        Drawable customErrorDrawable = mContext.getResources().getDrawable(R.drawable.redwarning);
+                                        customErrorDrawable.setBounds(0, 0, customErrorDrawable.getIntrinsicWidth(), customErrorDrawable.getIntrinsicHeight());
+                                        checkBtn.setError("Rejected", customErrorDrawable);
+                                        checkBtn.setEnabled(true);
+                                    }
+
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (
+                                    JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.
+
+                                    onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String
+                                responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (
+                Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void get_identity_verificationAdhar(Context mContext, String token, ImageView img1, ImageView img2) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            client.addHeader("token", token);
+            Log.d("token", token);
+            Log.d(TAG, "@@@get_identity_verification :" + GET_IDENTITY_VERIFICATION + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(GET_IDENTITY_VERIFICATION, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@get_identity_verification_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+                                    JSONObject obj = response.getJSONObject("data");
+                                    JSONObject adhaar_data = obj.getJSONObject("adhaar_data");
+                                    String adhar_img_front = adhaar_data.getString("adhar_img_front");
+                                    try {
+                                        Picasso.get().load(adhar_img_front).into(img1);
+                                    } catch (Exception ignored) {
+                                    }
+
+                                    String adhar_img_back = adhaar_data.getString("adhar_img_back");
+                                    try {
+                                        Picasso.get().load(adhar_img_back).into(img2);
+                                    } catch (Exception ignored) {
+                                    }
+
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (
+                                    JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.
+
+                                    onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String
+                                responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (
+                Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void get_identity_verificationPan(Context mContext, String token, ImageView img1) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            client.addHeader("token", token);
+            Log.d(TAG, "@@@get_identity_verification :" + GET_IDENTITY_VERIFICATION + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(GET_IDENTITY_VERIFICATION, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@get_identity_verification_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+                                    JSONObject obj = response.getJSONObject("data");
+                                    JSONObject pan_data = obj.getJSONObject("pan_data");
+                                    String pan_img = pan_data.getString("pan_img");
+                                    try {
+                                        Picasso.get().load(pan_img).into(img1);
+                                    } catch (Exception ignored) {
+                                    }
+
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (
+                                    JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.
+
+                                    onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String
+                                responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (
+                Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void get_identity_verificationCheck(Context mContext, String token, ImageView img1) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            client.addHeader("token", token);
+            Log.d(TAG, "@@@get_identity_verification :" + GET_IDENTITY_VERIFICATION + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(GET_IDENTITY_VERIFICATION, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@get_identity_verification_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+                                    JSONObject obj = response.getJSONObject("data");
+                                    JSONObject cancel_check_data = obj.getJSONObject("cancel_check_data");
+                                    String cancel_check_img = cancel_check_data.getString("cancel_check_img");
+                                    try {
+                                        Picasso.get().load(cancel_check_img).into(img1);
+                                    } catch (Exception ignored) {
+                                    }
+
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (
+                                    JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.
+
+                                    onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String
+                                responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (
+                Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void identity_verification(Context mContext, String identity_type, File file, File file2, String token) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+            request_param.put("identity_type", identity_type);
+
+
+            if (file != null) {
+                request_param.put("file", file);
+            }
+            if (file2 != null) {
+                request_param.put("file2", file2);
+            }
+            client.addHeader("token", token);
+            Log.d(TAG, "@@@identity_verification :" + IDENTITY_VERIFICATION + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    client.addHeader("token", token);
+                    client.post(IDENTITY_VERIFICATION, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@identity_verification_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                String msg = response.getString("message");
+                                if (status == 200) {
+
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                    mContext.startActivity(new Intent(mContext, kycVerificationScreen.class));
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (
+                                    JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.
+
+                                    onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String
+                                responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (
+                Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void phonepay_payment_init(Context mContext, String uid, String amount) {
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+
+            request_param.put("u_id", uid);
+            request_param.put("amount", amount);
+
+
+            Log.d(TAG, "@@@phonepay_payment_init :" + "http://192.168.0.200/influny-test-payment/PaymentController/phonepay_payment_init" + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+
+                    client.post("http://192.168.0.200/influny-test-payment/PaymentController/phonepay_payment_init", request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@phonepay_payment_init_response :" + response.toString());
+
+                            try {
+                                boolean success = response.getBoolean("success");
+                                String msg = response.getString("message");
+                                if (success == true) {
+
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+
+                                } else {
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (
+                                    JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.
+
+                                    onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String
+                                responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable
+                                throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (
+                Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void upload_user_contact_listRetrofit(final Context mContext, String token, String user_contacts, String account_typeKey, String mobile, String emailKey, String name, String BusinessCatKey, String social_media_typeKey) {
+
+        Retrofit retrofit = APIClient.getClient();
+        API api = retrofit.create(API.class);
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
+        builder.addFormDataPart("user_contacts", user_contacts);
+
+        RequestBody requestBody = builder.build();
+
+        api.upload_user_contact_list(requestBody, token).enqueue(new Callback<globalModel>() {
+            @Override
+            public void onResponse(@NonNull Call<globalModel> call, @NonNull Response<globalModel> response) {
+                Log.d(TAG, "onResponseupload_user_contact_listRetrofit: " + response.code());
+
+                if (response.body() != null) {
+
+                    int errorcode = response.body().getError_code();
+                    String message = response.body().getMessage();
+
+
+                    if (errorcode == 200) {
+
+
+                        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+
+
+                        if (mContext != null) {
+
+
+                            Intent intent = new Intent(mContext, MainActivity.class);
+                            intent.putExtra("account_typeKey", account_typeKey);
+                            intent.putExtra("mobileKey", mobile);
+                            intent.putExtra("emailKey", emailKey);
+                            intent.putExtra("nameKey", name);
+                            intent.putExtra("BusinessCatKey", BusinessCatKey);
+                            intent.putExtra("social_media_typeKey", social_media_typeKey);
+                            intent.putExtra("tokenKey", token);
+
+
+                            mContext.startActivity(intent);
+
+                            //((Activity) mContext).finish();
+                            ReferActivity.dialog.dismiss();
+
+                        }
+
+
+                    } else {
+                        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+
+                    }
+
+                } else {
+                    // Toast.makeText(mContext, response.code(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onResponse: " + response.toString());
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<globalModel> call, @NonNull Throwable t) {
+                //   Toast.makeText(mContext, "" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("loginerror", t.getMessage());
+            }
+        });
+    }
+
+
+    public static void fetchDataProfileVisitingCard(final Context mContext, String token, EditText busname, EditText yourname, EditText email, EditText web, EditText addressEt, EditText mobile) {
+
+        try {
+
+            final AsyncHttpClient client = new AsyncHttpClient();
+            client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+            final RequestParams request_param = new RequestParams();
+
+
+            Log.d(TAG, "@@@fetch_user_profile :" + FETCH_USER_PROFILE + "?" + request_param.toString());
+            ((Activity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+
+
+                    client.addHeader("token", token);
+                    client.post(FETCH_USER_PROFILE, request_param, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Log.d(TAG, "@@@fetch_user_profile_response :" + response.toString());
+
+                            try {
+                                int status = response.getInt("error_code");
+                                if (status == 200) {
+                                    String message = response.getString("message");
+                                    //    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+
+                                    //main code type here
+
+                                    JSONObject obj = response.getJSONObject("data");
+                                    String account_type = obj.getString("account_type");
+
+                                    Constant.setSfFunction(mContext);
+                                    Constant.setSF.putString(Constant.ACC_TYPE, account_type);
+                                    Constant.setSF.apply();
+
+
+                                    //for business
+                                    String name = obj.getString("name");
+                                    String profile_pic = obj.getString("profile_pic");
+
+                                    try {
+                                        mainFragment.getImgUrl(profile_pic);
+                                    } catch (Exception ex) {
+                                    }
+
+
+                                    Log.d("profile_pic_new", "https://www.adpanda.in/api/" + profile_pic);
+
+                                    String email_id = obj.getString("email_id");
+                                    String mobile_number = obj.getString("mobile_number");
+                                    String address = obj.getString("address");
+                                    String dob = obj.getString("dob");
+                                    String political_interest = obj.getString("political_interest");
+
+                                    //tbis is for business account details
+                                    String bussiness_name = obj.getString("bussiness_name");
+                                    String website = obj.getString("website");
+                                    String business_category = obj.getString("business_category");
+                                    String date_of_incorporation = obj.getString("date_of_incorporation");
+                                    String business_details = obj.getString("business_details");
+
+
+                                    if (account_type.equals("1")) {
+
+                                        // 2 for personal
+                                        if (bussiness_name != null) {
+                                            if(bussiness_name.equals("null")){
+                                                busname.setText("");
+                                            }else {
+                                                busname.setText(bussiness_name);
+                                            }
+                                        }
+
+                                        if (website != null) {
+                                            if(bussiness_name.equals("null")){
+                                                web.setText("");
+                                            }else {
+                                                web.setText(website);
+                                            }
+                                        }
+
+                                        if (name != null) {
+                                            if(name.equals("null")){
+                                                yourname.setText("");
+                                            }else {
+                                                yourname.setText(name);
+                                            }
+                                        }
+
+                                        if (email_id != null) {
+                                            if(email_id.equals("null")) {
+                                                email.setText("");
+                                            }else{
+                                                email.setText(email_id);
+                                            }
+                                        }
+
+                                        if (address != null) {
+                                            if(address.equals("null")) {
+                                                addressEt.setText("");
+                                            }else{
+                                                addressEt.setText(address);
+                                            }
+                                        }
+                                        if (mobile_number != null) {
+                                            if(mobile_number.equals("null")) {
+                                                mobile.setText("");
+                                            }else{
+                                                mobile.setText(mobile_number);
+                                            }
+                                        }
+                                    } else if (account_type.equals("2")) {
+
+                                        // 2 for personal
+                                        if (bussiness_name != null) {
+                                            if(bussiness_name.equals("null")){
+                                                busname.setText("");
+                                            }else {
+                                                busname.setText(bussiness_name);
+                                            }
+                                        }
+
+                                        if (website != null) {
+                                            if(bussiness_name.equals("null")){
+                                                web.setText("");
+                                            }else {
+                                                web.setText(website);
+                                            }
+                                        }
+
+                                        if (name != null) {
+                                            if(name.equals("null")){
+                                                yourname.setText("");
+                                            }else {
+                                                yourname.setText(name);
+                                            }
+                                        }
+
+                                        if (email_id != null) {
+                                            if(email_id.equals("null")) {
+                                                email.setText("");
+                                            }else{
+                                                email.setText(email_id);
+                                            }
+                                        }
+
+                                        if (address != null) {
+                                            if(address.equals("null")) {
+                                                addressEt.setText("");
+                                            }else{
+                                                addressEt.setText(address);
+                                            }
+                                        }
+                                        if (mobile_number != null) {
+                                            if(mobile_number.equals("null")) {
+                                                mobile.setText("");
+                                            }else{
+                                                mobile.setText(mobile_number);
+                                            }
+                                        }
+                                    }
+
+                                } else {
+                                    String message = response.getString("message");
+                                    // Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+
+                                Log.d("@@@ notSuccess: ", e.getMessage());
+                            }
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+
+
+            e.printStackTrace();
+        }
+    }
+
 
 }
 
